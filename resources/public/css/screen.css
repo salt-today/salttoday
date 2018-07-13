@@ -1,0 +1,185 @@
+html,
+body {
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    height: 100%;
+    background-color: #377def;
+    background-image: url("/img/background.png");
+    background-repeat: repeat;
+}
+
+.navbar {
+  margin-bottom: 10px;
+  border-radius: 0px;
+  margin-bottom: 0px !important;
+  background: linear-gradient(to bottom, rgba(3,48,107,1) 0%, rgba(15,78,166,1) 100%);
+}
+
+.navbar-brand {
+  float: none;
+}
+
+.navbar-nav .nav-item {
+  float: none;
+}
+
+.navbar-divider,
+.navbar-nav .nav-item+.nav-item,
+.navbar-nav .nav-link + .nav-link {
+  margin-left: 0;
+}
+
+.jumbotron {
+    background-color: #C1E4FA !important;
+    background-image: url("/img/salt.png") !important;
+    background-repeat: repeat-x;
+    background-size: contain;
+    -webkit-animation:100s scroll infinite linear !important;
+    -moz-animation:100s scroll infinite linear !important;
+    -o-animation:100s scroll infinite linear !important;
+    -ms-animation:100s scroll infinite linear !important;
+    animation:100s scroll infinite linear;
+    max-size: 20%;
+    height:20%;
+}
+
+@-webkit-keyframes scroll{
+  100%{
+    background-position:-1000px 0px;
+  }
+}
+
+@-moz-keyframes scroll{
+  100%{
+    background-position:-1000px 0px;
+  }
+}
+
+@-o-keyframes scroll{
+  100%{
+    background-position:-1000px 0px;
+  }
+}
+
+@-ms-keyframes scroll{
+  100%{
+    background-position:-1000px 0px;
+  }
+}
+
+@keyframes scroll{
+  100%{
+    background-position:-1000px 0px;
+  }
+}
+
+.jumbotron h1 {
+    -webkit-text-stroke: 1px black !important;
+    color: white !important;
+}
+
+.date-container {
+    background-color: rgba(30, 77, 153, 1)
+}
+
+.comments-time-header {
+    color: white;
+    background-color: rgba(3,48,107,1);
+    text-align: center;
+    font-size: 25px;
+    font-weight: bold;
+    border-radius: 10px 10px 0 0;
+}
+
+.comments-type-header {
+    color: white;
+    background-color: #2a68cc
+    margin-top: 10px;
+}
+.background-container > .panel {
+    border: 1px solid #1e4d99;
+    border-radius: 15px 15px 0px 0px;
+    box-shadow: 1px 1px 10px #545454;
+}
+.background-container > .panel > .panel-body {
+    padding: 10px;
+    background-color: #377def;
+    background-color: rgba(55, 125, 239, 0.3)
+}
+
+.comments-type-header > .panel {
+    border: 1px solid rgba(15,78,166,1);
+    border-radius: 15px 15px 0 0;
+}
+
+.comments-type-header > .panel > .panel-heading {
+    background-color: rgba(15,78,166,1);
+    border-radius: 10px 10px 0 0;
+    text-align: center;
+    font-weight: bold;
+}
+.comments-type-header {
+    margin-bottom: 10px;
+}
+.comment-background {
+    background-color: white;
+    color: black;
+    padding: 10px !important;
+    background-image: url("/img/stripes-light.png");
+    background-repeat: repeat;
+}
+.comment-text > a, .comment-info > a {
+    color: black;
+}
+.comment-info > a {
+    text-decoration: underline;
+    font-weight: bold;
+}
+@media (min-width: 34em) {
+  .navbar-brand {
+    float: left;
+  }
+  .navbar-nav .nav-item {
+    float: left;
+  }
+  .navbar-divider,
+  .navbar-nav .nav-item+.nav-item,
+  .navbar-nav .nav-link + .nav-link {
+    margin-left: 1rem;
+  }
+}
+
+@-moz-keyframes three-quarters-loader {
+    0% {
+        -moz-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -moz-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+@-webkit-keyframes three-quarters-loader {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+@keyframes three-quarters-loader {
+    0% {
+        -moz-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -moz-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+

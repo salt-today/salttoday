@@ -1,0 +1,15 @@
+2018-06-30 14:50:30,188 [main] DEBUG datomic.db - {:event :db/add-fulltext, :phase :begin, :pid 492, :tid 1} 
+2018-06-30 14:50:30,195 [main] DEBUG datomic.db - {:event :db/add-fulltext, :msec 3.01, :phase :end, :pid 492, :tid 1} 
+2018-06-30 14:50:30,205 [main] DEBUG datomic.db - {:event :db/add-fulltext, :phase :begin, :pid 492, :tid 1} 
+2018-06-30 14:50:30,205 [main] DEBUG datomic.db - {:event :db/add-fulltext, :msec 0.105, :phase :end, :pid 492, :tid 1} 
+2018-06-30 14:50:30,223 [main] DEBUG datomic.db - {:event :db/add-fulltext, :phase :begin, :pid 492, :tid 1} 
+2018-06-30 14:50:30,333 [main] DEBUG datomic.db - {:event :db/add-fulltext, :msec 110.0, :phase :end, :pid 492, :tid 1} 
+2018-06-30 14:50:30,340 [main] DEBUG datomic.db - {:event :db/add-fulltext, :phase :begin, :pid 492, :tid 1} 
+2018-06-30 14:50:30,340 [main] DEBUG datomic.db - {:event :db/add-fulltext, :msec 0.0604, :phase :end, :pid 492, :tid 1} 
+2018-06-30 14:50:30,342 [main] DEBUG datomic.db - {:event :db/add-fulltext, :phase :begin, :pid 492, :tid 1} 
+2018-06-30 14:50:30,361 [main] DEBUG datomic.db - {:event :db/add-fulltext, :msec 18.3, :phase :end, :pid 492, :tid 1} 
+2018-06-30 14:50:30,372 [main] DEBUG datomic.db - {:event :db/add-fulltext, :phase :begin, :pid 492, :tid 1} 
+2018-06-30 14:50:30,372 [main] DEBUG datomic.db - {:event :db/add-fulltext, :msec 0.0184, :phase :end, :pid 492, :tid 1} 
+2018-06-30 14:50:30,372 [main] DEBUG datomic.db - {:event :db/add-fulltext, :phase :begin, :pid 492, :tid 1} 
+2018-06-30 14:50:30,372 [main] DEBUG datomic.db - {:event :db/add-fulltext, :msec 0.014, :phase :end, :pid 492, :tid 1} 
+2018-06-30 14:50:30,524 [main] DEBUG org.jboss.logging - Logging Provider: org.jboss.logging.Slf4jLoggerProvider 
