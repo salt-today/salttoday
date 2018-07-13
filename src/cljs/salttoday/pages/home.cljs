@@ -18,14 +18,6 @@
      {:headers {"Accept" "application/transit"}
       :handler top-comments-handler})
 
-
-;<div class="container">
-;<h2>Panel Heading</h2>
-;<div class="panel panel-default">
-;<div class="panel-heading">Panel Heading</div>
-;<div class="panel-body">Panel Content</div>
-;</div>
-;</div>
 (defn home-page []
   [:div
    (jumbotron "Top Comments")
@@ -43,14 +35,19 @@
         [:div.panel-body.comment-background (display-comment (:daily-negative @state))]]]
      ]]]
 
-   [:div.container
-   [:div.all-time
-    [:h3 "All Time"]
-    [:div  [:h4 "Most Liked: "]
-     (for [comment (:all-time-positives @state)]
-       (display-comment comment))]
-    [:div [:h4 "Most Disliked:"]
-     (into [:div.comments-list]
-           (for [comment (:all-time-negatives @state)]
-             (display-comment comment)))]]
-   ]])
+   [:div.container.background-container
+   [:div.panel.panel-default
+    [:div.comments-time-header.panel-heading "All Time"]
+    [:div.panel-body
+     [:div.comments-type-header.container
+      [:div.panel.panel-default
+       [:div.panel-heading "Liked"]
+       [:div.panel-body.comment-background
+        (for [comment (:all-time-positives @state)]
+          (display-comment comment))]]]
+     [:div.comments-type-header.container
+      [:div.panel.panel-default
+       [:div.panel-heading "Disliked"]
+       [:div.panel-body.comment-background
+        (for [comment (:all-time-positives @state)]
+          (display-comment comment))]]]]]]])

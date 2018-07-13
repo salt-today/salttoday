@@ -127,6 +127,9 @@ body {
     background-image: url("/img/stripes-light.png");
     background-repeat: repeat;
 }
+.comment-text {
+    margin-bottom: 15px;
+}
 .comment-text > a, .comment-info > a {
     color: black;
 }
@@ -134,6 +137,11 @@ body {
     text-decoration: underline;
     font-weight: bold;
 }
+
+.background-container {
+    margin-bottom: 15px;
+}
+
 @media (min-width: 34em) {
   .navbar-brand {
     float: left;
