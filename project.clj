@@ -26,6 +26,7 @@
                  [org.webjars/bootstrap "4.1.0"]
                  [org.webjars/font-awesome "5.0.13"]
                  [org.webjars/webjars-locator "0.34"]
+                 [overtone/at-at "1.2.0"]
                  [reagent "0.8.0" :exclusions [com.google.guava/guava]]
                  [ring-webjars "0.2.0"]
                  [ring/ring-core "1.6.3"]

@@ -11,4 +11,5 @@
    :stop
    (fn []
      (log/info "\n-=[salttoday has shut down successfully]=-"))
-   :middleware wrap-dev})
+   :middleware wrap-dev
+   :database-url "datomic:mem://salttoday"})

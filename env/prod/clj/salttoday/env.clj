@@ -8,4 +8,5 @@
    :stop
    (fn []
      (log/info "\n-=[salttoday has shut down successfully]=-"))
-   :middleware identity})
+   :middleware identity
+   :database-url "datomic:free://localhost:4334/salttoday"})

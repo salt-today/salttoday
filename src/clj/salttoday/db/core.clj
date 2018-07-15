@@ -9,12 +9,11 @@
 
 ;; TODO this should be uncommented
 
-(d/create-database "datomic:mem://sample-database")
-;(defstate conn
-;  :start (-> env :database-url d/connect)
-;  :stop (-> conn .release))
-
-(def conn (d/connect "datomic:mem://sample-database"))
+(defstate conn
+  :start (let [db-url (:database-url env)]
+              (d/create-database db-url)
+              (d/connect db-url))
+  :stop (-> conn .release))
 
 ;; TODO this should eventually be removed
 
@@ -146,7 +145,7 @@
 
 
 
-(defn update-stats [conn posts]
+(defn update-stats [posts]
   (doseq [post posts]
     (let [post-id (add-post conn post)]
       (add-comments conn post-id (:comments post)))))

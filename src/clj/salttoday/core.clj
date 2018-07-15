@@ -2,6 +2,7 @@
   (:require [salttoday.handler :as handler]
             [salttoday.db.core :as db]
             [salttoday.scraper :as scraper]
+            [overtone.at-at :as at-at]
             [luminus.repl-server :as repl]
             [luminus.http-server :as http]
             [salttoday.config :refer [env]]
@@ -51,4 +52,8 @@
 (defn -main [& args]
   (start-app args)
   (db/create-schema)
-  (db/update-stats db/conn (scraper/scrape-sootoday)))
+    (let [seconds 1000
+          minutes (* seconds 60)
+          interval (* 15 minutes)
+          pool (at-at/mk-pool)]
+       (at-at/every interval #(db/update-stats (scraper/scrape-sootoday)) pool)))
