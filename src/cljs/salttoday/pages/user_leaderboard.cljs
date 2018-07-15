@@ -9,8 +9,7 @@
 (defn top-users-handler
   [response]
   (js/console.log response)
-  (reset! state {:positive-users (get response "positive-users")
-                 :negative-users (get response "negative-users")}))
+  (reset! state response))
 
 (GET "/top-users"
      {:headers {"Accept" "application/transit"}
@@ -29,9 +28,9 @@
   [:div.container
    [:h3 "Most Liked Users"]
    (into [:div.users-list]
-         (for [user (:positive-users @state)]
+         (for [user (get @state "positive-users")]
            (display-user user)))
    [:h3 "Most Disliked Users"]
    (into [:div.users-list]
-         (for [user (:positive-users @state)]
+         (for [user (get @state "negative-users")]
            (display-user user)))])
