@@ -28,11 +28,11 @@
   []
   (make-layout
     [:div.container
-     [:h3 "Most Liked Users"]
+     [:div.general-heading "Most" [:span.liked " Liked"] " Users"]  [:div.general-line-break]
      (into [:div.users-list]
            (for [user (get @state "positive-users")]
              (display-user user)))
-     [:h3 "Most Disliked Users"]
+     [:div.general-heading "Most" [:span.disliked " Disliked"] " Users"] [:div.general-line-break]
      (into [:div.users-list]
            (for [user (get @state "negative-users")]
              (display-user user)))]))

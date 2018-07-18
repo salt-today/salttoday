@@ -61,6 +61,12 @@ body {
     padding: 10px;
     color: #ed1c24;
 }
+.liked {
+    color: #0072bc;
+}
+.disliked {
+    color: #ed1c24;
+}
 .negative > .comment-text > a {
     color: #ed1c24;
 }

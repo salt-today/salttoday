@@ -19,7 +19,7 @@
 (defn home-page []
   (make-layout
     [:div
-     [:img.title-image {:src "/img/soo-salty.png"}]
+
      [:div
       [:div [:div.general-heading "Today"] [:div.general-line-break]
        [:div.comments-type-header.container
