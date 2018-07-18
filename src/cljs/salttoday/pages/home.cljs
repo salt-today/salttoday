@@ -20,8 +20,8 @@
   (make-layout
     [:div
      [:img.title-image {:src "/img/soo-salty.png"}]
-     [:div.container.background-container
-      [:div
+     [:div
+      [:div [:div.general-heading "Today"] [:div.general-line-break]
        [:div.comments-type-header.container
         [:div
          [:div.liked-heading "Liked"][:div.line-break-positive]
@@ -34,9 +34,9 @@
        ]
       ]
 
-     [:div.container.background-container
+     [:div
       [:div
-       [:div.general-heading "All Time"]
+       [:div.general-heading "All Time"] [:div.general-line-break]
        [:div.panel-body
         [:div.comments-type-header.container
           [:div.liked-heading "Liked"][:div.line-break-positive]
