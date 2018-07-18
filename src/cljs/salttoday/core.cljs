@@ -31,11 +31,6 @@
      [nav-link "#/" "Home" :home]
      [nav-link "#/users" "Users" :users]]]])
 
-(defn about-page []
-  [:div.container
-   [:div.row
-    [:div.col-md-12
-     [:img {:src "/img/warning_clojure.png"}]]]])
 
 
 
@@ -72,7 +67,6 @@
 ;; Initialize app
 
 (defn mount-components []
-  (r/render [#'navbar] (.getElementById js/document "navbar"))
   (r/render [#'page] (.getElementById js/document "app")))
 
 (defn init! []

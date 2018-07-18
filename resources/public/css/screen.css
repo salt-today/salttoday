@@ -1,12 +1,102 @@
 html,
 body {
 	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    height: 100%;
-    background-color: #377def;
-    background-image: url("/img/background.png");
-    background-repeat: repeat;
+    background: radial-gradient(#000000, #292929);
+    font-family: BebasNeue;
 }
-
+@font-face {
+    font-family: BebasNeue;
+    src: url("../fonts/BebasNeue-Regular.otf") format("opentype");
+}
+body {
+    background-image: url("/img/salt-falling.png");
+    background-repeat: repeat-y;
+}
+.footer-pile {
+    width: 1160px;
+}
+.navigation {
+    position: absolute;
+    padding: 20px 0px 0px 20px;
+}
+/*this will be on :active once done*/
+.navigation > div:hover {
+    -webkit-transform: scale(1.3);
+    -ms-transform: scale(1.3);
+    transform: scale(1.3);
+    cursor: pointer;
+    padding: 10px;
+    animation: createBox .25s;
+}
+@keyframes createBox {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.3);
+  }
+}
+.navigation > div {
+    margin-bottom: -10px;
+    width: fit-content;
+}
+.negative > .comment-text  {
+    border: 3.25px solid #ed1c24;
+    background: white;
+    border-radius: 5px;
+    padding: 10px;
+    color: #ed1c24;
+}
+.negative > .comment-text > a {
+    color: #ed1c24;
+}
+.negative > .comment-info, .negative > .comment-info > a {
+    color: #ed1c24;
+    text-decoration: none;
+    text-align: right;
+}
+.line-break-negative {
+    width: 99%;
+    height: 3.25px;
+    background: #ed1c24;
+    margin-top: -17px;
+    margin-bottom: 15px;
+}
+.positive > .comment-text {
+    border: 3.25px solid #0072bc;
+    background: white;
+    border-radius: 5px;
+    padding: 10px;
+    color: #0072bc;
+}
+.positive > .comment-text > a {
+    color: #0072bc;
+}
+.positive > .comment-info, .positive > .comment-info > a {
+    color: #0072bc;
+    text-decoration: none;
+}
+.line-break-positive {
+    width: 100%;
+    height: 3.25px;
+    background: #0072bc;
+    margin-top: -17px;
+    margin-bottom: 15px;
+    margin-left: 1px;
+}
+.liked-heading {
+    color: #0072bc;
+    font-size: 35px;
+}
+.disliked-heading {
+    color: #ed1c24;
+    text-align: right;
+    font-size: 35px;
+}
+.general-heading {
+    font-size: 50px;
+    text-align: center;
+}
 .navbar {
   margin-bottom: 10px;
   border-radius: 0px;
@@ -28,20 +118,18 @@ body {
   margin-left: 0;
 }
 
-.jumbotron {
-    background-color: #C1E4FA !important;
-    background-image: url("/img/salt.png") !important;
-    background-repeat: repeat-x;
-    background-size: contain;
-    -webkit-animation:100s scroll infinite linear !important;
-    -moz-animation:100s scroll infinite linear !important;
-    -o-animation:100s scroll infinite linear !important;
-    -ms-animation:100s scroll infinite linear !important;
-    animation:100s scroll infinite linear;
-    max-size: 20%;
-    height:20%;
+.title-image {
+    vertical-align: middle;
+    border-style: none;
+    margin-left: 50%;
+    width: 15%;
+    display: inline-block;
+    min-width: 160px;
 }
-
+.outer {
+    color: white;
+    font-size: 30px;
+}
 @-webkit-keyframes scroll{
   100%{
     background-position:-1000px 0px;

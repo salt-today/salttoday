@@ -1,7 +1,8 @@
 (ns salttoday.pages.user-leaderboard
   (:require [ajax.core :refer [GET PUT]]
             [reagent.core :as r]
-            [salttoday.common :refer [display-comment]]))
+            [salttoday.common :refer [display-comment]]
+            [salttoday.common :refer [make-layout]]))
 
 (def state
   (r/atom {}))
@@ -25,12 +26,14 @@
 
 (defn users-page
   []
-  [:div.container
-   [:h3 "Most Liked Users"]
-   (into [:div.users-list]
-         (for [user (get @state "positive-users")]
-           (display-user user)))
-   [:h3 "Most Disliked Users"]
-   (into [:div.users-list]
-         (for [user (get @state "negative-users")]
-           (display-user user)))])
+  (make-layout
+    [:div.container
+     [:h3 "Most Liked Users"]
+     (into [:div.users-list]
+           (for [user (get @state "positive-users")]
+             (display-user user)))
+     [:h3 "Most Disliked Users"]
+     (into [:div.users-list]
+           (for [user (get @state "negative-users")]
+             (display-user user)))]))
+  
