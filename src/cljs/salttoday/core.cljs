@@ -12,10 +12,9 @@
 
 (defonce session (r/atom {:page :home}))
 
-(defn nav-link [uri title page]
-  [:li.nav-item
-   {:class (when (= page (:page @session)) "active")}
-   [:a.nav-link {:href uri} title]])
+(defn nav-link [uri title page icon]
+  [:div.navigation-link {:class (when (= page (:page @session)) "active")} [:a {:href uri} title]  [:span {:class icon}]])
+
 
 (defn navbar []
   [:nav.navbar.navbar-dark.navbar-expand-md

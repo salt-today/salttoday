@@ -1,7 +1,9 @@
-(ns salttoday.common)
+(ns salttoday.common
+  (:require
+            [salttoday.core :refer [nav-link]]))
 (defn make-layout
   [content]
-  [:div.outer[:div.navigation [:div"Home "[:span.icon-home3]][:div"Users "[:span.icon-group]]]
+  [:div.outer[:div.navigation [nav-link "#/" "Home " :home "icon-home3"][nav-link "#/users" "Users " :users "icon-group"]]
    content
    [:img.footer-pile {:src "/img/footer-pile.png"}]])
 
