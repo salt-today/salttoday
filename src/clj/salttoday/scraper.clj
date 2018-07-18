@@ -12,11 +12,12 @@
 
 (defn ^:private get-url-from-div
   [div]
-  (-> div
-      (html/select [:a])
-      first
-      :attrs
-      :href))
+  (str "https://sootday.com"
+       (-> div
+           (html/select [:a])
+           first
+           :attrs
+           :href)))
 
 (defn ^:private get-id-from-div
   [div]
@@ -46,7 +47,9 @@
                           {:title (get-title-from-div div)
                            :url (get-url-from-div div)
                            :id (get-id-from-div div)})]
-    (filter #(starts-with-strings (:url %) ["/local-news/" "/spotlight/" "/great-stories/"]) titles-and-urls)))
+    (filter #(starts-with-strings (:url %)
+                                  ["https://sootday.com/local-news/" "https://sootday.com/spotlight/" "https://sootday.com/great-stories/"])
+            titles-and-urls)))
 
 
 
@@ -93,9 +96,9 @@
 
 (defn ^:private get-comments-from-article
   [{:keys [id title url]}]
-  (let [url (format "https://www.sootoday.com/comments/load?Type=Comment&ContentId=%s&TagId=2346&TagType=Content" id)
+  (let [comment-url (format "https://www.sootoday.com/comments/load?Type=Comment&ContentId=%s&TagId=2346&TagType=Content" id)
         comments-html (-> (html/html-snippet
-                            (:body @(http/get url {:insecure? true})))
+                            (:body @(http/get comment-url {:insecure? true})))
                           (html/select [:div.comment]))]
     {:url url
      :title title
