@@ -7,8 +7,6 @@
             [clj-time.core :as t]
             [clj-time.coerce :as c]))
 
-;; TODO this should be uncommented
-
 (defstate conn
   :start (let [db-url (:database-url env)]
               (d/create-database db-url)
@@ -16,7 +14,6 @@
   :stop (-> conn .release))
 
 ;; TODO this should eventually be removed
-
 
 (defn create-schema []
   (let [schema [{:db/ident              :user/name
@@ -57,10 +54,10 @@
                  :db/valueType          :db.type/string
                  :db/cardinality        :db.cardinality/one
                  :db.install/_attribute :db.part/db}
-                ;{:db/ident              :post/title
-                ; :db/valueType          :db.type/string
-                ; :db/cardinality        :db.cardinality/one
-                ; :db.install/_attribute :db.part/db}
+                {:db/ident              :post/title
+                 :db/valueType          :db.type/string
+                 :db/cardinality        :db.cardinality/one
+                 :db.install/_attribute :db.part/db}
                 {:db/ident              :post/comment
                  :db/valueType          :db.type/ref
                  :db/cardinality        :db.cardinality/many
@@ -78,12 +75,13 @@
       user)))
 
 ;; add title to keys eventually once that is also scraped
-(defn ^:private add-post [conn {:keys [url]}]
+(defn ^:private add-post [conn {:keys [url title]}]
   ; Check if the post exists, if it doesn't add it.
   (let [post-id (-> (d/q '[:find ?e :in $ ?url :where [?e :post/url ?url]] (d/db conn) url)
                  ffirst)]
     (if (nil? post-id)
-      (-> @(d/transact conn [{:post/url url}])
+      (-> @(d/transact conn [{:post/url url
+                              :post/title title}])
           :tempids first second)
       post-id)))
 
