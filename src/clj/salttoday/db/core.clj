@@ -7,8 +7,6 @@
             [clj-time.core :as t]
             [clj-time.coerce :as c]))
 
-;; TODO this should be uncommented
-
 (defstate conn
   :start (let [db-url (:database-url env)]
               (d/create-database db-url)
@@ -16,7 +14,6 @@
   :stop (-> conn .release))
 
 ;; TODO this should eventually be removed
-
 
 (defn create-schema []
   (let [schema [{:db/ident              :user/name
