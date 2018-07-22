@@ -9,8 +9,8 @@
 
 (defstate conn
   :start (let [db-url (:database-url env)]
-              (d/create-database db-url)
-              (d/connect db-url))
+           (d/create-database db-url)
+           (d/connect db-url))
   :stop (-> conn .release))
 
 ;; TODO this should eventually be removed
@@ -78,7 +78,7 @@
 (defn ^:private add-post [conn {:keys [url title]}]
   ; Check if the post exists, if it doesn't add it.
   (let [post-id (-> (d/q '[:find ?e :in $ ?url :where [?e :post/url ?url]] (d/db conn) url)
-                 ffirst)]
+                    ffirst)]
     (if (nil? post-id)
       (-> @(d/transact conn [{:post/url url
                               :post/title title}])
@@ -94,8 +94,8 @@
 (defn ^:private add-comment [conn post-id {:keys [username comment timestamp upvotes downvotes]}]
   (let [user-id (add-or-get-user conn username)
         user-stats (-> (d/q '[:find ?upvotes ?downvotes :in $ ?user-id :where
-                             [?user-id :user/upvotes ?upvotes]
-                             [?user-id :user/downvotes ?downvotes]]
+                              [?user-id :user/upvotes ?upvotes]
+                              [?user-id :user/downvotes ?downvotes]]
                             (d/db conn)
                             user-id)
                        first)
@@ -133,15 +133,12 @@
                           :comment/upvotes upvotes
                           :comment/downvotes downvotes}]))
     @(d/transact conn [{:db/id user-id
-                       :user/upvotes (+ user-upvotes upvote-increase)
-                       :user/downvotes (+ user-downvotes downvote-increase)}])))
-
+                        :user/upvotes (+ user-upvotes upvote-increase)
+                        :user/downvotes (+ user-downvotes downvote-increase)}])))
 
 (defn ^:private add-comments [conn post-id comments]
   (doseq [comment comments]
     (add-comment conn post-id comment)))
-
-
 
 (defn update-stats [posts]
   (doseq [post posts]
@@ -156,6 +153,8 @@
 ; ---------
 ; Comments
 ; ---------
+
+
 (defn get-most-x-comments
   ([vote-type num db]
    (let [comments (d/q '[:find ?votes ?name ?text  ?url :in $ ?vote-type :where
@@ -192,7 +191,7 @@
     (d/since (d/db conn) yesterday-time)))
 
 (defn get-daily-positive-comment []
-    (first (get-most-positive-comments 1 (db-since-yesterday))))
+  (first (get-most-positive-comments 1 (db-since-yesterday))))
 
 (defn get-daily-negative-comment []
   (first (get-most-negative-comments 1 (db-since-yesterday))))
@@ -202,6 +201,7 @@
 ; -----------
 ; User stats
 ; -----------
+
 
 (defn get-user-stats
   [name]
@@ -222,8 +222,8 @@
 (defn get-most-x-users
   [vote-type num]
   (let [users (d/q '[:find ?name ?vote :in $ ?vote-type :where
-         [?u :user/name ?name]
-         [?u ?vote-type ?vote]]
+                     [?u :user/name ?name]
+                     [?u ?vote-type ?vote]]
                    (d/db conn) vote-type)
         sorted-users (sort-by second > users)
         top-users (take num sorted-users)]
@@ -237,6 +237,10 @@
 
 (defn get-most-positive-users
   [num]
-  (get-most-x-users :user/upvotes num))
+  (get-most-x-users :user/upvotes
+
+
+
+                    num))
 
 
