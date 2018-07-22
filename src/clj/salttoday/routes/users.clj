@@ -17,6 +17,8 @@
                       :negative-users (db/get-most-negative-users 5)})
         (response/header "Content-Type"
 
+
+
                          "application/json"))))
 
 

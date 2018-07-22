@@ -19,6 +19,8 @@
                       :all-time-negatives (db/get-most-negative-comments 5)})
         (response/header "Content-Type"
 
+
+
                          "application/json"))))
 
 
