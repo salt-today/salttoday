@@ -37,8 +37,6 @@
     [:div.col-md-12
      [:img {:src "/img/warning_clojure.png"}]]]])
 
-
-
 (def pages
   {:home #'home/home-page
    :users #'users/users-page})
@@ -60,13 +58,15 @@
 ;; -------------------------
 ;; History
 ;; must be called after routes have been defined
+
+
 (defn hook-browser-navigation! []
   (doto (History.)
-        (events/listen
-          HistoryEventType/NAVIGATE
-          (fn [event]
-              (secretary/dispatch! (.-token event))))
-        (.setEnabled true)))
+    (events/listen
+     HistoryEventType/NAVIGATE
+     (fn [event]
+       (secretary/dispatch! (.-token event))))
+    (.setEnabled true)))
 
 ;; -------------------------
 ;; Initialize app

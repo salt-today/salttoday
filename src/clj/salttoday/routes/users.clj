@@ -9,13 +9,15 @@
   (layout/render "home.html"))
 
 (defroutes users-routes
-           (GET "/#/users" []
-             (home-page))
+  (GET "/#/users" []
+    (home-page))
 
-           (GET "/top-users" []
-             (-> (response/ok {:positive-users (db/get-most-positive-users 5)
-                               :negative-users (db/get-most-negative-users 5)})
-                 (response/header "Content-Type" "application/json"))))
+  (GET "/top-users" []
+    (-> (response/ok {:positive-users (db/get-most-positive-users 5)
+                      :negative-users (db/get-most-negative-users 5)})
+        (response/header "Content-Type"
+
+                         "application/json"))))
 
 
 
