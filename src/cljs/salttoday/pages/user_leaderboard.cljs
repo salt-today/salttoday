@@ -12,8 +12,8 @@
   (reset! state response))
 
 (GET "/top-users"
-     {:headers {"Accept" "application/transit"}
-      :handler top-users-handler})
+  {:headers {"Accept" "application/transit"}
+   :handler top-users-handler})
 
 (defn display-user
   [user]

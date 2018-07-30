@@ -9,7 +9,6 @@
         (for [sub substrings]
           (.startsWith string sub))))
 
-
 (defn ^:private get-url-from-div
   [div]
   (str "https://www.sootoday.com"
@@ -36,11 +35,10 @@
       first
       (.trim)))
 
-
 (defn ^:private get-articles-from-homepage
   []
   (let [article-divs (-> (html/html-snippet
-                           (:body @(http/get "https://www.sootoday.com" {:insecure? true})))
+                          (:body @(http/get "https://www.sootoday.com" {:insecure? true})))
                          (html/select [:div.section-items]))
         most-recent (take 10 article-divs)
         titles-and-urls (for [div most-recent]
@@ -51,8 +49,6 @@
                                   ["https://www.sootoday.com/local-news/" "https://www.sootoday.com/spotlight/"
                                    "https://www.sootoday.com/great-stories/" "https://www.sootoday.com/videos/"])
             titles-and-urls)))
-
-
 
 (defn ^:private get-content-helper
   "Gets the content of username, text, upvotes, downvotes, etc"
@@ -99,7 +95,7 @@
   [{:keys [id title url]}]
   (let [comment-url (format "https://www.sootoday.com/comments/load?Type=Comment&ContentId=%s&TagId=2346&TagType=Content" id)
         comments-html (-> (html/html-snippet
-                            (:body @(http/get comment-url {:insecure? true})))
+                           (:body @(http/get comment-url {:insecure? true})))
                           (html/select [:div.comment]))]
     {:url url
      :title title
@@ -113,6 +109,6 @@
 (defn scrape-sootoday
   []
   (flatten
-    (for [article (get-articles-from-homepage)]
-      (get-comments-from-article article))))
+   (for [article (get-articles-from-homepage)]
+     (get-comments-from-article article))))
 
