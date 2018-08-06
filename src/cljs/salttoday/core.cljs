@@ -12,27 +12,6 @@
 
 (defonce session (r/atom {:page :home}))
 
-(defn nav-link [uri title page icon]
-  [:div.navigation-link {:class (when (= page (:page @session)) "active")} [:a {:href uri} title]  [:span {:class icon}]])
-
-
-(defn navbar []
-  [:nav.navbar.navbar-dark.navbar-expand-md
-   {:role "navigation"}
-   [:button.navbar-toggler.hidden-sm-up
-    {:type "button"
-     :data-toggle "collapse"
-     :data-target "#collapsing-navbar"}
-    [:span.navbar-toggler-icon]]
-   [:a.navbar-brand {:href "#/"} "Soo Salty"]
-   [:div#collapsing-navbar.collapse.navbar-collapse
-    [:ul.nav.navbar-nav.mr-auto
-     [nav-link "#/" "Home" :home]
-     [nav-link "#/users" "Users" :users]]]])
-
-
-
-
 (def pages
   {:home #'home/home-page
    :users #'users/users-page})

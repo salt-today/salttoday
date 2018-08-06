@@ -1,11 +1,4 @@
-(ns salttoday.common
-  (:require
-            [salttoday.core :refer [nav-link]]))
-(defn make-layout
-  [content]
-  [:div.outer[:div.navigation [nav-link "#/" "Home " :home "icon-home3"][nav-link "#/users" "Users " :users "icon-group"]]
-   [:div [:img.title-image {:src "/img/soo-salty.png"}] content]
-   [:img.footer-pile {:src "/img/footer-pile.png"}]])
+(ns salttoday.common)
 
 (defn display-comment [comment comment-type]
   [:div.comment-container {:class comment-type}

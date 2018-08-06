@@ -2,7 +2,7 @@
   (:require [ajax.core :refer [GET PUT]]
             [reagent.core :as r]
             [salttoday.common :refer [display-comment]]
-            [salttoday.common :refer [make-layout]]))
+            [salttoday.pages.common :refer [make-layout]]))
 
 (def state
   (r/atom {}))
@@ -26,14 +26,14 @@
 
 (defn users-page
   []
-  (make-layout
-    [:div.container
-     [:div.general-heading "Most" [:span.liked " Liked"] " Users"]  [:div.general-line-break]
-     (into [:div.users-list]
-           (for [user (get @state "positive-users")]
-             (display-user user)))
-     [:div.general-heading "Most" [:span.disliked " Disliked"] " Users"] [:div.general-line-break]
-     (into [:div.users-list]
-           (for [user (get @state "negative-users")]
-             (display-user user)))]))
+  (make-layout :users
+               [:div.container
+                [:div.general-heading "Most" [:span.liked " Liked"] " Users"]  [:div.general-line-break]
+                (into [:div.users-list]
+                      (for [user (get @state "positive-users")]
+                        (display-user user)))
+                [:div.general-heading "Most" [:span.disliked " Disliked"] " Users"] [:div.general-line-break]
+                (into [:div.users-list]
+                      (for [user (get @state "negative-users")]
+                        (display-user user)))]))
   
