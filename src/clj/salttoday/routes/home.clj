@@ -10,7 +10,7 @@
 
 (defroutes home-routes
   (GET "/" []
-       (home-page))
+    (home-page))
 
   (GET "/top-comments" []
    (-> (response/ok {:daily (db/get-daily-comments 3)

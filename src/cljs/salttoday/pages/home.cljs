@@ -13,8 +13,8 @@
   (reset! state response))
 
 (GET "/top-comments"
-     {:headers {"Accept" "application/transit"}
-      :handler top-comments-handler})
+  {:headers {"Accept" "application/transit"}
+   :handler top-comments-handler})
 
 (defn home-page []
   (make-layout :home
