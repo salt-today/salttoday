@@ -19,18 +19,11 @@
 (defn home-page []
   (make-layout :home
                [:div
-
                 [:div
                  [:div [:div.general-heading "Today"] [:div.general-line-break]
                   [:div.comments-type-header.container
-                   [:div
-                    [:div.liked-heading "Liked"][:div.line-break-positive]
-                    [:div (display-comment (get @state "daily-positive") "positive")]]]
-
-                  [:div.comments-type-header.container
-                   [:div
-                    [:div.disliked-heading "Disliked"][:div.line-break-negative]
-                    [:div (display-comment (get @state "daily-negative") "negative")]]]
+                   (for [comment (get @state "daily")]
+                     (display-comment comment))]
                   ]
                  ]
 
@@ -39,10 +32,5 @@
                   [:div.general-heading "All Time"] [:div.general-line-break]
                   [:div.panel-body
                    [:div.comments-type-header.container
-                    [:div.liked-heading "Liked"][:div.line-break-positive]
-                    (for [comment (get @state "all-time-positives")]
-                      (display-comment comment "positive"))]
-                   [:div.comments-type-header.container
-                    [:div.disliked-heading "Disliked"][:div.line-break-negative]
-                    (for [comment (get @state "all-time-negatives")]
-                      (display-comment comment "negative"))]]]]]))
+                    (for [comment (get @state "all-time")]
+                      (display-comment comment))]]]]]))

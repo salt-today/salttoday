@@ -153,37 +153,26 @@
 ; Queries ---------------------------------------------------------------------------
 ; -----------------------------------------------------------------------------------
 
-; ---------
-; Comments
-; ---------
-(defn get-most-x-comments
-  ([vote-type num db]
-   (let [comments (d/q '[:find ?votes ?name ?text  ?url :in $ ?vote-type :where
+; -----------------------------------------------------------------------------------
+; Comments --------------------------------------------------------------------------
+; -----------------------------------------------------------------------------------
+(defn get-top-x-comments
+  ([num db]
+   (let [comments (d/q '[:find ?upvotes ?downvotes ?name ?text  ?url :in $ :where
                          [?c :comment/text ?text]
-                         [?c ?vote-type ?votes]
+                         [?c :comment/upvotes ?upvotes]
+                         [?c :comment/downvotes ?downvotes]
                          [?c :comment/user ?u]
                          [?u :user/name ?name]
                          [?p :post/comment ?c]
-                         [?p :post/url ?url]] db vote-type)
-         sorted-comments (sort-by first > comments)
+                         [?p :post/url ?url]] db)
+         sorted-comments (sort #(> (+ (first %1) (second %1)) (+ (first %2) (second %2))) comments)
          top-x (take num sorted-comments)]
      (for [comment top-x]
        (apply assoc {}
-              (interleave [:votes :user :text :url] comment)))))
-  ([vote-type num]
-   (get-most-x-comments vote-type num (d/db conn))))
-
-(defn get-most-positive-comments
-  ([num db]
-   (get-most-x-comments :comment/upvotes num db))
+              (interleave [:upvotes :downvotes :user :text :url] comment)))))
   ([num]
-   (get-most-positive-comments num (d/db conn))))
-
-(defn get-most-negative-comments
-  ([num db]
-   (get-most-x-comments :comment/downvotes num db))
-  ([num]
-   (get-most-negative-comments num (d/db conn))))
+   (get-top-x-comments num (d/db conn))))
 
 (defn db-since-yesterday []
   (let [yesterday-time (-> (t/now)
@@ -191,11 +180,10 @@
                            (c/to-date))]
     (d/since (d/db conn) yesterday-time)))
 
-(defn get-daily-positive-comment []
-    (first (get-most-positive-comments 1 (db-since-yesterday))))
+(defn get-daily-comments
+  [num]
+  (get-top-x-comments num (db-since-yesterday)))
 
-(defn get-daily-negative-comment []
-  (first (get-most-negative-comments 1 (db-since-yesterday))))
 
 
 
@@ -238,5 +226,3 @@
 (defn get-most-positive-users
   [num]
   (get-most-x-users :user/upvotes num))
-
-
