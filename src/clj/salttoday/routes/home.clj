@@ -13,8 +13,8 @@
     (home-page))
 
   (GET "/top-comments" []
-   (-> (response/ok {:daily (db/get-daily-comments 3)
-                     :all-time (db/get-top-x-comments 10)})
+   (-> (response/ok {:daily (db/get-daily-comments 1)
+                     :all-time (db/get-top-x-comments 50)})
        (response/header "Content-Type" "application/json"))))
 
 

@@ -54,12 +54,12 @@ body {
     margin-bottom: -10px;
     width: fit-content;
 }
-.negative > .comment-text  {
-    border: 3.25px solid #ed1c24;
+.negative > .comment-text-border > .comment-text  {
+    // border: 3.25px solid #ed1c24;
     background: white;
     border-radius: 5px;
     padding: 10px;
-    color: #ed1c24;
+    color: black;
 }
 .liked {
     color: #0072bc;
@@ -67,14 +67,17 @@ body {
 .disliked {
     color: #ed1c24;
 }
-.negative > .comment-text > a {
-    color: #ed1c24;
+
+.comment-text-border {
+    padding: 3px;
+    background-color: red;
+    border-radius: 5px;
+    margin: 0px;
 }
-.negative > .comment-info, .negative > .comment-info > a {
-    color: #ed1c24;
-    text-decoration: none;
-    text-align: right;
+.negative > .comment-text-border > .comment-text > a {
+    color: black;
 }
+
 .line-break-negative {
     width: 99%;
     height: 3.25px;
@@ -89,20 +92,18 @@ body {
     margin: auto;
     margin-bottom: 20px;
 }
-.positive > .comment-text {
-    border: 3.25px solid #0072bc;
+.positive > .comment-text-border > .comment-text {
+    // border: 3.25px solid #0072bc;
     background: white;
     border-radius: 5px;
     padding: 10px;
-    color: #0072bc;
+    color: black;
 }
-.positive > .comment-text > a {
-    color: #0072bc;
+.positive > .comment-text-border > .comment-text > a {
+    color: black;
 }
-.positive > .comment-info, .positive > .comment-info > a {
-    color: #0072bc;
-    text-decoration: none;
-}
+
+
 .line-break-positive {
     width: 100%;
     height: 3.25px;
@@ -196,6 +197,10 @@ body {
     background-color: rgba(30, 77, 153, 1)
 }
 
+.comment-container {
+    display: flex;
+    padding: 10px;
+}
 .comments-time-header {
     color: white;
     background-color: rgba(3,48,107,1);
@@ -242,15 +247,51 @@ body {
     background-image: url("/img/stripes-light.png");
     background-repeat: repeat;
 }
-.comment-text {
-    margin-bottom: 15px;
+
+.comment-text-and-name {
+    width: 80%;
 }
-.comment-text > a, .comment-info > a {
+
+.votes {
+    margin: 10px;
+    width: 10%;
+    font-size: 1em;
+}
+
+.votes.liked {
+    text-align: right;
+}
+
+.votes > img {
+    width: 50px;
+    margin: 5px;
+}
+
+.fas.fa-thumbs-down {
+    margin-right: 10px;
+}
+
+.fas.fa-thumbs-up {
+    margin-left: 10px;
+}
+
+.votes.disliked {
+    text-align: left;
+}
+
+.comment-text {
+    color: black;
+    background: white;
+    padding: 5px 8px 5px 8px;
+}
+
+.comment-text > a {
     color: black;
 }
-.comment-info > a {
-    text-decoration: underline;
-    font-weight: bold;
+.comment-user > a {
+    text-decoration: none;
+    color: white;
+    padding-left: 10px;
 }
 
 .background-container {
