@@ -21,19 +21,20 @@
   [:div.user-container
    [:div.user-name
     (get user "name")]
-   [:div.user-votes
-    (get user "votes")]])
+   [:div.user-vote-container
+    [:div.user-votes.liked
+     (get user "upvotes")
+     [:i.fas.fa-thumbs-up]]
+    [:div.user-votes.disliked
+     [:i.fas.fa-thumbs-down.fa-flip-horizontal]
+     (get user "downvotes")]]])
 
 (defn users-page
   []
   (make-layout :users
                [:div.container
-                [:div.general-heading "Most" [:span.liked " Liked"] " Users"]  [:div.general-line-break]
+                [:div.general-heading "Top Voted Users"]  [:div.general-line-break]
                 (into [:div.users-list]
-                      (for [user (get @state "positive-users")]
-                        (display-user user)))
-                [:div.general-heading "Most" [:span.disliked " Disliked"] " Users"] [:div.general-line-break]
-                (into [:div.users-list]
-                      (for [user (get @state "negative-users")]
+                      (for [user (get @state "users")]
                         (display-user user)))]))
   

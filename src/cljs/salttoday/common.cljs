@@ -21,7 +21,7 @@
        [:div.comment-text-border
         {:style {"background" (str "linear-gradient(to right, #0072bc " pos-gradient "%, #ed1c24 " neg-gradient "%)")}}
         [:div.comment-text
-         [:a {:href (get comment "url")}
+         [:a {:href (get comment "url") :target "_blank"}
           (get comment "text")]]
         ]
       [:div.comment-user
