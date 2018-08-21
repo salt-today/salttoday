@@ -196,14 +196,6 @@
          [?u :user/downvotes ?downvotes]]
        (d/db conn) name))
 
-(defn get-most-negative-users
-  []
-  (d/q '[:find ?name ?upvotes ?downvotes :where
-         [?u :user/name ?name
-          ?c :comment/user ?u
-          ?c :comment/upvotes
-          ?c]]))
-
 (defn get-most-x-users
   [vote-type num]
   (let [users (d/q '[:find ?name ?vote :in $ ?vote-type :where
@@ -215,6 +207,19 @@
     (for [user top-users]
       (apply assoc {}
              (interleave [:name :votes] user)))))
+
+(defn get-top-rated-users
+  ([num db]
+   (let [users (d/q '[:find ?upvotes ?downvotes ?name :in $ :where
+                      [?u :user/name ?name]
+                      [?u :user/upvotes ?upvotes]
+                      [?u :user/downvotes ?downvotes]] db)
+         sorted-users (sort #(> (+ (first %1) (second %1)) (+ (first %2) (second %2))) users)
+         top-x (take num sorted-users)]
+     (for [user top-x]
+       (apply assoc {}
+              (interleave [:upvotes :downvotes :name] user)))))
+  ([num] (get-top-rated-users num (d/db conn))))
 
 (defn get-most-negative-users
   [num]
