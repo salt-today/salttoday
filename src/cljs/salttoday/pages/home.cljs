@@ -2,7 +2,8 @@
   (:require [ajax.core :refer [GET PUT]]
             [reagent.core :as r]
             [salttoday.common :refer [display-comment]]
-            [salttoday.pages.common :refer [jumbotron content]]))
+            [salttoday.pages.common :refer [content make-layout jumbotron]]
+            ))
 
 (def state
   (r/atom {}))
@@ -16,34 +17,20 @@
    :handler top-comments-handler})
 
 (defn home-page []
-  [:div
-   (jumbotron "Top Comments")
-   [:div.container.background-container
-    [:div.panel.panel-default
-     [:div.comments-time-header.panel-heading "Today"]
-     [:div.panel-body
-      [:div.comments-type-header.container
-       [:div.panel.panel-default
-        [:div.panel-heading "Liked"]
-        [:div.panel-body.comment-background (display-comment (get @state "daily-positive"))]]]
-      [:div.comments-type-header.container
-       [:div.panel.panel-default
-        [:div.panel-heading "Disliked"]
-        [:div.panel-body.comment-background (display-comment (get @state "daily-negative"))]]]]]]
+  (make-layout :home
+               [:div
+                [:div
+                 [:div [:div.general-heading "Today"] [:div.general-line-break]
+                  [:div.comments-type-header.container
+                   (for [comment (get @state "daily")]
+                     (display-comment comment))]
+                  ]
+                 ]
 
-   [:div.container.background-container
-    [:div.panel.panel-default
-     [:div.comments-time-header.panel-heading "All Time"]
-     [:div.panel-body
-      [:div.comments-type-header.container
-       [:div.panel.panel-default
-        [:div.panel-heading "Liked"]
-        [:div.panel-body.comment-background
-         (for [comment (get @state "all-time-positives")]
-           (display-comment comment))]]]
-      [:div.comments-type-header.container
-       [:div.panel.panel-default
-        [:div.panel-heading "Disliked"]
-        [:div.panel-body.comment-background
-         (for [comment (get @state "all-time-negatives")]
-           (display-comment comment))]]]]]]])
+                [:div
+                 [:div
+                  [:div.general-heading "All Time"] [:div.general-line-break]
+                  [:div.panel-body
+                   [:div.comments-type-header.container
+                    (for [comment (get @state "all-time")]
+                      (display-comment comment))]]]]]))

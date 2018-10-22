@@ -13,13 +13,8 @@
     (home-page))
 
   (GET "/top-users" []
-    (-> (response/ok {:positive-users (db/get-most-positive-users 5)
-                      :negative-users (db/get-most-negative-users 5)})
-        (response/header "Content-Type"
-
-
-
-                         "application/json"))))
+    (-> (response/ok {:users (db/get-top-rated-users 10)})
+        (response/header "Content-Type" "application/json"))))
 
 
 

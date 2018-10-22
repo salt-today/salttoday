@@ -9,3 +9,13 @@
 (defn content [x]
   [:div {:class "container"}
    x])
+
+(defn nav-link [uri title current-page page icon]
+  [:div.navigation-link {:class (when (= page current-page) "active")} [:a {:href uri} title]  [:span {:class icon}]])
+
+
+(defn make-layout
+  [current-page content]
+  [:div.outer[:div.navigation [nav-link "#/" "Home " current-page :home "icon-home3"][nav-link "#/users" "Users " current-page :users "icon-group"]]
+   [:div [:img.title-image {:src "/img/soo-salty.png"}] content]
+   [:img.footer-pile {:src "/img/footer-pile.png"}]])
