@@ -10,9 +10,7 @@ You will need [Leiningen][1] 2.0 or above installed.
 
 [1]: https://github.com/technomancy/leiningen
 
-Datomic is used for storage, although you can use an in-mem instance for developing locally, you may still want to consider running an local instance. I personally it using Docker.
-
-[2]: https://www.docker.com/
+Datomic is used for storage, although you can use an in-mem instance for developing locally, you may still want to consider running an local instance. I personally it using [Docker](https://www.docker.com).
 
 ## Running
 
