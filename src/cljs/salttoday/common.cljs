@@ -1,7 +1,5 @@
 (ns salttoday.common)
 
-
-
 (defn display-comment [comment]
   (let [upvotes (get comment "upvotes")
         downvotes (get comment "downvotes")
@@ -18,16 +16,13 @@
      [:div.votes.liked upvotes [:i.fas.fa-thumbs-up]]
 
      [:div.comment-text-and-name
-       [:div.comment-text-border
-        {:style {"background" (str "linear-gradient(to right, #0072bc " pos-gradient "%, #ed1c24 " neg-gradient "%)")}}
-        [:div.comment-text
-         [:a {:href (get comment "url") :target "_blank"}
-          (get comment "text")]]
-        ]
+      [:div.comment-text-border
+       {:style {"background" (str "linear-gradient(to right, #0072bc " pos-gradient "%, #ed1c24 " neg-gradient "%)")}}
+       [:div.comment-text
+        [:a {:href (get comment "url") :target "_blank"}
+         (get comment "text")]]]
       [:div.comment-user
        [:a {:href "/#/user"} "- "
         (get comment "user")]]]
      [:div.votes.disliked
-      [:i.fas.fa-thumbs-down] downvotes
-      ]
-     ]))
+      [:i.fas.fa-thumbs-down] downvotes]]))

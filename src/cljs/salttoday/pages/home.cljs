@@ -2,8 +2,7 @@
   (:require [ajax.core :refer [GET PUT]]
             [reagent.core :as r]
             [salttoday.common :refer [display-comment]]
-            [salttoday.pages.common :refer [content make-layout jumbotron]]
-            ))
+            [salttoday.pages.common :refer [content make-layout jumbotron]]))
 
 (def state
   (r/atom {}))
@@ -23,9 +22,7 @@
                  [:div [:div.general-heading "Today"] [:div.general-line-break]
                   [:div.comments-type-header.container
                    (for [comment (get @state "daily")]
-                     (display-comment comment))]
-                  ]
-                 ]
+                     (display-comment comment))]]]
 
                 [:div
                  [:div

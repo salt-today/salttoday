@@ -37,4 +37,3 @@
                 (into [:div.users-list]
                       (for [user (get @state "users")]
                         (display-user user)))]))
-  
