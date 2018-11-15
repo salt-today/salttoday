@@ -165,7 +165,7 @@
                          [?u :user/name ?name]
                          [?p :post/comment ?c]
                          [?p :post/url ?url]] db)
-         sorted-comments (sort #(> (+ (first %1) (second %1)) (+ (/ (first %2) 2) (second %2))) comments)
+         sorted-comments (sort #(> (+ (/ (first %1) 2) (second %1)) (+ (/ (first %2) 2) (second %2))) comments)
          top-x (take num sorted-comments)]
      (for [comment top-x]
        (apply assoc {}
