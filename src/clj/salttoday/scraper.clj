@@ -61,7 +61,7 @@
 (defn ^:private get-username
   "Gets the username given the html of a comment."
   [comment-html]
-  (-> (html/select comment-html [:b])
+  (-> (html/select comment-html [:a.comment-un])
       get-content-helper))
 
 (defn ^:private get-comment-text
