@@ -19,7 +19,8 @@
   (make-layout :home
                [:div
                 [:div
-                 [:div [:div.general-heading "Today"] [:div.general-line-break]
+                 [:div
+                  [:div.heading-wrapper [:div.general-heading "Today"]] [:div.general-line-break]
                   [:div.comments-type-header.container
                    (for [comment (get @state "daily")]
                      (display-comment comment))]]]
