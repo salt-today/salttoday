@@ -41,6 +41,7 @@ body {
     width: 1160px;
 }
 .navigation {
+    white-space:nowrap;
     position: relative;
     padding: 20px 0px 0px 20px;
 }

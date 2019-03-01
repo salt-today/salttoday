@@ -18,7 +18,7 @@
   [:div.outer
     [:div.content-wrapper 
       [:div.navigation 
-	[nav-link "#/" "Home " current-page :home "icon-home3"] 
+	      [nav-link "#/" "Home " current-page :home "icon-home3"]
         [nav-link "#/users" "Users " current-page :users "icon-group"]]
-        content [:img.title-image {:src "/img/soo-salty.png"}]]
-        [:img.footer-pile {:src "/img/footer-pile.png"}]])
+      content [:img.title-image {:src "/img/soo-salty.png"}]]
+      [:img.footer-pile {:src "/img/footer-pile.png"}]])
