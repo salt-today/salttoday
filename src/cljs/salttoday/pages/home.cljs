@@ -17,18 +17,16 @@
 
 (defn home-page []
   (make-layout :home
-               [:div
-                [:div
-                 [:div
+               [:div.content-block-wrapper
+                [:div.content-block
                   [:div.heading-wrapper [:div.general-heading "Today"]] [:div.general-line-break]
                   [:div.comments-type-header.container
                    (for [comment (get @state "daily")]
-                     (display-comment comment))]]]
+                     (display-comment comment))]]
 
-                [:div
-                 [:div
+                [:div.content-block
                   [:div.general-heading "All Time"] [:div.general-line-break]
                   [:div.panel-body
                    [:div.comments-type-header.container
                     (for [comment (get @state "all-time")]
-                      (display-comment comment))]]]]]))
+                      (display-comment comment))]]]]))
