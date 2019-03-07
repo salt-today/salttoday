@@ -17,8 +17,6 @@
                       :all-time (db/get-top-x-comments 50)})
         (response/header "Content-Type"
 
-
-
                          "application/json"))))
 
 

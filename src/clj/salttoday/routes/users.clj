@@ -16,8 +16,6 @@
     (-> (response/ok {:users (db/get-top-rated-users 10)})
         (response/header "Content-Type"
 
-
-
                          "application/json"))))
 
 

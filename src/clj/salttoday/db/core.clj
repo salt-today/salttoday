@@ -153,52 +153,53 @@
 ; -----------------------------------------------------------------------------------
 
 ; Sorting
+
+
 (defn sort-by-upvotes
-      [comments]
-      (sort #(> (:upvotes %1) (:upvotes %2)) comments))
+  [comments]
+  (sort #(> (:upvotes %1) (:upvotes %2)) comments))
 
 (defn sort-by-downvotes
-      [comments]
-      (sort #(> (:downvotes %1) (:downvotes %2)) comments))
+  [comments]
+  (sort #(> (:downvotes %1) (:downvotes %2)) comments))
 
 (defn sort-by-score
-      [comments]
-      (sort #(> (+ (/ (:upvotes %1) 2) (:downvotes %1)) (+ (/ (:upvotes %2) 2) (:downvotes %2))) comments))
+  [comments]
+  (sort #(> (+ (/ (:upvotes %1) 2) (:downvotes %1)) (+ (/ (:upvotes %2) 2) (:downvotes %2))) comments))
 
 ; Pagination
 (defn paginate-comments
-      ([amount comments]
-        (paginate-comments 0 amount comments))
-      ([offset amount comments]
-        (->> (drop offset comments)
-            (take amount))))
+  ([amount comments]
+   (paginate-comments 0 amount comments))
+  ([offset amount comments]
+   (->> (drop offset comments)
+        (take amount))))
 
 ; Puts the raw query comment into a map
 (defn create-comment-maps
-      [comments]
-      (for [comment comments]
-           (apply assoc {}
-             (interleave [:upvotes :downvotes :user :text :url] comment))))
+  [comments]
+  (for [comment comments]
+    (apply assoc {}
+           (interleave [:upvotes :downvotes :user :text :url] comment))))
 
 ; Gets literally every comment in the database.
 (defn get-all-comments
-      [db]
-      (-> (d/q '[:find ?upvotes ?downvotes ?name ?text  ?url :in $ :where
-                 [?c :comment/text ?text]
-                 [?c :comment/upvotes ?upvotes]
-                 [?c :comment/downvotes ?downvotes]
-                 [?c :comment/user ?u]
-                 [?u :user/name ?name]
-                 [?p :post/comment ?c]
-                 [?p :post/url ?url]] db)
-          (create-comment-maps)))
-
+  [db]
+  (-> (d/q '[:find ?upvotes ?downvotes ?name ?text  ?url :in $ :where
+             [?c :comment/text ?text]
+             [?c :comment/upvotes ?upvotes]
+             [?c :comment/downvotes ?downvotes]
+             [?c :comment/user ?u]
+             [?u :user/name ?name]
+             [?p :post/comment ?c]
+             [?p :post/url ?url]] db)
+      (create-comment-maps)))
 
 (defn get-top-x-comments
   ([num db]
    (let [comments (get-all-comments db)
          sorted-comments (sort-by-score comments)]
-        (paginate-comments num sorted-comments)))
+     (paginate-comments num sorted-comments)))
   ([num]
    (get-top-x-comments num (d/db conn))))
 
