@@ -366,20 +366,17 @@ body {
 }
 
 .loading-logo {
-    animation: shakeShaker 2.5s infinite 0s linear;
+    animation: shakeShaker 1.5s infinite 0s linear;
     width: 50vw;
     z-index: 2;
     height: 50vh;
+    position: absolute;
 }
 
 .loading-logo-salt {
-    width: 15vw;
-    height: 15vh;
-    position: absolute;
-    animation: shakeSalt 2.5s infinite 0s linear;
-    z-index: 1;
-    left: 15vw;
-    bottom: 30vh;
+    width: 50vw;
+    height: 50vh;
+    animation: shakeSalt 1.5s infinite 0s linear;
 }
 
 @keyframes shakeShaker{
