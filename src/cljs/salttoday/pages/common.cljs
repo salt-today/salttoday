@@ -20,6 +20,6 @@
     [:div.navigation
      [nav-link "#/" "Home " current-page :home "icon-home3"]
      [nav-link "#/users" "Users " current-page :users "icon-group"]]
-    [:img.title-image {:src "/img/SaltTodayLogo.svg"}]
+    [:img.title-image {:src "/img/SaltTodayLogoNoSalt.svg"}]
     content]
    [:img.footer-pile {:src "/img/footer-pile.png"}]])
