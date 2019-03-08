@@ -15,6 +15,11 @@
 
 (defn make-layout
   [current-page content]
-  [:div.outer [:div.navigation [nav-link "#/" "Home " current-page :home "icon-home3"] [nav-link "#/users" "Users " current-page :users "icon-group"]]
-   [:div [:img.title-image {:src "/img/soo-salty.png"}] content]
+  [:div.outer
+   [:div.content-wrapper
+    [:div.navigation
+     [nav-link "#/" "Home " current-page :home "icon-home3"]
+     [nav-link "#/users" "Users " current-page :users "icon-group"]]
+    [:img.title-image {:src "/img/SaltTodayLogoNoSalt.svg"}]
+    content]
    [:img.footer-pile {:src "/img/footer-pile.png"}]])

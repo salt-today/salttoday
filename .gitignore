@@ -16,3 +16,4 @@ profiles.clj
 *.log
 *.iml
 .nrepl-port
+/src/clj/salttoday/log
