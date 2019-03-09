@@ -6,7 +6,7 @@
 body {
     color: #ffffff;
     font-family: BebasNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    background: #0c0c0c;
+    background: #1b1b1b;
     margin: 0;
     height: 100vh;
 }
@@ -86,19 +86,6 @@ body {
     100%{ transform: translateX(0) translateY(0); opacity: 0; }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* Actual Styling */
 .navigation {
     white-space:nowrap;
@@ -145,20 +132,48 @@ body {
 }
 
 .comment-body {
+    font-size: 1.75em;
     margin-left: 1em;
     margin-right: 1em;
-    background: #fefde3;
+    background: #ffffed;
     padding: 0.5em;
 }
 
 .comment-likes {
+    color: #0072bc;
     align-items: end;
 }
 
 .comment-dislikes {
+    color: #ed1c24;
     align-items: start;
 }
 
 .comment-author {
     margin-left: 1em;
+}
+
+.like-dislike-counter {
+    font-size: 1.75em;
+}
+
+.article-link {
+    text-decoration: none;
+    color: black;
+}
+
+.article-link:hover {
+    text-decoration: underline;
+}
+
+.author-link {
+    margin-top: 0.5em;
+    color: white;
+    text-decoration: none;
+    font-size: 1.25em;
+    margin-left: 0.5em;
+}
+
+.author-link:hover {
+    text-decoration: underline;
 }

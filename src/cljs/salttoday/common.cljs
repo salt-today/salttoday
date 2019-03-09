@@ -14,24 +14,26 @@
 
     [:div.row
      [:div.row.comment-metadata-row
+      ; Likes
       [:div.column.comment-likes {:style {:flex 15}}
-       [:div.votes.liked upvotes [:i.fas.fa-thumbs-up]]]
-      ; : linear-gradient( 90deg, blue 70%, red 100%) 2; Get rid of Background Wrapper in Favor for <--
+       [:span.like-dislike-counter
+        (str upvotes " ")
+        [:i.fas.fa-thumbs-up]]]
+      ; Comment Body / Link to Article
       [:div.column.comment-body {:style {:flex 70 :border-image (str "linear-gradient(90deg, #0072bc " pos-gradient "%, #ed1c24 " neg-gradient "%) 2 / 4px")}}
-       [:div.comment-text-and-name
-        [:div.comment-text-border
-         [:div.comment-text
-          [:a {:href (get comment "url") :target "_blank"}
-           (get comment "text")]]]]]
+       [:a.article-link {:href (get comment "url") :target "_blank"}
+        (get comment "text")]]
+      ; Dislikes
       [:div.column.comment-dislikes {:style {:flex 15}}
-       [:span
+       [:span.like-dislike-counter
         [:i.fas.fa-thumbs-down]
-        downvotes]]]
+        (str " " downvotes)]]]
+     ; Author Information
      [:div.row
       ; Empty Offset
       [:div.column {:style {:flex 15}}]
       [:div.column.comment-author {:style {:flex 70}}
-       [:a {:href "/#/user"} "- "
+       [:a.author-link {:href "/#/user"} "- "
         (get comment "user")]]
       ; Empty Offset
       [:div.column {:style {:flex 15}}]]]))
