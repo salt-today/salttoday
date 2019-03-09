@@ -2,7 +2,7 @@
   (:require [ajax.core :refer [GET PUT]]
             [reagent.core :as r]
             [salttoday.common :refer [display-comment]]
-            [salttoday.pages.common :refer [make-navbar]]))
+            [salttoday.pages.common :refer [make-navbar make-content make-right-offset]]))
 
 (def state
   (r/atom {}))
@@ -18,23 +18,30 @@
 
 (defn display-user
   [user]
-  [:div.user-container
-   [:div.user-name
-    (get user "name")]
-   [:div.user-vote-container
-    [:div.user-votes.liked
+  [:div.row
+   [:div.row.user-name-row
+    [:span
+     (get user "name")]]
+   [:div.row.user-stats-row
+    [:span.positive
      (get user "upvotes")
+     " "
      [:i.fas.fa-thumbs-up]]
-    [:div.user-votes.disliked
-     [:i.fas.fa-thumbs-down.fa-flip-horizontal]
-     (get user "downvotes")]]])
+    [:span.negative
+     (get user "downvotes")
+     " "
+     [:i.fas.fa-thumbs-down]]]])
+
+(defn leaderboard-content [snapshot]
+  (list [:div.row.justify-center.header-wrapper
+         [:span.heading "Top Voted Users"]]
+        [:div.column.justify-center.comments-wrapper
+         (for [comment (get snapshot "users")]
+           (display-user comment))]))
 
 (defn users-page
   []
-  ; (make-navbar :users
-  ;              [:div.container
-  ;               [:div.general-heading "Top Voted Users"]  [:div.general-line-break]
-  ;               (into [:div.users-list]
-  ;                     (for [user (get @state "users")]
-  ;                       (display-user user)))])
-  )
+  [:div.page-wrapper
+   (make-navbar :home)
+   (make-content :home (leaderboard-content @state))
+   (make-right-offset)])
