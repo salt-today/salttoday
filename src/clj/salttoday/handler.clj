@@ -1,6 +1,7 @@
 (ns salttoday.handler
   (:require
    [salttoday.layout :refer [error-page]]
+   [salttoday.routes.common :refer [common-routes]]
    [salttoday.routes.home :refer [home-routes]]
    [salttoday.routes.users :refer [users-routes]]
    [compojure.core :refer [routes wrap-routes]]
@@ -21,6 +22,9 @@
         (wrap-routes middleware/wrap-csrf)
         (wrap-routes middleware/wrap-formats))
     (-> #'users-routes
+        (wrap-routes middleware/wrap-csrf)
+        (wrap-routes middleware/wrap-formats))
+    (-> #'common-routes
         (wrap-routes middleware/wrap-csrf)
         (wrap-routes middleware/wrap-formats))
     (route/not-found
