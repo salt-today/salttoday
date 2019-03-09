@@ -2,7 +2,7 @@
   (:require [ajax.core :refer [GET PUT]]
             [reagent.core :as r]
             [salttoday.common :refer [display-comment]]
-            [salttoday.pages.common :refer [content make-layout jumbotron]]))
+            [salttoday.pages.common :refer [content make-navbar jumbotron]]))
 
 (def state
   (r/atom {}))
@@ -16,7 +16,7 @@
    :handler top-comments-handler})
 
 (defn home-page []
-  (make-layout :home
+  (make-navbar :home
                [:div.content-block-wrapper
                 [:div.content-block
                  [:div.heading-wrapper [:div.general-heading "Today"]] [:div.general-line-break]
