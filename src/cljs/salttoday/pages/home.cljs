@@ -16,14 +16,14 @@
    :handler top-comments-handler})
 
 (defn home-content [snapshot]
-  (list [:div.row.justify-center
+  (list [:div.row.justify-center.header-wrapper
          [:span.heading "Today"]]
-        [:div.row.justify-center.comments-type-header.container
+        [:div.column.justify-center.comments-wrapper
          (for [comment (get snapshot "daily")]
            (display-comment comment))]
-        [:div.row.justify-center
+        [:div.row.justify-center.header-wrapper
          [:span.heading "All Time"]]
-        [:div.row.justify-center.comments-type-header.container
+        [:div.column.justify-center.comments-wrapper
          (for [comment (get snapshot "all-time")]
            (display-comment comment))]))
 

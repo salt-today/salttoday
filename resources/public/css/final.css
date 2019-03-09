@@ -131,3 +131,34 @@ body {
     width: 25%;
     text-align: center;
 }
+
+.header-wrapper {
+    margin-bottom: 2em;
+}
+
+.comment-metadata-row {
+    align-items: center;
+}
+
+.comments-wrapper > .row {
+    margin-bottom: 1.5em;
+}
+
+.comment-body {
+    margin-left: 1em;
+    margin-right: 1em;
+    background: #fefde3;
+    padding: 0.5em;
+}
+
+.comment-likes {
+    align-items: end;
+}
+
+.comment-dislikes {
+    align-items: start;
+}
+
+.comment-author {
+    margin-left: 1em;
+}
