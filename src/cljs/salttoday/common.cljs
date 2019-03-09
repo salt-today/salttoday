@@ -15,19 +15,17 @@
     [:div.row
      [:div.row.comment-metadata-row
       ; Likes
-      [:div.column.comment-likes {:style {:flex 15}}
-       [:span.like-dislike-counter
-        (str upvotes " ")
-        [:i.fas.fa-thumbs-up]]]
+       [:span.counter.like-counter
+        [:div (str upvotes " ")]
+        [:i.fas.fa-thumbs-up]]
       ; Comment Body / Link to Article
       [:div.column.comment-body {:style {:flex 70 :border-image (str "linear-gradient(90deg, #0072bc " pos-gradient "%, #ed1c24 " neg-gradient "%) 2 / 4px")}}
        [:a.article-link {:href (get comment "url") :target "_blank"}
         (get comment "text")]]
       ; Dislikes
-      [:div.column.comment-dislikes {:style {:flex 15}}
-       [:span.like-dislike-counter
+       [:span.counter.dislike-counter
         [:i.fas.fa-thumbs-down]
-        (str " " downvotes)]]]
+        [:div (str " " downvotes)]]]
      ; Author Information
      [:div.row
       ; Empty Offset
