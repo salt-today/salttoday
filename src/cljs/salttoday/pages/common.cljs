@@ -11,15 +11,17 @@
    x])
 
 (defn nav-link [uri title current-page page icon]
-  [:div.navigation-link {:class (when (= page current-page) "active")} [:a {:href uri} title]  [:span {:class icon}]])
+  [:span.nav-link {:class (when (= page current-page) "active")}
+   [:a {:href uri} title icon]
+   ])
 
 (defn make-navbar
   [current-page]
   [:div.column {:style {:flex 15}}
    [:div.row.navigation
-    [nav-link "#/" "Home " current-page :home "icon-home3"]]
+    [nav-link "#/" "Home " current-page :home [:i.fas.fa-home]]]
    [:div.row.navigation
-    [nav-link "#/users" "Users " current-page :users "icon-group"]]])
+    [nav-link "#/users" "Users " current-page :users [:i.fas.fa-users]]]])
 
 (defn make-content
   [current-page content]
