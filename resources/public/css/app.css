@@ -134,6 +134,7 @@ span.nav-link.active {
     font-size: 4em;
     border-bottom: 5px solid white;
     width: 25%;
+    min-width: 130px;
     text-align: center;
 }
 
