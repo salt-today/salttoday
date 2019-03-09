@@ -1,8 +1,4 @@
-
-
 body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-family: BebasNeue;
     width: 100vw;
     height: 100vh;
     background-image: url("/img/salt-falling.png");
@@ -10,8 +6,6 @@ body {
     background-position: center;
     margin: 0;
 }
-
-
 
 .card-block {
     position: fixed;
@@ -34,39 +28,13 @@ body {
     color: white;
 }
 
-@font-face {
-    font-family: BebasNeue;
-    src: url("../fonts/BebasNeue-Regular.otf") format("opentype");
-}
+
 
 .footer-pile {
     width: 100%;
     max-width: 1160px;
 }
-.navigation {
-    white-space:nowrap;
-    position: relative;
-    padding: 20px 0px 0px 20px;
-}
-/*this will be on :active once done*/
-.navigation > .navigation-link:hover:not(.active) {
-    -webkit-transform: scale(1.3);
-    -ms-transform: scale(1.3);
-    transform: scale(1.3);
-    cursor: pointer;
-    padding: 10px;
-    animation: grow .25s;
-}
-.navigation > .navigation-link.active:hover {
-    font-size: 45px;
-}
-.navigation > .active {
-    font-size: 45px;
-}
-.navigation > div > a {
-    color: white;
-    text-decoration: none;
-}
+
 
 @keyframes grow {
     from {
@@ -153,10 +121,7 @@ body {
     text-align: right;
     font-size: 35px;
 }
-.general-heading {
-    font-size: 50px;
-    text-align: center;
-}
+
 .heading-wrapper{
 
     display: flex;
@@ -267,7 +232,7 @@ body {
 
 .comments-type-header {
     color: white;
-    background-color: #2a68cc
+    background-color: #2a68cc;
     margin-top: 10px;
 }
 

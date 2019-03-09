@@ -1,9 +1,17 @@
+@font-face {
+    font-family: BebasNeue;
+    src: url("../fonts/BebasNeue-Regular.otf") format("opentype");
+}
+
 body {
+    color: #ffffff;
+    font-family: BebasNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif;
     background: #0c0c0c;
     margin: 0;
     height: 100vh;
 }
 
+/** Flex Box Related Stuff */
 .row {
     display: flex;
     flex-direction: row;
@@ -22,6 +30,16 @@ body {
     height: 100%;
 }
 
+.page-wrapper {
+    display: flex;
+    height: 100%;
+}
+
+.justify-center {
+    justify-content: center;
+    align-items: center;
+}
+
 .loading-wrapper {
     display: flex;
     justify-content: center;
@@ -29,6 +47,7 @@ body {
     height: 100%;
 }
 
+/* Loading Page */
 .loading-logo {
     animation: shakeShaker 1.5s infinite 0s linear;
     width: 50vw;
@@ -65,4 +84,50 @@ body {
     42%{ transform: translateX(-10px) translateY(10px); }
     44%{ transform: translateX(0) translateY(0); opacity: 0; }
     100%{ transform: translateX(0) translateY(0); opacity: 0; }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Actual Styling */
+.navigation {
+    white-space:nowrap;
+    position: relative;
+    padding: 20px 0px 0px 20px;
+}
+/*this will be on :active once done*/
+.navigation > .navigation-link:hover:not(.active) {
+    -webkit-transform: scale(1.3);
+    -ms-transform: scale(1.3);
+    transform: scale(1.3);
+    cursor: pointer;
+    padding: 10px;
+    animation: grow .25s;
+}
+.navigation > .navigation-link.active:hover {
+    font-size: 3.5em;
+}
+.navigation > .active {
+    font-size: 3.5em;
+}
+.navigation > div > a {
+    color: white;
+    text-decoration: none;
+}
+
+.heading {
+    font-size: 4em;
+    border-bottom: 5px solid white;
+    width: 25%;
+    text-align: center;
 }

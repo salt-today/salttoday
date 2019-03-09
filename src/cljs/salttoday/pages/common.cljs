@@ -14,30 +14,20 @@
   [:div.navigation-link {:class (when (= page current-page) "active")} [:a {:href uri} title]  [:span {:class icon}]])
 
 (defn make-navbar
-  [current-page content]
+  [current-page]
   [:div.column {:style {:flex 15}}
    [:div.row.navigation
     [nav-link "#/" "Home " current-page :home "icon-home3"]]
    [:div.row.navigation
     [nav-link "#/users" "Users " current-page :users "icon-group"]]])
 
+(defn make-content
+  [current-page content]
+  [:div.column {:style {:flex 70}}
+   [:div.column.justify-center {:style {:flex-grow 1}}
+    content]
+   [:div.row.justify-center
+    [:img.footer-pile {:src "/img/footer-pile.png"}]]])
 
-
-
-
-
-; (defn make-layout
-;   [current-page content]
-;   [[:div.column {:style {:flex 15}}
-;     [:div.row.navigation
-;      [nav-link "#/" "Home " current-page :home "icon-home3"]
-;      [nav-link "#/users" "Users " current-page :users "icon-group"]]]
-;    [:div.column {:style {:flex 70}}
-;     [:div.row
-;      [:img.title-image {:src "/img/SaltTodayLogoNoSalt.svg"}]]
-;     [:div.row
-;      content]
-;     [:div.row
-;      [:img.footer-pile {:src "/img/footer-pile.png"}]]]
-;    ; Offset, nothing else
-;    [:div.column {:style {:flex 15}}]])
+(defn make-right-offset []
+  [:div.column {:style {:flex 15}}])

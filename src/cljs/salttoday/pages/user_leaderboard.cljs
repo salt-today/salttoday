@@ -31,9 +31,10 @@
 
 (defn users-page
   []
-  (make-navbar :users
-               [:div.container
-                [:div.general-heading "Top Voted Users"]  [:div.general-line-break]
-                (into [:div.users-list]
-                      (for [user (get @state "users")]
-                        (display-user user)))]))
+  ; (make-navbar :users
+  ;              [:div.container
+  ;               [:div.general-heading "Top Voted Users"]  [:div.general-line-break]
+  ;               (into [:div.users-list]
+  ;                     (for [user (get @state "users")]
+  ;                       (display-user user)))])
+  )
