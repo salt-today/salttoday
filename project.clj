@@ -23,7 +23,6 @@
                  [org.clojure/tools.cli "0.3.7"]
                  [org.clojure/tools.logging "0.4.1"]
                  [org.webjars.bower/tether "1.4.3"]
-                 [org.webjars/bootstrap "4.1.0"]
                  [org.webjars/font-awesome "5.0.13"]
                  [org.webjars/webjars-locator "0.34"]
                  [overtone/at-at "1.2.0"]

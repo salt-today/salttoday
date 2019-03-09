@@ -2,7 +2,7 @@
   (:require [ajax.core :refer [GET PUT]]
             [reagent.core :as r]
             [salttoday.common :refer [display-comment]]
-            [salttoday.pages.common :refer [make-layout]]))
+            [salttoday.pages.common :refer [make-navbar]]))
 
 (def state
   (r/atom {}))
@@ -31,9 +31,10 @@
 
 (defn users-page
   []
-  (make-layout :users
-               [:div.container
-                [:div.general-heading "Top Voted Users"]  [:div.general-line-break]
-                (into [:div.users-list]
-                      (for [user (get @state "users")]
-                        (display-user user)))]))
+  ; (make-navbar :users
+  ;              [:div.container
+  ;               [:div.general-heading "Top Voted Users"]  [:div.general-line-break]
+  ;               (into [:div.users-list]
+  ;                     (for [user (get @state "users")]
+  ;                       (display-user user)))])
+  )

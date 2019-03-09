@@ -4,7 +4,7 @@
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <link rel="icon" href="/img/favicon.png">
-      <title>Welcome to salttoday</title>
+      <title>SaltToday</title>
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-128491699-1"></script>
@@ -12,37 +12,27 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'UA-128491699-1');
     </script>
   </head>
   <body>
-    <div id="navbar"></div>
-    <div id="app">
-      <div class="container-fluid">
-        <div class="card-deck">
-          <div class="card-block">
-            <div style="display:flex;justify-content:center;align-items:center;height:100%;">
-              <div>
-                <img class="loading-logo" src = "/img/SaltTodayLogoNoSalt.svg"/>
-                <img class="loading-logo-salt" src = "/img/SaltTodayLogoWithSalt.svg"/>
-              </div>
-            </div>
-          </div>
+    <div id="app" class="app-wrapper">
+      <!-- Content Here is Replaced once the App is Loaded! -->
+      <div class="loading-wrapper">
+        <div>
+          <img class="loading-logo" src = "/img/SaltTodayLogoNoSalt.svg"/>
+          <img class="loading-logo-salt" src = "/img/SaltTodayLogoWithSalt.svg"/>
         </div>
       </div>
     </div>
 
     <!-- scripts and styles -->
-    {% style "/assets/bootstrap/css/bootstrap.min.css" %}
     {% style "/assets/font-awesome/web-fonts-with-css/css/fontawesome-all.min.css" %}
-    {% style "/css/screen.css" %}
-    {% style "/css/fonts.css" %}
+    {% style "/css/app.css" %}
 
     {% script "/assets/jquery/jquery.min.js" %}
     {% script "/assets/font-awesome/svg-with-js/js/fontawesome.min.js" %}
     {% script "/assets/tether/dist/js/tether.min.js" %}
-    {% script "/assets/bootstrap/js/bootstrap.min.js" %}
 
     <script type="text/javascript">
         var csrfToken = "{{csrf-token}}";

@@ -12,17 +12,28 @@
                        (max 0 (- pos-percent 2.5)))
         neg-gradient (min 100 (+ pos-gradient 5))]
 
-    [:div.comment-container
-     [:div.votes.liked upvotes [:i.fas.fa-thumbs-up]]
-
-     [:div.comment-text-and-name
-      [:div.comment-text-border
-       {:style {"background" (str "linear-gradient(to right, #0072bc " pos-gradient "%, #ed1c24 " neg-gradient "%)")}}
-       [:div.comment-text
-        [:a {:href (get comment "url") :target "_blank"}
-         (get comment "text")]]]
-      [:div.comment-user
-       [:a {:href "/#/user"} "- "
-        (get comment "user")]]]
-     [:div.votes.disliked
-      [:i.fas.fa-thumbs-down] downvotes]]))
+    [:div.row
+     [:div.row.comment-metadata-row
+      ; Likes
+      [:div.column.comment-likes {:style {:flex 15}}
+       [:span.like-dislike-counter
+        (str upvotes " ")
+        [:i.fas.fa-thumbs-up]]]
+      ; Comment Body / Link to Article
+      [:div.column.comment-body {:style {:flex 70 :border-image (str "linear-gradient(90deg, #0072bc " pos-gradient "%, #ed1c24 " neg-gradient "%) 2 / 4px")}}
+       [:a.article-link {:href (get comment "url") :target "_blank"}
+        (get comment "text")]]
+      ; Dislikes
+      [:div.column.comment-dislikes {:style {:flex 15}}
+       [:span.like-dislike-counter
+        [:i.fas.fa-thumbs-down]
+        (str " " downvotes)]]]
+     ; Author Information
+     [:div.row
+      ; Empty Offset
+      [:div.column {:style {:flex 15}}]
+      [:div.column.comment-author {:style {:flex 70}}
+       [:a.author-link {:href "/#/user"} "- "
+        (get comment "user")]]
+      ; Empty Offset
+      [:div.column {:style {:flex 15}}]]]))
