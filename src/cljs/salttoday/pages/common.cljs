@@ -24,7 +24,7 @@
 (defn make-content
   [current-page content]
   [:div.column {:style {:flex 70}}
-   [:div.column.justify-center {:style {:flex-grow 1}}
+   [:div.column.justify-center.main-content {:style {:flex-grow 1}}
     content]
    [:div.row.justify-center
     [:img.footer-pile {:src "/img/footer-pile.png"}]]])

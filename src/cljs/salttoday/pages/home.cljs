@@ -28,7 +28,6 @@
            (display-comment comment))]))
 
 (defn home-page []
-  ; TODO This can probably be removed by using a `list`
   [:div.page-wrapper
    (make-navbar :home)
    (make-content :home (home-content @state))
