@@ -31,4 +31,4 @@
     [:img.footer-pile {:src "/img/footer-pile.png"}]]])
 
 (defn make-right-offset []
-  [:div.column {:style {:flex 15}}])
+  [:div.column.right-offset {:style {:flex 15 :overflow "hidden"}}])
