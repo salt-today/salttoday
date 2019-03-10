@@ -202,3 +202,31 @@ span.nav-link.active {
 .author-link:hover {
     text-decoration: underline;
 }
+
+.user-name-row {
+    justify-content: center;
+}
+
+.user-name-row > span {
+    font-size: 2em;
+}
+
+.user-stats-row {
+    justify-content: center;
+}
+
+.user-stats-row > span {
+    font-size: 1.5em;
+}
+
+.positive {
+    color: #0072bc;
+}
+
+.negative {
+    color: #ed1c24;
+}
+
+.user-stats-row > span.positive {
+    margin-right: 0.5em;
+}

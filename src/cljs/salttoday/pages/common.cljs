@@ -12,8 +12,7 @@
 
 (defn nav-link [uri title current-page page icon]
   [:span.nav-link {:class (when (= page current-page) "active")}
-   [:a {:href uri} title icon]
-   ])
+   [:a {:href uri} title icon]])
 
 (defn make-navbar
   [current-page]

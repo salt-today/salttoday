@@ -266,15 +266,17 @@
 
 
 ;; Stats
+
+
 (defn get-todays-stats []
-      (let [comments (get-all-comments (db-since-midnight))
-            comment-count (count comments)
-            upvote-count (reduce #(+ %1 (:upvotes %2)) 0 comments)
-            downvote-count (reduce #(+ %1 (:downvotes %2)) 0 comments)
-            article-count (-> (map :title comments)
-                              distinct
-                              count)]
-           {:comment-count comment-count
-            :upvote-count upvote-count
-            :downvote-count downvote-count
-            :article-count article-count}))
+  (let [comments (get-all-comments (db-since-midnight))
+        comment-count (count comments)
+        upvote-count (reduce #(+ %1 (:upvotes %2)) 0 comments)
+        downvote-count (reduce #(+ %1 (:downvotes %2)) 0 comments)
+        article-count (-> (map :title comments)
+                          distinct
+                          count)]
+    {:comment-count comment-count
+     :upvote-count upvote-count
+     :downvote-count downvote-count
+     :article-count article-count}))
