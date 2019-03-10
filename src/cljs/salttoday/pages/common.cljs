@@ -12,15 +12,14 @@
 
 (defn nav-link [uri title current-page page icon]
   [:span.nav-link {:class (when (= page current-page) "active")}
-   [:a {:href uri} title icon]
-   ])
+   [:a {:href uri} title icon]])
 
 (defn make-navbar
   [current-page]
   [:div.column {:style {:flex 15}}
-   [:div.row.navigation
+   [:div.nav-row.navigation
     [nav-link "#/" "Home " current-page :home [:i.fas.fa-home]]]
-   [:div.row.navigation
+   [:div.nav-row.navigation
     [nav-link "#/users" "Users " current-page :users [:i.fas.fa-users]]]])
 
 (defn make-content

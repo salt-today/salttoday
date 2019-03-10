@@ -18,13 +18,23 @@ body {
     width: 100%;
 }
 
+.nav-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-width: 100%;
+}
+
 .column {
+    max-width: 100%;
     display: flex;
     flex-direction: column;
 }
 
 .page-wrapper {
+    max-width: 100%;
     display: flex;
+    flex-wrap: wrap;
 }
 
 .justify-center {
@@ -117,6 +127,7 @@ span.nav-link.active {
     font-size: 4em;
     border-bottom: 5px solid white;
     width: 25%;
+    min-width: 130px;
     text-align: center;
 }
 
@@ -147,17 +158,28 @@ span.nav-link.active {
     align-items: flex-end;
 }
 
-.comment-dislikes {
-    color: #ed1c24;
-    align-items: start;
+.counter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .comment-author {
     margin-left: 1em;
 }
 
-.like-dislike-counter {
+.dislike-counter {
+    margin-right: 13px;
+    color: #ed1c24;
     font-size: 1.75em;
+    align-items: start;
+}
+
+.like-counter {
+    color: #0072bc;
+    margin-left: 13px;
+    font-size: 1.75em;
+    align-items: end;
 }
 
 .article-link {
@@ -179,4 +201,32 @@ span.nav-link.active {
 
 .author-link:hover {
     text-decoration: underline;
+}
+
+.user-name-row {
+    justify-content: center;
+}
+
+.user-name-row > span {
+    font-size: 2em;
+}
+
+.user-stats-row {
+    justify-content: center;
+}
+
+.user-stats-row > span {
+    font-size: 1.5em;
+}
+
+.positive {
+    color: #0072bc;
+}
+
+.negative {
+    color: #ed1c24;
+}
+
+.user-stats-row > span.positive {
+    margin-right: 0.5em;
 }
