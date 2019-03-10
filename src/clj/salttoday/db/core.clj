@@ -205,10 +205,12 @@
    (get-top-x-comments num (d/db conn))))
 
 (defn db-since-midnight []
-  (let [yesterday-time (-> (t/now)
-                           (t/minus (t/days 1))
-                           (c/to-date))]
-    (d/since (d/db conn) yesterday-time)))
+  (let [midnight (-> (java.time.LocalDateTime/now)
+                     (.toLocalDate)
+                     (.atStartOfDay)
+                     (.atZone (java.time.ZoneId/of "America/Toronto"))
+                     (.toInstant))]
+    (d/since (d/db conn) midnight)))
 
 (defn get-daily-comments
   [num]
