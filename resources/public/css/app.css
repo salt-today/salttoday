@@ -181,26 +181,33 @@ span.nav-link.active {
     align-items: end;
 }
 
-.like-counter > .counter-icon{
+.like-counter > .counter-icon {
     top: -32px;
     left: -30px;
     position: absolute;
     font-size: 0.5em;
 }
 
-.dislike-counter > .counter-icon{
-    bottom: -15px;
+.dislike-counter > .counter-icon {
+    bottom: -32px;
     right: -25px;
     position: absolute;
     font-size: 0.5em;
 }
 
-
-.vote-counter-text{
-    padding-left: 6px;
-    padding-top: 10px;
+.vote-counter-text {
     color: white;
     font-family: BebasNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.dislike-counter > .counter-icon > .vote-counter-text {
+    margin-top: -6px;
+    margin-left: 5px;
+}
+
+.like-counter > .counter-icon > .vote-counter-text {
+    padding-left: 6px;
+    padding-top: 10px;
 }
 
 .article-link {
