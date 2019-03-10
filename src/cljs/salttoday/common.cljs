@@ -1,8 +1,8 @@
 (ns salttoday.common)
 
 (defn display-comment [comment]
-  (let [upvotes (get comment "upvotes")
-        downvotes (get comment "downvotes")
+  (let [upvotes (get comment "comment/upvotes")
+        downvotes (get comment "comment/downvotes")
         vote-total (max 1 (+ upvotes downvotes))
         pos-percent (if (zero? vote-total)
                       50
@@ -15,23 +15,23 @@
     [:div.row
      [:div.row.comment-metadata-row
       ; Likes
-       [:span.counter.like-counter
-        [:div (str upvotes " ")]
-        [:i.fas.fa-thumbs-up]]
+      [:span.counter.like-counter
+       [:div (str upvotes " ")]
+       [:i.fas.fa-thumbs-up]]
       ; Comment Body / Link to Article
       [:div.column.comment-body {:style {:flex 70 :border-image (str "linear-gradient(90deg, #0072bc " pos-gradient "%, #ed1c24 " neg-gradient "%) 2 / 4px")}}
-       [:a.article-link {:href (get comment "url") :target "_blank"}
-        (get comment "text")]]
+       [:a.article-link {:href (get comment "post/url") :target "_blank"}
+        (get comment "comment/text")]]
       ; Dislikes
-       [:span.counter.dislike-counter
-        [:i.fas.fa-thumbs-down]
-        [:div (str " " downvotes)]]]
+      [:span.counter.dislike-counter
+       [:i.fas.fa-thumbs-down]
+       [:div (str " " downvotes)]]]
      ; Author Information
      [:div.row
       ; Empty Offset
       [:div.column {:style {:flex 15}}]
       [:div.column.comment-author {:style {:flex 70}}
        [:a.author-link {:href "/#/user"} "- "
-        (get comment "user")]]
+        (get comment "user/name")]]
       ; Empty Offset
       [:div.column {:style {:flex 15}}]]]))
