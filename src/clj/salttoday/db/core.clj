@@ -180,18 +180,19 @@
   [comments]
   (for [comment comments]
     (apply assoc {}
-           (interleave [:upvotes :downvotes :user :text :url] comment))))
+           (interleave [:upvotes :downvotes :user :text :title :url] comment))))
 
 ; Gets literally every comment in the database.
 (defn get-all-comments
   [db]
-  (-> (d/q '[:find ?upvotes ?downvotes ?name ?text  ?url :in $ :where
+  (-> (d/q '[:find ?upvotes ?downvotes ?name ?text ?title ?url :in $ :where
              [?c :comment/text ?text]
              [?c :comment/upvotes ?upvotes]
              [?c :comment/downvotes ?downvotes]
              [?c :comment/user ?u]
              [?u :user/name ?name]
              [?p :post/comment ?c]
+             [?p :post/title ?title]
              [?p :post/url ?url]] db)
       (create-comment-maps)))
 
@@ -203,7 +204,7 @@
   ([num]
    (get-top-x-comments num (d/db conn))))
 
-(defn db-since-yesterday []
+(defn db-since-midnight []
   (let [yesterday-time (-> (t/now)
                            (t/minus (t/days 1))
                            (c/to-date))]
@@ -211,7 +212,7 @@
 
 (defn get-daily-comments
   [num]
-  (get-top-x-comments num (db-since-yesterday)))
+  (get-top-x-comments num (db-since-midnight)))
 
 
 
@@ -262,3 +263,18 @@
 (defn get-most-positive-users
   [num]
   (get-most-x-users :user/upvotes num))
+
+
+;; Stats
+(defn get-todays-stats []
+      (let [comments (get-all-comments (db-since-midnight))
+            comment-count (count comments)
+            upvote-count (reduce #(+ %1 (:upvotes %2)) 0 comments)
+            downvote-count (reduce #(+ %1 (:downvotes %2)) 0 comments)
+            article-count (-> (map :title comments)
+                              distinct
+                              count)]
+           {:comment-count comment-count
+            :upvote-count upvote-count
+            :downvote-count downvote-count
+            :article-count article-count}))
