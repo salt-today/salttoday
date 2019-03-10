@@ -209,7 +209,8 @@
                      (.toLocalDate)
                      (.atStartOfDay)
                      (.atZone (java.time.ZoneId/of "America/Toronto"))
-                     (.toInstant))]
+                     (.toInstant)
+                     (java.util.Date/from))]
     (d/since (d/db conn) midnight)))
 
 (defn get-daily-comments
