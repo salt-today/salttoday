@@ -136,14 +136,17 @@ span.nav-link.active {
 }
 
 .comment-metadata-row {
+    flex-wrap: nowrap;
     align-items: center;
 }
 
 .comments-wrapper > .row {
+    padding-bottom: 10px;
     margin-bottom: 1.5em;
 }
 
 .comment-body {
+    position: relative;
     border: 4px solid;
     font-size: 1.75em;
     margin-left: 1em;
@@ -158,11 +161,6 @@ span.nav-link.active {
     align-items: flex-end;
 }
 
-.counter {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
 
 .comment-author {
     margin-left: 1em;
@@ -176,10 +174,33 @@ span.nav-link.active {
 }
 
 .like-counter {
+    width: 10px;
     color: #0072bc;
     margin-left: 13px;
     font-size: 1.75em;
     align-items: end;
+}
+
+.like-counter > .counter-icon{
+    top: -32px;
+    left: -30px;
+    position: absolute;
+    font-size: 0.5em;
+}
+
+.dislike-counter > .counter-icon{
+    bottom: -15px;
+    right: -25px;
+    position: absolute;
+    font-size: 0.5em;
+}
+
+
+.vote-counter-text{
+    padding-left: 6px;
+    padding-top: 10px;
+    color: white;
+    font-family: BebasNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 .article-link {
@@ -229,4 +250,15 @@ span.nav-link.active {
 
 .user-stats-row > span.positive {
     margin-right: 0.5em;
+}
+
+.footer-pile{
+    max-width: 100%;
+}
+
+@media screen and (max-width: 1000px) {
+    .right-offset {
+        visibility: hidden;
+        display: none;
+    }
 }
