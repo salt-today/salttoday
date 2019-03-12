@@ -157,17 +157,15 @@
 
 (defn sort-by-upvotes
   [comments]
-  (sort #(> (:comment/upvotes %1) (:comment/upvotes %2)) comments))
+  (sort #(> (:upvotes %1) (:upvotes %2)) comments))
 
 (defn sort-by-downvotes
   [comments]
-  (sort #(> (:comment/downvotes %1) (:comment/downvotes %2)) comments))
+  (sort #(> (:downvotes %1) (:downvotes %2)) comments))
 
 (defn sort-by-score
   [comments]
-  (sort #(> (+ (/ (:comment/upvotes %1) 2) (:comment/downvotes %1))
-            (+ (/ (:comment/upvotes %2) 2) (:comment/downvotes %2)))
-        comments))
+  (sort #(> (+ (/ (:upvotes %1) 2) (:downvotes %1)) (+ (/ (:upvotes %2) 2) (:downvotes %2))) comments))
 
 ; Pagination
 (defn paginate-comments
@@ -177,17 +175,26 @@
    (->> (drop offset comments)
         (take amount))))
 
+; Puts the raw query comment into a map
+(defn create-comment-maps
+  [comments]
+  (for [comment comments]
+    (apply assoc {}
+           (interleave [:upvotes :downvotes :user :text :title :url] comment))))
+
 ; Gets literally every comment in the database.
 (defn get-all-comments
   [db]
-  (let [comments (d/q '[:find
-                        (pull ?c [:comment/upvotes :comment/downvotes :comment/text])
-                        (pull ?u [:user/name])
-                        (pull ?p [:post/title :post/url])
-                        :in $
-                        :where [?p :post/comment ?c] [?c :comment/user ?u]] db)]
-    (for [comment comments]
-      (apply merge comment))))
+  (-> (d/q '[:find ?upvotes ?downvotes ?name ?text ?title ?url :in $ :where
+             [?c :comment/text ?text]
+             [?c :comment/upvotes ?upvotes]
+             [?c :comment/downvotes ?downvotes]
+             [?c :comment/user ?u]
+             [?u :user/name ?name]
+             [?p :post/comment ?c]
+             [?p :post/title ?title]
+             [?p :post/url ?url]] db)
+      (create-comment-maps)))
 
 (defn get-top-x-comments
   ([num db]
@@ -210,9 +217,15 @@
   [num]
   (get-top-x-comments num (db-since-midnight)))
 
+
+
+
+
 ; -----------
 ; User stats
 ; -----------
+
+
 (defn get-user-stats
   [name]
   (d/q '[:find ?upvotes ?downvotes :in $ ?name :where
@@ -261,8 +274,8 @@
 (defn get-todays-stats []
   (let [comments (get-all-comments (db-since-midnight))
         comment-count (count comments)
-        upvote-count (reduce #(+ %1 (:comment/upvotes %2)) 0 comments)
-        downvote-count (reduce #(+ %1 (:comment/downvotes %2)) 0 comments)
+        upvote-count (reduce #(+ %1 (:upvotes %2)) 0 comments)
+        downvote-count (reduce #(+ %1 (:downvotes %2)) 0 comments)
         article-count (-> (map :title comments)
                           distinct
                           count)]
