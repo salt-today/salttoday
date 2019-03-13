@@ -1,8 +1,8 @@
 (ns salttoday.common)
 
 (defn display-comment [comment]
-  (let [upvotes (get comment "comment/upvotes")
-        downvotes (get comment "comment/downvotes")
+  (let [upvotes (get comment "upvotes")
+        downvotes (get comment "downvotes")
         vote-total (max 1 (+ upvotes downvotes))
         pos-percent (if (zero? vote-total)
                       50
@@ -22,8 +22,8 @@
         [:span.fa-stack.fa-1x.counter-icon
          [:i.fas.fa-thumbs-up.fa-stack-2x]
          [:i.fas.fa-stack-1x.vote-counter-text (str upvotes " ")]]]
-       [:a.article-link {:href (get comment "post/url") :target "_blank"}
-        (get comment "comment/text")]
+       [:a.article-link {:href (get comment "url") :target "_blank"}
+        (get comment "text")]
        ; Dislikes
        [:span.counter.dislike-counter
         [:span.fa-stack.fa-1x.counter-icon
@@ -36,6 +36,6 @@
       ; Empty Offset
       [:div.column.comment-author {:style {:flex 70}}
        [:a.author-link {:href "/#/user"} "- "
-        (get comment "user/name")]]
+        (get comment "name")]]
       ; Empty Offset
       [:div.column {:style {:flex 15}}]]]))
