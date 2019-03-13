@@ -103,8 +103,6 @@
                       :source-map true
                       :optimizations :none
                       :pretty-print true}}}}
-                  
-                  
 
                   :source-paths ["env/dev/clj"]
                   :resource-paths ["env/dev/resources"]
