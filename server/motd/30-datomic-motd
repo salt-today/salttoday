@@ -1,0 +1,3 @@
+#!/bin/sh
+
+python3.7 /root/salttoday/server/motd/get-datomic-usage.py

@@ -1,4 +1,4 @@
-(defproject salttoday "0.1.0-SNAPSHOT"
+(defproject salttoday "1.0.0"
 
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
@@ -70,8 +70,6 @@
                  :closure-warnings
                  {:externs-validation :off :non-standard-jsdoc :off}
                  :externs ["react/externs/react.js"]}}}}
-             
-             
              :aot :all
              :uberjar-name "salttoday.jar"
              :source-paths ["env/prod/clj"]
