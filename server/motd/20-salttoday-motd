@@ -1,0 +1,5 @@
+#!/bin/bash
+
+printf "\e[36m"
+cat /root/salttoday/server/motd/banner.txt
+printf "\e[0m"
