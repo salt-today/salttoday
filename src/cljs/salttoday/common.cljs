@@ -36,6 +36,6 @@
       ; Empty Offset
       [:div.column.comment-author {:style {:flex 70}}
        [:a.author-link {:href "/#/user"} "- "
-        (get comment "name")]]
+        (get comment "user")]]
       ; Empty Offset
       [:div.column {:style {:flex 15}}]]]))
