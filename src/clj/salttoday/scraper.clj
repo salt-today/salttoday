@@ -30,11 +30,11 @@
   [div]
   (let [contents (-> div first :content)
         content-text-list (for [content contents]
-                               (-> (if (map? content)
-                                     (-> content :content first)
-                                     content)
-                                   .trim))]
-       (clojure.string/join " " content-text-list)))
+                            (-> (if (map? content)
+                                  (-> content :content first)
+                                  content)
+                                .trim))]
+    (clojure.string/join " " content-text-list)))
 
 (defn ^:private get-articles-from-homepage
   []
@@ -98,8 +98,8 @@
                            (:body @(http/get comment-url {:insecure? true})))
                           (html/select [:div.comment]))
         title-div (-> (html/html-snippet
-                           (:body @(http/get "https://www.sootoday.com/local-sports/live-blog-soo-greyhounds-vs-owen-sound-attack-game-1-1333516" {:insecure? true})))
-                         (html/select [:h1]))
+                       (:body @(http/get "https://www.sootoday.com/local-sports/live-blog-soo-greyhounds-vs-owen-sound-attack-game-1-1333516" {:insecure? true})))
+                      (html/select [:h1]))
         title (get-title-from-div title-div)]
     {:url url
      :title title

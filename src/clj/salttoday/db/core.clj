@@ -179,24 +179,24 @@
 
 ; Puts the raw query comment into a map
 (defn create-comment-maps
-      [comments]
-      (for [comment comments]
-           (apply assoc {}
-                  (interleave [:upvotes :downvotes :user :text :title :url] comment))))
+  [comments]
+  (for [comment comments]
+    (apply assoc {}
+           (interleave [:upvotes :downvotes :user :text :title :url] comment))))
 
 ; Gets literally every comment in the database.
 (defn get-all-comments
   [db]
-      (-> (d/q '[:find ?upvotes ?downvotes ?name ?text ?title ?url :in $ :where
-                 [?c :comment/text ?text]
-                 [?c :comment/upvotes ?upvotes]
-                 [?c :comment/downvotes ?downvotes]
-                 [?c :comment/user ?u]
-                 [?u :user/name ?name]
-                 [?p :post/comment ?c]
-                 [?p :post/title ?title]
-                 [?p :post/url ?url]] db)
-          (create-comment-maps)))
+  (-> (d/q '[:find ?upvotes ?downvotes ?name ?text ?title ?url :in $ :where
+             [?c :comment/text ?text]
+             [?c :comment/upvotes ?upvotes]
+             [?c :comment/downvotes ?downvotes]
+             [?c :comment/user ?u]
+             [?u :user/name ?name]
+             [?p :post/comment ?c]
+             [?p :post/title ?title]
+             [?p :post/url ?url]] db)
+      (create-comment-maps)))
 
 (defn get-top-x-comments
   ([num db]
