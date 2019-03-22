@@ -28,10 +28,10 @@
        [:span.counter.dislike-counter
         [:span.fa-stack.fa-1x.counter-icon
          [:i.fas.fa-thumbs-down.fa-stack-2x]
-         [:i.fas.fa-stack-1x.vote-counter-text (str downvotes " ")]]]
-       ]
-     ]
+         [:i.fas.fa-stack-1x.vote-counter-text (str downvotes " ")]]]]]
      ; Author Information
+
+
      [:div.row
       ; Empty Offset
       [:div.column.comment-author {:style {:flex 70}}
