@@ -208,6 +208,7 @@
 
 (defn db-since-midnight []
   (let [midnight (-> (java.time.LocalDateTime/now)
+                     (.minusHours 5)
                      (.toLocalDate)
                      (.atStartOfDay)
                      (.atZone (java.time.ZoneId/of "America/Toronto"))
