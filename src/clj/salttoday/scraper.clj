@@ -98,7 +98,7 @@
                            (:body @(http/get comment-url {:insecure? true})))
                           (html/select [:div.comment]))
         title-div (-> (html/html-snippet
-                       (:body @(http/get "https://www.sootoday.com/local-sports/live-blog-soo-greyhounds-vs-owen-sound-attack-game-1-1333516" {:insecure? true})))
+                       (:body @(http/get url {:insecure? true})))
                       (html/select [:h1]))
         title (get-title-from-div title-div)]
     {:url url
