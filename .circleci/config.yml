@@ -1,36 +1,107 @@
-# Clojure CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-clojure/ for more details
-version: 2
+version: 2.1
+
 jobs:
-  build:
+  checkout_code:
     docker:
-      # specify the version you desire here
       - image: circleci/clojure:lein-2.8.3
-
-    working_directory: ~/repo
-
-    environment:
-      LEIN_ROOT: "true"
-      # Customize the JVM maximum heap limit
-      JVM_OPTS: -Xmx3200m
-
+    working_directory: ~/circleci
     steps:
       - checkout
+      - save_cache:
+          key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ~/circleci
 
-      # Download and cache dependencies
+  bundle_dependencies:
+    docker:
+      - image: circleci/clojure:lein-2.8.3
+    working_directory: ~/circleci
+    steps:
+      - restore_cache:
+          keys:
+            - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "project.clj" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-
       - run: lein deps
-
       - save_cache:
+          key: v1-dependencies-{{ checksum "project.clj" }}
           paths:
             - ~/.m2
-          key: v1-dependencies-{{ checksum "project.clj" }}
 
-      # run tests!
-      - run: echo "Hello World"
+  lint_code:
+    docker:
+      - image: circleci/clojure:lein-2.8.3
+    working_directory: ~/circleci
+    steps:
+      - restore_cache:
+          keys:
+            - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "project.clj" }}
+      - run: lein cljfmt check
+
+  unit_tests:
+    docker:
+      - image: circleci/clojure:lein-2.8.3
+    working_directory: ~/circleci
+    steps:
+      - restore_cache:
+          keys:
+            - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "project.clj" }}
+      - run: lein test
+
+  uberjar:
+    docker:
+      - image: circleci/clojure:lein-2.8.3
+    working_directory: ~/circleci
+    steps:
+      - restore_cache:
+          keys:
+            - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "project.clj" }}
+      - run: lein uberjar
+      - save_cache:
+          key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ~/circleci
+
+  docker_push:
+    docker:
+      - image: circleci/clojure:lein-2.8.3
+    working_directory: ~/circleci
+    steps:
+      - restore_cache:
+          keys:
+            - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+      - run: docker build -t xtvaser/salttoday:latest .
+      - run: docker login
+      # - run: docker push xtvaser/salttoday:latest
+
+workflows:
+  version: 2.1
+  lint_build_deploy:
+    jobs:
+      - checkout_code
+      - bundle_dependencies:
+          requires:
+            - checkout_code
+      - lint_code:
+          requires:
+            - bundle_dependencies
+      - unit_tests:
+          requires:
+            - bundle_dependencies
+      - uberjar:
+          requires:
+            - lint_code
+            - unit_tests
+      - docker_push:
+          requires:
+            - uberjar
