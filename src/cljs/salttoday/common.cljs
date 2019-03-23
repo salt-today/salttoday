@@ -13,17 +13,25 @@
         neg-gradient (min 100 (+ pos-gradient 5))]
 
     [:div.row
+     ; Title
+     [:div.article-title
+      [:a.article-link {:href (get comment "url") :target "_blank"}
+       (get comment "title")]]
      [:div.row.comment-metadata-row
+
+
 
       ; Comment Body / Link to Article
       [:div.column.comment-body {:style {:flex 70 :border-image (str "linear-gradient(90deg, #0072bc " pos-gradient "%, #ed1c24 " neg-gradient "%) 2 / 4px")}}
+
        ; Likes
        [:span.counter.like-counter
         [:span.fa-stack.fa-1x.counter-icon
          [:i.fas.fa-thumbs-up.fa-stack-2x]
          [:i.fas.fa-stack-1x.vote-counter-text (str upvotes " ")]]]
-       [:a.article-link {:href (get comment "url") :target "_blank"}
-        (get comment "text")]
+
+       ; Comment text
+       [:span.comment-text (get comment "text")]
        ; Dislikes
        [:span.counter.dislike-counter
         [:span.fa-stack.fa-1x.counter-icon
