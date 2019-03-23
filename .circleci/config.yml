@@ -1,21 +1,35 @@
 version: 2.1
 
+commands:
+  early_return_for_forked_pull_requests:
+    description: >-
+      If this build is from a fork, stop executing the current job and return success.
+      This is useful to avoid steps that will fail due to missing credentials.
+    steps:
+      - run:
+          name: Early return if this build is from a forked PR
+          command: |
+            if [ -n "$CIRCLE_PR_NUMBER" ]; then
+              echo "Nothing to do for forked PRs, so marking this step successful"
+              circleci step halt
+            fi
+
 jobs:
   checkout_code:
     docker:
       - image: circleci/clojure:lein-2.8.3
-    working_directory: ~/circleci
+    working_directory: ~/build
     steps:
       - checkout
       - save_cache:
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
           paths:
-            - ~/circleci
+            - ~/build
 
   bundle_dependencies:
     docker:
       - image: circleci/clojure:lein-2.8.3
-    working_directory: ~/circleci
+    working_directory: ~/build
     steps:
       - restore_cache:
           keys:
@@ -32,7 +46,7 @@ jobs:
   lint_code:
     docker:
       - image: circleci/clojure:lein-2.8.3
-    working_directory: ~/circleci
+    working_directory: ~/build
     steps:
       - restore_cache:
           keys:
@@ -45,7 +59,7 @@ jobs:
   unit_tests:
     docker:
       - image: circleci/clojure:lein-2.8.3
-    working_directory: ~/circleci
+    working_directory: ~/build
     steps:
       - restore_cache:
           keys:
@@ -58,7 +72,7 @@ jobs:
   uberjar:
     docker:
       - image: circleci/clojure:lein-2.8.3
-    working_directory: ~/circleci
+    working_directory: ~/build
     steps:
       - restore_cache:
           keys:
@@ -67,22 +81,32 @@ jobs:
           keys:
             - v1-dependencies-{{ checksum "project.clj" }}
       - run: lein uberjar
-      - save_cache:
-          key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+      - run: cp ./target/uberjar/salttoday.jar /tmp/salttoday.jar
+      - store_artifacts:
+          path: ./target/uberjar/salttoday.jar
+      - persist_to_workspace:
+          root: /tmp
           paths:
-            - ~/circleci
+            - salttoday.jar
 
   docker_push:
     docker:
       - image: circleci/clojure:lein-2.8.3
-    working_directory: ~/circleci
+    working_directory: ~/build
     steps:
+      - early_return_for_forked_pull_requests
       - restore_cache:
           keys:
             - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+      - attach_workspace:
+          at: /tmp/workspace
+      - run: mkdir -p ./target/uberjar/
+      - run: mv /tmp/workspace/salttoday.jar ./target/uberjar/salttoday.jar
+      - setup_remote_docker:
+          docker_layer_caching: false
       - run: docker build -t xtvaser/salttoday:latest .
-      - run: docker login
-      # - run: docker push xtvaser/salttoday:latest
+      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
+      - run: docker push xtvaser/salttoday:latest
 
 workflows:
   version: 2.1
@@ -105,3 +129,9 @@ workflows:
       - docker_push:
           requires:
             - uberjar
+          # Only run on tagged builds starting with 'v'
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
