@@ -7,14 +7,16 @@
             [salttoday.ajax :refer [load-interceptors!]]
             [ajax.core :refer [GET POST]]
             [salttoday.pages.home :as home]
-            [salttoday.pages.user-leaderboard :as users])
+            [salttoday.pages.user-leaderboard :as users]
+            [salttoday.pages.about :as about])
   (:import goog.History))
 
 (defonce session (r/atom {:page :home}))
 
 (def pages
   {:home #'home/home-page
-   :users #'users/users-page})
+   :users #'users/users-page
+   :about #'about/about-page})
 
 (defn page []
   [(pages (:page @session))])
@@ -28,6 +30,9 @@
 
 (secretary/defroute "/users" []
   (swap! session assoc :page :users))
+
+(secretary/defroute "/about" []
+  (swap! session assoc :page :about))
 
 
 ;; -------------------------
