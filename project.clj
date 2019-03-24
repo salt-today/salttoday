@@ -83,8 +83,7 @@
 
    :dev           [:project/dev]
 
-   :project/dev  {:jvm-opts ["-Dconf=dev-config.edn"]
-                  :dependencies [[binaryage/devtools "0.9.10"]
+   :project/dev  {:dependencies [[binaryage/devtools "0.9.10"]
                                  [com.cemerick/piggieback "0.2.2"]
                                  [expound "0.6.0"]
                                  [figwheel-sidecar "0.5.16" :exclusions [com.google.guava/guava]]
