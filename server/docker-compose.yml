@@ -4,6 +4,7 @@ services:
   # Will periodically check for image updates and hot reload image
   watchtower:
     image: v2tec/watchtower
+    container_name: watchtower
     environment:
       - WATCHTOWER_NOTIFICATIONS=slack
       - WATCHTOWER_NOTIFICATION_SLACK_IDENTIFIER=Watchtower
@@ -13,15 +14,24 @@ services:
     command: --interval 30
 
   datomic:
-    image: akiel/datomic-free
+    image: akiel/datomic-free:0.9.5656
+    container_name: datomic
     ports:
       - 4334:4334
       - 4335:4335
       - 4336:4336
     volumes:
-      - salttoday-vol:/root/datomic-volumes
+      - salttoday-vol:/data
+      - salttoday-logs:/log
 
   salttoday:
     image: xtvaser/salttoday:latest
+    container_name: salttoday
     ports:
       - 80:80
+
+volumes:
+  salttoday-vol:
+    external: true
+  salttoday-logs:
+    external: true
