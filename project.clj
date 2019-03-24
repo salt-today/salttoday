@@ -1,11 +1,24 @@
 (defproject salttoday "1.0.0"
 
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+  :description "Scrapes Sootoday and displays statistics about users and comments."
+  :url "http://www.salttoday.ca"
 
-  :dependencies [[com.google.guava/guava "21.0"]
-                 [clj-time "0.14.4"]
+  :min-lein-version "2.0.0"
+
+  :main ^:skip-aot salttoday.core
+
+  :source-paths ["src/clj" "src/cljs" "src/cljc"]
+  :test-paths ["test/clj"]
+  :resource-paths ["resources" "target/cljsbuild"]
+  :target-path "target/%s/"
+
+  :repositories [["jitpack.io" "https://jitpack.io"]]
+
+  :dependencies [[clj-time "0.14.4"]
                  [cljs-ajax "0.7.3"]
+                 [com.datomic/datomic-free "0.9.5697"]
+                 [com.github.humboldtdev/logback-logdna-bulk "1.0"]
+                 [com.google.guava/guava "21.0"]
                  [compojure "1.6.1"]
                  [cprop "0.1.11"]
                  [enlive "1.1.6"]
@@ -31,21 +44,16 @@
                  [ring/ring-core "1.6.3"]
                  [ring/ring-defaults "0.3.1"]
                  [secretary "1.2.3"]
-                 [selmer "1.11.7"]
-                 [com.datomic/datomic-free "0.9.5697"]]
-
-  :min-lein-version "2.0.0"
-  :source-paths ["src/clj" "src/cljs" "src/cljc"]
-  :test-paths ["test/clj"]
-  :resource-paths ["resources" "target/cljsbuild"]
-  :target-path "target/%s/"
-  :main ^:skip-aot salttoday.core
+                 [selmer "1.11.7"]]
 
   :plugins [[lein-cljsbuild "1.1.5"]
             [lein-immutant "2.1.0"]
             [lein-cljfmt "0.6.4"]]
+
   :clean-targets ^{:protect false}
+
   [:target-path [:cljsbuild :builds :app :compiler :output-dir] [:cljsbuild :builds :app :compiler :output-to]]
+
   :figwheel
   {:http-server-root "public"
    :nrepl-port 7002
@@ -73,7 +81,7 @@
              :source-paths ["env/prod/clj"]
              :resource-paths ["env/prod/resources"]}
 
-   :dev           [:project/dev :profiles/dev]
+   :dev           [:project/dev]
 
    :project/dev  {:jvm-opts ["-Dconf=dev-config.edn"]
                   :dependencies [[binaryage/devtools "0.9.10"]
@@ -105,5 +113,4 @@
                   :resource-paths ["env/dev/resources"]
                   :repl-options {:init-ns user}
                   :injections [(require 'pjstadig.humane-test-output)
-                               (pjstadig.humane-test-output/activate!)]}
-   :profiles/dev {}})
+                               (pjstadig.humane-test-output/activate!)]}})

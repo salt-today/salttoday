@@ -9,4 +9,5 @@
    (fn []
      (log/info "\n-=[salttoday has shut down successfully]=-"))
    :middleware identity
-   :database-url "datomic:free://localhost:4334/salttoday"})
+   :database-url "datomic:free://localhost:4334/salttoday"
+   :port 80})
