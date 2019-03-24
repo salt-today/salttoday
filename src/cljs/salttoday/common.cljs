@@ -22,6 +22,8 @@
 
 
       ; Comment Body / Link to Article
+
+
       [:div.column.comment-body {:style {:flex 70 :border-image (str "linear-gradient(90deg, #0072bc " pos-gradient "%, #ed1c24 " neg-gradient "%) 2 / 4px")}}
 
        ; Likes
