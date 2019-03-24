@@ -1,6 +1,0 @@
-language: clojure
-sudo: required
-lein: lein
-script: lein cljfmt check
-jdk:
-  - oraclejdk8

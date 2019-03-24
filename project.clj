@@ -35,7 +35,6 @@
                  [com.datomic/datomic-free "0.9.5697"]]
 
   :min-lein-version "2.0.0"
-  
   :source-paths ["src/clj" "src/cljs" "src/cljc"]
   :test-paths ["test/clj"]
   :resource-paths ["resources" "target/cljsbuild"]
@@ -52,7 +51,6 @@
    :nrepl-port 7002
    :css-dirs ["resources/public/css"]
    :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
-  
 
   :profiles
   {:uberjar {:omit-source true
@@ -76,7 +74,6 @@
              :resource-paths ["env/prod/resources"]}
 
    :dev           [:project/dev :profiles/dev]
-   :test          [:project/dev :project/test :profiles/test]
 
    :project/dev  {:jvm-opts ["-Dconf=dev-config.edn"]
                   :dependencies [[binaryage/devtools "0.9.10"]
@@ -103,13 +100,10 @@
                       :source-map true
                       :optimizations :none
                       :pretty-print true}}}}
-                  
-                  
 
                   :source-paths ["env/dev/clj"]
                   :resource-paths ["env/dev/resources"]
                   :repl-options {:init-ns user}
                   :injections [(require 'pjstadig.humane-test-output)
                                (pjstadig.humane-test-output/activate!)]}
-   :profiles/dev {}
-   :profiles/test {}})
+   :profiles/dev {}})

@@ -1,8 +1,8 @@
-FROM java:8-alpine
-MAINTAINER Your Name <you@example.com>
+FROM openjdk:8u191-jre-alpine3.9
 
-ADD target/uberjar/salttoday.jar /salttoday/app.jar
+COPY target/uberjar/salttoday.jar /opt/salttoday.jar
+COPY server/prod-config.edn /opt/prod-config.edn
 
-EXPOSE 3000
+EXPOSE 80
 
-CMD ["java", "-jar", "/salttoday/app.jar"]
+CMD ["java", "-Dconf=\"/opt/prod-config.edn\"", "-jar", "/opt/salttoday.jar"]
