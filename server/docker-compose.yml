@@ -1,0 +1,27 @@
+version: "3"
+services:
+  # https://github.com/v2tec/watchtower
+  # Will periodically check for image updates and hot reload image
+  watchtower:
+    image: v2tec/watchtower
+    environment:
+      - WATCHTOWER_NOTIFICATIONS=slack
+      - WATCHTOWER_NOTIFICATION_SLACK_IDENTIFIER=Watchtower
+      - "WATCHTOWER_NOTIFICATION_SLACK_HOOK_URL=${DISCORD_HOOK_URL}/slack"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 30
+
+  datomic:
+    image: akiel/datomic-free
+    ports:
+      - 4334:4334
+      - 4335:4335
+      - 4336:4336
+    volumes:
+      - salttoday-vol:/root/datomic-volumes
+
+  salttoday:
+    image: xtvaser/salttoday:latest
+    ports:
+      - 80:80
