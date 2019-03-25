@@ -16,16 +16,19 @@
    :handler top-comments-handler})
 
 (defn home-content [snapshot]
-  (list [:div.row.justify-center.header-wrapper
-         [:span.heading "Today"]]
-        [:div.column.justify-center.comments-wrapper
-         (for [comment (get snapshot "daily")]
-           (display-comment comment))]
-        [:div.row.justify-center.header-wrapper
-         [:span.heading "All Time"]]
-        [:div.column.justify-center.comments-wrapper
-         (for [comment (get snapshot "all-time")]
-           (display-comment comment))]))
+  (list
+        ; Temporary fix until Today functions properly
+   (if (not (empty? (get snapshot "daily")))
+     (list [:div.row.justify-center.header-wrapper
+            [:span.heading "Today"]]
+           [:div.column.justify-center.comments-wrapper
+            (for [comment (get snapshot "daily")]
+              (display-comment comment))]))
+   [:div.row.justify-center.header-wrapper
+    [:span.heading "All Time"]]
+   [:div.column.justify-center.comments-wrapper
+    (for [comment (get snapshot "all-time")]
+      (display-comment comment))]))
 
 (defn home-page []
   [:div.page-wrapper

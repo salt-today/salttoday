@@ -131,6 +131,10 @@ span.nav-link.active {
     text-align: center;
 }
 
+.small-heading {
+    font-size: 3em;
+}
+
 .header-wrapper {
     margin-bottom: 2em;
 }
@@ -153,6 +157,7 @@ span.nav-link.active {
     margin-right: 1em;
     background: #ffffed;
     padding: 0.5em;
+    color: black;
 }
 
 .comment-likes {
@@ -210,9 +215,19 @@ span.nav-link.active {
     padding-top: 10px;
 }
 
+.article-title {
+    width: 90%;
+    font-size: 1.5em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .article-link {
     text-decoration: none;
-    color: black;
+    color: white;
+    padding-left: 55px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .article-link:hover {
@@ -257,6 +272,28 @@ span.nav-link.active {
 
 .user-stats-row > span.positive {
     margin-right: 0.5em;
+}
+
+.definition {
+    font-size: 1.75em;
+}
+.definition-title {
+    padding-right: 10px;
+    text-align: center;
+    font-size: 1.3em;
+}
+
+.about-link {
+    text-decoration: none;
+    color: white;
+}
+
+.about-link:hover {
+    text-decoration: underline;
+}
+
+.about-text {
+    font-size: 1.75em;
 }
 
 .footer-pile{
