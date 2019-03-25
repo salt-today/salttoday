@@ -9,27 +9,13 @@
             <pattern>%date{ISO8601} [%thread] %-5level %logger{36} - %msg %n</pattern>
         </encoder>
     </appender>
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>log/salttoday.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>log/salttoday.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>100MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
-            <!-- keep 30 days of history -->
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-        <encoder>
-            <charset>UTF-8</charset>
-            <pattern>%date{ISO8601} [%thread] %-5level %logger{36} - %msg %n</pattern>
-        </encoder>
-    </appender>
     <logger name="org.apache.http" level="warn" />
     <logger name="org.xnio.nio" level="warn" />
     <logger name="io.undertow.session" level="warn" />
     <logger name="io.undertow.request" level="warn" />
+    <logger name="datomic.db" level="info"/>
+    <logger name="io.honeycomb" level="info"/>
     <root level="DEBUG">
         <appender-ref ref="STDOUT" />
-        <appender-ref ref="FILE" />
     </root>
 </configuration>

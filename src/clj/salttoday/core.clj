@@ -1,6 +1,7 @@
 (ns salttoday.core
   (:require [salttoday.handler :as handler]
             [salttoday.db.core :as db]
+            [salttoday.metrics.core :as honeycomb]
             [salttoday.scraper :refer [scrape-sootoday]]
             [overtone.at-at :as at-at]
             [luminus.repl-server :as repl]

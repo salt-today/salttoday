@@ -2,6 +2,7 @@
   (:require [datomic.api :as d]
             [mount.core :refer [defstate]]
             [salttoday.config :refer [env]]
+            [salttoday.metrics.core :as honeycomb]
             [salttoday.scraper :as scraper]
             [clojure.tools.logging :as log]
             [clj-time.core :as t]
@@ -65,6 +66,8 @@
 (defn ^:private add-or-get-user [conn username]
   (let [user (-> (d/q '[:find ?e :in $ ?name :where [?e :user/name ?name]] (d/db conn) username)
                  ffirst)]
+    (honeycomb/send-metrics {"db-operation" "add-or-get-user"
+                             "username" username})
     (if (nil? user)
       (-> @(d/transact conn [{:user/name username
                               :user/upvotes 0
@@ -72,11 +75,13 @@
           :tempids first second)
       user)))
 
-;; add title to keys eventually once that is also scraped
 (defn ^:private add-post [conn {:keys [url title]}]
   ; Check if the post exists, if it doesn't add it.
   (let [post-id (-> (d/q '[:find ?e :in $ ?url :where [?e :post/url ?url]] (d/db conn) url)
                     ffirst)]
+    (honeycomb/send-metrics {"db-operation" "add-post"
+                             "post-url" url
+                             "post-title" title})
     (if (nil? post-id)
       (-> @(d/transact conn [{:post/url url
                               :post/title title}])
@@ -118,6 +123,13 @@
 
         upvote-increase (vote-difference comment-upvotes upvotes)
         downvote-increase (vote-difference comment-downvotes downvotes)]
+    (honeycomb/send-metrics {"db-operation" "add-comment"
+                             "user-id" user-id
+                             "user-upvotes" user-upvotes
+                             "user-downvotes" user-downvotes
+                             "comment-id" comment-id
+                             "comment-upvotes" comment-upvotes
+                             "comment-downvotes" comment-downvotes})
     (if (zero? comment-id)
       @(d/transact conn [{:db/id "comment"
                           :comment/user user-id
@@ -266,8 +278,6 @@
 
 
 ;; Stats
-
-
 (defn get-todays-stats []
   (let [comments (get-all-comments (db-since-midnight))
         comment-count (count comments)
