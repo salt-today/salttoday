@@ -16,6 +16,7 @@ services:
   datomic:
     image: akiel/datomic-free:0.9.5656
     container_name: datomic
+    network_mode: host
     ports:
       - 4334:4334
       - 4335:4335
@@ -27,8 +28,12 @@ services:
   salttoday:
     image: xtvaser/salttoday:latest
     container_name: salttoday
+    network_mode: host
     ports:
       - 80:80
+    environment:
+      - "LOGDNA_INGEST_KEY=${LOGDNA_INGEST_KEY}"
+
 
 volumes:
   salttoday-vol:
