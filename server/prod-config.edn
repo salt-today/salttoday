@@ -1,3 +1,0 @@
-{:dev false
- :port 80
- :database-url "datomic:free://localhost:4334/salttoday"}

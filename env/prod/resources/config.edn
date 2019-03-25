@@ -1,5 +1,3 @@
 {:dev false
  :port 80
- ; set your dev database connection URL here
- ; :database-url "datomic:free://localhost:4334/salttoday_dev"
- :database-url "datomic:mem://salttoday"}
+ :database-url "datomic:free://localhost:4334/salttoday"}
