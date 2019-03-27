@@ -17,7 +17,6 @@
       {:headers {"Accept" "application/transit"}
        :handler top-comments-handler})))
 
-
 (defn home-content [snapshot]
   (list
         ; Temporary fix until Today functions properly
