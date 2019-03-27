@@ -11,9 +11,11 @@
   (js/console.log response)
   (reset! state response))
 
-(GET "/top-comments"
-  {:headers {"Accept" "application/transit"}
-   :handler top-comments-handler})
+(defn get-comments []
+  (if (empty? @state)
+    (GET "/top-comments"
+      {:headers {"Accept" "application/transit"}
+       :handler top-comments-handler})))
 
 (defn home-content [snapshot]
   (list
@@ -31,6 +33,7 @@
       (display-comment comment))]))
 
 (defn home-page []
+  (get-comments)
   [:div.page-wrapper
    (make-navbar :home)
    (make-content :home (home-content @state))
