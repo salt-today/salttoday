@@ -12,9 +12,11 @@
   (js/console.log response)
   (reset! state {:name (-> response (get "users") first (get "name"))}))
 
-(GET "/top-users"
-  {:headers {"Accept" "application/transit"}
-   :handler top-users-handler})
+(defn get-users []
+  (if (empty? @state)
+    (GET "/top-users"
+      {:headers {"Accept" "application/transit"}
+       :handler top-users-handler})))
 
 (defn about-content []
   (list [:div.row.justify-center.header-wrapper
@@ -43,6 +45,7 @@
         [:div.about-text "It happens. Bear with me, theres a few kinks that need to be worked out yet."]))
 
 (defn about-page []
+  (get-users)
   [:div.page-wrapper
    (make-navbar :about)
    (make-content :about (about-content))
