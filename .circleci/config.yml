@@ -112,20 +112,35 @@ workflows:
   version: 2.1
   lint_build_deploy:
     jobs:
-      - checkout_code
+      - checkout_code:
+          filters:
+            tags:
+              only: /.*/
       - bundle_dependencies:
           requires:
             - checkout_code
+          filters:
+            tags:
+              only: /.*/
       - lint_code:
           requires:
             - bundle_dependencies
+          filters:
+            tags:
+              only: /.*/
       - unit_tests:
           requires:
             - bundle_dependencies
+          filters:
+            tags:
+              only: /.*/
       - uberjar:
           requires:
             - lint_code
             - unit_tests
+          filters:
+            tags:
+              only: /.*/
       - docker_push:
           requires:
             - uberjar
