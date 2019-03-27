@@ -45,6 +45,6 @@
   []
   (get-users)
   [:div.page-wrapper
-   (make-navbar :home)
-   (make-content :home (leaderboard-content @state))
+   (make-navbar :users)
+   (make-content :users (leaderboard-content @state))
    (make-right-offset)])
