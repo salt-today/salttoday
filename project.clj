@@ -1,5 +1,4 @@
 (defproject salttoday "1.0.0"
-  :jvm-opts ["--add-modules" "java.xml.bind"]
 
   :description "Scrapes Sootoday and displays statistics about users and comments."
   :url "http://www.salttoday.ca"
