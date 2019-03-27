@@ -116,36 +116,24 @@ workflows:
           filters:
             tags:
               only: /.*/
-            branches:
-              only:
-               - master
       - bundle_dependencies:
           requires:
             - checkout_code
           filters:
             tags:
               only: /.*/
-            branches:
-              only:
-               - master
       - lint_code:
           requires:
             - bundle_dependencies
           filters:
             tags:
               only: /.*/
-            branches:
-              only:
-               - master
       - unit_tests:
           requires:
             - bundle_dependencies
           filters:
             tags:
               only: /.*/
-            branches:
-              only:
-               - master
       - uberjar:
           requires:
             - lint_code
@@ -153,9 +141,6 @@ workflows:
           filters:
             tags:
               only: /.*/
-            branches:
-              only:
-               - master
       - docker_push:
           requires:
             - uberjar
