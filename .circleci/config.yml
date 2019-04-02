@@ -21,6 +21,8 @@ jobs:
     working_directory: ~/build
     steps:
       - checkout
+      - run: echo $TEST_VAR
+      - run: echo $DOCKER_USER
       - save_cache:
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
           paths:
@@ -116,6 +118,7 @@ workflows:
   lint_build_deploy:
     jobs:
       - checkout_code:
+          context: SaltToday Credentials
           filters:
             tags:
               only: /.*/
