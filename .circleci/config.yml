@@ -118,6 +118,7 @@ workflows:
   lint_build_deploy:
     jobs:
       - checkout_code:
+          context: SaltToday Credentials
           filters:
             tags:
               only: /.*/
