@@ -21,8 +21,6 @@ jobs:
     working_directory: ~/build
     steps:
       - checkout
-      - run: echo $TEST_VAR
-      - run: echo $DOCKER_USER
       - save_cache:
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
           paths:
@@ -39,6 +37,8 @@ jobs:
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "project.clj" }}
+      - run: echo $TEST_VAR
+      - run: echo $DOCKER_USER
       - run: lein deps
       - save_cache:
           key: v1-dependencies-{{ checksum "project.clj" }}
@@ -118,11 +118,11 @@ workflows:
   lint_build_deploy:
     jobs:
       - checkout_code:
-          context: SaltToday Credentials
           filters:
             tags:
               only: /.*/
       - bundle_dependencies:
+          context: SaltToday Credentials
           requires:
             - checkout_code
           filters:
