@@ -4,7 +4,7 @@ commands:
   early_return_for_forked_pull_requests:
     description: >-
       If this build is from a fork, stop executing the current job and return success.
-      This is useful to avoid steps that will fail due to missing credentials.
+      This is useful to avoid steps that will fail due to missing credentials..
     steps:
       - run:
           name: Early return if this build is from a forked PR
