@@ -26,6 +26,11 @@
            [:div.column.justify-center.comments-wrapper
             (for [comment (get snapshot "daily")]
               (display-comment comment))]))
+        (list [:div.row.justify-center.header-wrapper
+               [:span.heading "Weekly"]]
+              [:div.column.justify-center.comments-wrapper
+               (for [comment (get snapshot "weekly")]
+                    (display-comment comment))])
    [:div.row.justify-center.header-wrapper
     [:span.heading "All Time"]]
    [:div.column.justify-center.comments-wrapper

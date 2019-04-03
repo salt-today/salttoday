@@ -14,6 +14,7 @@
 
   (GET "/top-comments" []
     (-> (response/ok {:daily (db/get-daily-comments 3)
+                      :weekly (db/get-weekly-comments 5)
                       :all-time (db/get-top-x-comments 50)})
         (response/header "Content-Type"
 
