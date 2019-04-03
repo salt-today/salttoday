@@ -220,8 +220,8 @@
   (get-top-x-comments num (db-since-days-ago 1)))
 
 (defn get-weekly-comments
-      [num]
-      (get-top-x-comments num (db-since-days-ago 7)))
+  [num]
+  (get-top-x-comments num (db-since-days-ago 7)))
 
 ; -----------
 ; User stats
