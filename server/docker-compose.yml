@@ -35,6 +35,9 @@ services:
       - KEYSTORE_PATH=/opt/keystore.jks
       - "LOGDNA_INGEST_KEY=${LOGDNA_INGEST_KEY}"
       - "SSL_PASSWORD=${SSL_PASSWORD}"
+    volumes:
+      # Use /scripts/gen-keystore.sh to generate a self-signed JKS SSL cert
+      - ~/keystore.jks:/opt/keystore.jks
 
 volumes:
   salttoday-vol:
