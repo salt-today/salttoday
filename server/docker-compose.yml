@@ -30,10 +30,11 @@ services:
     container_name: salttoday
     network_mode: host
     ports:
-      - 80:80
+      - 443:443
     environment:
+      - KEYSTORE_PATH=/opt/keystore.jks
       - "LOGDNA_INGEST_KEY=${LOGDNA_INGEST_KEY}"
-
+      - "SSL_PASSWORD=${SSL_PASSWORD}"
 
 volumes:
   salttoday-vol:

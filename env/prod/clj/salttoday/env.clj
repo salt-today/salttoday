@@ -4,10 +4,8 @@
 (def defaults
   {:init
    (fn []
-     (log/info "\n-=[salttoday started successfully]=-"))
+     (log/info "\n-=[SaltToday [PROD] started successfully]=-"))
    :stop
    (fn []
-     (log/info "\n-=[salttoday has shut down successfully]=-"))
-   :middleware identity
-   :database-url "datomic:free://localhost:4334/salttoday"
-   :port 80})
+     (log/info "\n-=[SaltToday [PROD] has shut down successfully]=-"))
+   :middleware identity})

@@ -18,10 +18,14 @@
 (mount/defstate ^{:on-reload :noop} http-server
   :start
   (http/start
-   (-> env
-       (assoc  :handler #'handler/app)
-       (update :io-threads #(or % (* 2 (.availableProcessors (Runtime/getRuntime)))))
-       (update :port #(or (-> env :options :port) %))))
+   (merge
+    {:handler #'handler/app
+     :io-threads (* 2 (.availableProcessors (Runtime/getRuntime)))
+     :port (-> env :port)}
+    (if (-> env :enable-ssl)
+      {:ssl-port (-> env :ssl-port)
+       :keystore (System/getenv "KEYSTORE_PATH")
+       :key-password (System/getenv "SSL_PASSWORD")})))
   :stop
   (http/stop http-server))
 
