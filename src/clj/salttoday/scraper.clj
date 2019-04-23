@@ -112,8 +112,8 @@
                                :downvotes (get-downvotes comment-html)})}]
     (honeycomb/send-metrics {"context" "scraper"
                              "article-id" id
-                             "comment-url" comment-url
                              "article-title" title
+                             "comment-url" comment-url
                              "num-comments" (count (:comments comments))})
     comments))
 
