@@ -290,6 +290,8 @@
 
 
 ;; Stats
+
+
 (defn get-todays-stats []
   (let [comments (get-all-comments (db-since-days-ago 1))
         comment-count (count comments)
