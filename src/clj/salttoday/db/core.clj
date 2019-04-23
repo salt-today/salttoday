@@ -218,11 +218,10 @@
   ([num]
    (get-top-x-comments num (d/db conn))))
 
-(defn db-since-midnight []
+(defn db-since-days-ago [days]
   (let [midnight (-> (java.time.LocalDateTime/now)
                      (.minusHours 5)
-                     (.toLocalDate)
-                     (.atStartOfDay)
+                     (.minusDays days)
                      (.atZone (java.time.ZoneId/of "America/Toronto"))
                      (.toInstant)
                      (java.util.Date/from))]
@@ -230,7 +229,11 @@
 
 (defn get-daily-comments
   [num]
-  (get-top-x-comments num (db-since-midnight)))
+  (get-top-x-comments num (db-since-days-ago 1)))
+
+(defn get-weekly-comments
+  [num]
+  (get-top-x-comments num (db-since-days-ago 7)))
 
 ; -----------
 ; User stats
@@ -279,7 +282,7 @@
 
 ;; Stats
 (defn get-todays-stats []
-  (let [comments (get-all-comments (db-since-midnight))
+  (let [comments (get-all-comments (db-since-days-ago 1))
         comment-count (count comments)
         upvote-count (reduce #(+ %1 (:upvotes %2)) 0 comments)
         downvote-count (reduce #(+ %1 (:downvotes %2)) 0 comments)

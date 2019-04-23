@@ -13,8 +13,9 @@
     <logger name="org.xnio.nio" level="warn" />
     <logger name="io.undertow.session" level="warn" />
     <logger name="io.undertow.request" level="warn" />
-    <logger name="datomic.db" level="info"/>
+    <logger name="datomic.db" level="info" />
     <logger name="io.honeycomb" level="info"/>
+
     <root level="DEBUG">
         <appender-ref ref="STDOUT" />
     </root>

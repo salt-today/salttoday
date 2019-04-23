@@ -2,6 +2,8 @@
 
 ## About
 
+[Currently lives here](http://www.salttoday.ca)
+
 Scrapes comments from Sootoday articles and displays like/dislike statistics for comments and users.
 
 ## Prerequisites

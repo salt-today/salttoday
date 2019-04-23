@@ -104,29 +104,48 @@ jobs:
       - run: mv /tmp/workspace/salttoday.jar ./target/uberjar/salttoday.jar
       - setup_remote_docker:
           docker_layer_caching: false
-      - run: docker build -t xtvaser/salttoday:latest .
+      - run: docker build -t xtvaser/salttoday:latest -t xtvaser/salttoday:$CIRCLE_TAG .
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - run: docker push xtvaser/salttoday:latest
+      - run: docker push xtvaser/salttoday:$CIRCLE_TAG
+      - run: chmod +x ./scripts/gh-artifact-upload.sh
+      - run: owner=salt-today repo=salttoday tag=$CIRCLE_TAG filename=./target/uberjar/salttoday-$CIRCLE_TAG ./scripts/gh-artifact-upload.sh
 
 workflows:
   version: 2.1
   lint_build_deploy:
     jobs:
-      - checkout_code
+      - checkout_code:
+          filters:
+            tags:
+              only: /.*/
       - bundle_dependencies:
           requires:
             - checkout_code
+          filters:
+            tags:
+              only: /.*/
       - lint_code:
           requires:
             - bundle_dependencies
+          filters:
+            tags:
+              only: /.*/
       - unit_tests:
           requires:
             - bundle_dependencies
+          filters:
+            tags:
+              only: /.*/
       - uberjar:
           requires:
             - lint_code
             - unit_tests
+          filters:
+            tags:
+              only: /.*/
       - docker_push:
+          context: SaltToday Credentials
           requires:
             - uberjar
           # Only run on tagged builds starting with 'v'

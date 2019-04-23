@@ -1,4 +1,5 @@
 {:dev true
+ :enable-ssl false
  :port 3000
  :nrepl-port 7000
  :database-url "datomic:mem://salttoday"}

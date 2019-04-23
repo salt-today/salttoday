@@ -12,9 +12,11 @@
   (js/console.log response)
   (reset! state response))
 
-(GET "/top-users"
-  {:headers {"Accept" "application/transit"}
-   :handler top-users-handler})
+(defn get-users []
+  (if (empty? @state)
+    (GET "/top-users"
+      {:headers {"Accept" "application/transit"}
+       :handler top-users-handler})))
 
 (defn display-user
   [user]
@@ -41,7 +43,8 @@
 
 (defn users-page
   []
+  (get-users)
   [:div.page-wrapper
-   (make-navbar :home)
-   (make-content :home (leaderboard-content @state))
+   (make-navbar :users)
+   (make-content :users (leaderboard-content @state))
    (make-right-offset)])
