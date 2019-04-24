@@ -4,13 +4,13 @@
            [io.honeycomb.libhoney LibHoney]))
 
 (defn create-honey-client [key]
-  (when (nil? key)
-    nil)
-  (let [optionsBuilder (LibHoney/options)]
-    (doto optionsBuilder
-      (.setWriteKey key)
-      (.setDataset "SaltToday-Prod"))
-    (LibHoney/create (.build optionsBuilder))))
+  (if (nil? key)
+    nil
+    (let [optionsBuilder (LibHoney/options)]
+      (doto optionsBuilder
+        (.setWriteKey key)
+        (.setDataset "SaltToday-Prod"))
+      (LibHoney/create (.build optionsBuilder)))))
 
 (defstate honey-client
   :start (let [honeycomb-key (System/getenv "HONEYCOMB_KEY")]
