@@ -2,6 +2,7 @@
   (:require [datomic.api :as d]
             [mount.core :refer [defstate]]
             [salttoday.config :refer [env]]
+            [salttoday.metrics.core :as honeycomb]
             [salttoday.scraper :as scraper]
             [clojure.tools.logging :as log]
             [clj-time.core :as t]
@@ -63,24 +64,35 @@
     @(d/transact conn schema)))
 
 (defn ^:private add-or-get-user [conn username]
-  (let [user (-> (d/q '[:find ?e :in $ ?name :where [?e :user/name ?name]] (d/db conn) username)
+  (let [user (-> (d/q '[:find ?e
+                        :in $ ?name
+                        :where [?e :user/name ?name]] (d/db conn) username)
                  ffirst)]
     (if (nil? user)
-      (-> @(d/transact conn [{:user/name username
-                              :user/upvotes 0
-                              :user/downvotes 0}])
-          :tempids first second)
+      (do
+        (honeycomb/send-metrics {"db-operation" "add-or-get-user"
+                                 "username" username})
+        (-> @(d/transact conn [{:user/name username
+                                :user/upvotes 0
+                                :user/downvotes 0}])
+            :tempids first second))
       user)))
 
-;; add title to keys eventually once that is also scraped
 (defn ^:private add-post [conn {:keys [url title]}]
   ; Check if the post exists, if it doesn't add it.
-  (let [post-id (-> (d/q '[:find ?e :in $ ?url :where [?e :post/url ?url]] (d/db conn) url)
+  (let [post-id (-> (d/q '[:find ?e
+                           :in $ ?url
+                           :where [?e :post/url ?url]] (d/db conn) url)
                     ffirst)]
     (if (nil? post-id)
-      (-> @(d/transact conn [{:post/url url
-                              :post/title title}])
-          :tempids first second)
+      (do
+        (honeycomb/send-metrics {"db-operation" "add-post"
+                                 "post-id" post-id
+                                 "post-url" url
+                                 "post-title" title})
+        (-> @(d/transact conn [{:post/url url
+                                :post/title title}])
+            :tempids first second))
       post-id)))
 
 (defn ^:private vote-difference [old new]
@@ -89,7 +101,7 @@
     (- new old)))
 
 ;; TODO: THIS REALLY SHOULD BE A TRANSACTION FUNCTION
-(defn ^:private add-comment [conn post-id {:keys [username comment timestamp upvotes downvotes]}]
+(defn ^:private add-comment [conn post-id post-title {:keys [username comment timestamp upvotes downvotes]}]
   (let [user-id (add-or-get-user conn username)
         user-stats (-> (d/q '[:find ?upvotes ?downvotes :in $ ?user-id :where
                               [?user-id :user/upvotes ?upvotes]
@@ -132,16 +144,25 @@
                           :comment/downvotes downvotes}]))
     @(d/transact conn [{:db/id user-id
                         :user/upvotes (+ user-upvotes upvote-increase)
-                        :user/downvotes (+ user-downvotes downvote-increase)}])))
+                        :user/downvotes (+ user-downvotes downvote-increase)}])
+    (honeycomb/send-metrics {"db-operation" "add-comment"
+                             "post-id" post-id
+                             "post-title" post-title
+                             "user-id" user-id
+                             "user-upvotes" user-upvotes
+                             "user-downvotes" user-downvotes
+                             "comment-id" comment-id
+                             "comment-upvotes" comment-upvotes
+                             "comment-downvotes" comment-downvotes})))
 
-(defn ^:private add-comments [conn post-id comments]
+(defn ^:private add-comments [conn post-id post-title comments]
   (doseq [comment comments]
-    (add-comment conn post-id comment)))
+    (add-comment conn post-id post-title comment)))
 
 (defn update-stats [posts]
   (doseq [post posts]
     (let [post-id (add-post conn post)]
-      (add-comments conn post-id (:comments post)))))
+      (add-comments conn post-id (:title post) (:comments post)))))
 
 
 ; -----------------------------------------------------------------------------------

@@ -1,7 +1,8 @@
 (ns salttoday.scraper
   (:require [net.cgrand.enlive-html :as html]
             [org.httpkit.client :as http]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [salttoday.metrics.core :as honeycomb]))
 
 (defn ^:private starts-with-strings
   [string substrings]
@@ -100,19 +101,28 @@
         title-div (-> (html/html-snippet
                        (:body @(http/get url {:insecure? true})))
                       (html/select [:h1]))
-        title (get-title-from-div title-div)]
-    {:url url
-     :title title
-     :comments (for [comment-html comments-html]
-                 {:username (get-username comment-html)
-                  :timestamp (get-comment-time comment-html)
-                  :comment (get-comment-text comment-html)
-                  :upvotes (get-upvotes comment-html)
-                  :downvotes (get-downvotes comment-html)})}))
+        title (get-title-from-div title-div)
+        comments {:url url
+                  :title title
+                  :comments (for [comment-html comments-html]
+                              {:username (get-username comment-html)
+                               :timestamp (get-comment-time comment-html)
+                               :comment (get-comment-text comment-html)
+                               :upvotes (get-upvotes comment-html)
+                               :downvotes (get-downvotes comment-html)})}]
+    (honeycomb/send-metrics {"context" "scraper"
+                             "article-id" id
+                             "article-title" title
+                             "comment-url" comment-url
+                             "num-comments" (count (:comments comments))})
+    comments))
 
 (defn scrape-sootoday
   []
   (flatten
-   (for [article (get-articles-from-homepage)]
-     (get-comments-from-article article))))
+   (let [articles (get-articles-from-homepage)]
+     (honeycomb/send-metrics {"context" "scraper"
+                              "num-articles" (count articles)})
+     (for [article articles]
+       (get-comments-from-article article)))))
 

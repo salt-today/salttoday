@@ -24,6 +24,7 @@
                  [enlive "1.1.6"]
                  [funcool/struct "1.2.0"]
                  [http-kit "2.1.18"]
+                 [io.honeycomb.libhoney/libhoney-java "1.0.2"]
                  [luminus-immutant "0.2.4"]
                  [luminus-nrepl "0.1.4"]
                  [luminus/ring-ttl-session "0.3.2"]
@@ -49,6 +50,8 @@
   :plugins [[lein-cljsbuild "1.1.5"]
             [lein-immutant "2.1.0"]
             [lein-cljfmt "0.6.4"]]
+
+  :repl-options {:timeout 120000}
 
   :clean-targets ^{:protect false}
 
