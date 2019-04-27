@@ -13,7 +13,6 @@
   (js/console.log response)
   (swap! state assoc days-range response))
 
-
 (defn get-comments []
   (if (empty? (:all-time @state))
     (do (GET "/comments" {:params {:offset    0
@@ -33,8 +32,6 @@
                                    :sort-type "score"}
                           :headers {"Accept" "application/transit"}
                           :handler (partial comments-handler :all-time)}))))
-
-
 
 (defn home-content [snapshot]
   (list
