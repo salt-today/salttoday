@@ -169,6 +169,21 @@
 ; Queries ---------------------------------------------------------------------------
 ; -----------------------------------------------------------------------------------
 
+
+(defn db-since-days-ago
+  "Given a number of days, returns a db from that many days ago.
+  If given a number <= 0, return the current state of the db."
+  [days]
+  (if (<= days 0) (d/db conn)
+      (let [midnight (-> (java.time.LocalDateTime/now)
+                         (.minusHours 5)
+                         (.minusDays days)
+                         (.atZone (java.time.ZoneId/of "America/Toronto"))
+                         (.toInstant)
+                         (java.util.Date/from))]
+        (d/since (d/db conn) midnight))))
+
+
 ; -----------------------------------------------------------------------------------
 ; Comments --------------------------------------------------------------------------
 ; -----------------------------------------------------------------------------------
@@ -189,6 +204,14 @@
   (sort #(> (+ (/ (:upvotes %1) 2) (:downvotes %1))
             (+ (/ (:upvotes %2) 2) (:downvotes %2)))
         comments))
+
+(defn sort-by-specified
+  [comments sort-type]
+  (case sort-type
+    "score" (sort-by-score comments)
+    "downvotes" (sort-by-downvotes comments)
+    "upvotes" (sort-by-upvotes comments)
+    (sort-by-score comments)))
 
 ; Pagination
 (defn paginate-comments
@@ -220,29 +243,11 @@
       (create-comment-maps)))
 
 (defn get-top-x-comments
-  ([num db]
-   (let [comments (get-all-comments db)
-         sorted-comments (sort-by-score comments)]
-     (paginate-comments num sorted-comments)))
-  ([num]
-   (get-top-x-comments num (d/db conn))))
-
-(defn db-since-days-ago [days]
-  (let [midnight (-> (java.time.LocalDateTime/now)
-                     (.minusHours 5)
-                     (.minusDays days)
-                     (.atZone (java.time.ZoneId/of "America/Toronto"))
-                     (.toInstant)
-                     (java.util.Date/from))]
-    (d/since (d/db conn) midnight)))
-
-(defn get-daily-comments
-  [num]
-  (get-top-x-comments num (db-since-days-ago 1)))
-
-(defn get-weekly-comments
-  [num]
-  (get-top-x-comments num (db-since-days-ago 7)))
+  [offset num sort-type days-ago]
+  (let [db (db-since-days-ago days-ago)
+        comments (get-all-comments db)
+        sorted-comments (sort-by-specified comments sort-type)]
+    (paginate-comments offset num sorted-comments)))
 
 ; -----------
 ; User stats
