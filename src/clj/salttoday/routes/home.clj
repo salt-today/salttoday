@@ -33,7 +33,7 @@
     (let [offset-num (string->number offset)
           amount-num (string->number amount)
           days-num (string->number days)]
-      (-> (response/ok {:comments (db/get-top-x-comments offset-num amount-num sort-type days-num)})
+      (-> (response/ok (db/get-top-x-comments offset-num amount-num sort-type days-num))
           (response/header "Content-Type"
                            "application/json")))))
 
