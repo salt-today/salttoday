@@ -296,6 +296,25 @@ span.nav-link.active {
     font-size: 1.75em;
 }
 
+.sort-bar {
+    font-size: 1.5em;
+}
+
+.sort-item {
+    padding: 5px;
+}
+
+.sort-dropdown {
+    width: 150px;
+}
+
+.sort-dropdown select {
+    font-family: BebasNeue;
+    font-size: 1em;
+    background-color: #1D1D1D;
+    color: white;
+}
+
 .footer-pile{
     max-width: 100%;
 }
