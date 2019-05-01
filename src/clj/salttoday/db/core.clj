@@ -230,6 +230,8 @@
 
 
 ; Below is how queries with optional conditions are created, taken from here: https://grishaev.me/en/datomic-query
+
+
 (defn remap-query
   [{args :args :as m}]
   {:query (dissoc m :args)
@@ -253,20 +255,20 @@
 (defn create-get-comments-query
   [db search-text name]
   (cond-> initial-get-all-comments-query
-          true
-          (update :args conj db)
+    true
+    (update :args conj db)
 
-          search-text
-          (-> (update :in conj '?search-text)
-              (update :args conj search-text)
-              (update :where conj '[(.contains ^String ?text ?search-text)]))
+    search-text
+    (-> (update :in conj '?search-text)
+        (update :args conj search-text)
+        (update :where conj '[(.contains ^String ?text ?search-text)]))
 
-          name
-          (-> (update :in conj '?name)
-              (update :args conj name))
+    name
+    (-> (update :in conj '?name)
+        (update :args conj name))
 
-          true
-          remap-query))
+    true
+    remap-query))
 
 (defn get-comments
   ([db search-text name]
