@@ -29,11 +29,11 @@
         (response/header "Content-Type"
                          "application/json")))
 
-  (GET "/comments" [offset amount sort-type days]
+  (GET "/comments" [offset amount sort-type days search-text user]
     (let [offset-num (string->number offset)
           amount-num (string->number amount)
           days-num (string->number days)]
-      (-> (response/ok (db/get-top-x-comments offset-num amount-num sort-type days-num))
+      (-> (response/ok (db/get-top-x-comments offset-num amount-num sort-type days-num search-text user))
           (response/header "Content-Type"
                            "application/json")))))
 
