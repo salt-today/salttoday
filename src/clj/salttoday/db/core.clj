@@ -228,24 +228,60 @@
     (apply assoc {}
            (interleave [:upvotes :downvotes :user :text :title :url] comment))))
 
+
+; Below is how queries with optional conditions are created, taken from here: https://grishaev.me/en/datomic-query
+
+
+(defn remap-query
+  [{args :args :as m}]
+  {:query (dissoc m :args)
+   :args args})
+
 ; Gets literally every comment in the database.
-(defn get-all-comments
-  [db]
-  (-> (d/q '[:find ?upvotes ?downvotes ?name ?text ?title ?url :in $ :where
-             [?c :comment/text ?text]
-             [?c :comment/upvotes ?upvotes]
-             [?c :comment/downvotes ?downvotes]
-             [?c :comment/user ?u]
-             [?u :user/name ?name]
-             [?p :post/comment ?c]
-             [?p :post/title ?title]
-             [?p :post/url ?url]] db)
-      (create-comment-maps)))
+(def initial-get-all-comments-query
+  '{:find [?upvotes ?downvotes ?name ?text ?title ?url]
+    :in [$]
+    :args []
+    :where [[?c :comment/text ?text]
+            [?c :comment/upvotes ?upvotes]
+            [?c :comment/downvotes ?downvotes]
+            [?c :comment/user ?u]
+            [?u :user/name ?name]
+            [?p :post/comment ?c]
+            [?p :post/title ?title]
+            [?p :post/url ?url]]})
+
+; Adds any optional args/conditionals to the query
+(defn create-get-comments-query
+  [db search-text name]
+  (cond-> initial-get-all-comments-query
+    true
+    (update :args conj db)
+
+    search-text
+    (-> (update :in conj '?search-text)
+        (update :args conj search-text)
+        (update :where conj '[(.contains ^String ?text ?search-text)]))
+
+    name
+    (-> (update :in conj '?name)
+        (update :args conj name))
+
+    true
+    remap-query))
+
+(defn get-comments
+  ([db search-text name]
+   (let [query-map (create-get-comments-query db search-text name)]
+     (-> (apply (partial d/q (:query query-map)) (:args query-map))
+         (create-comment-maps))))
+  ([db]
+   (get-comments db nil nil)))
 
 (defn get-top-x-comments
-  [offset num sort-type days-ago]
+  [offset num sort-type days-ago search-text name]
   (let [db (db-since-days-ago days-ago)
-        comments (get-all-comments db)
+        comments (get-comments db search-text name)
         sorted-comments (sort-by-specified comments sort-type)]
     (paginate-comments offset num sorted-comments)))
 
@@ -298,7 +334,7 @@
 
 
 (defn get-todays-stats []
-  (let [comments (get-all-comments (db-since-days-ago 1))
+  (let [comments (get-comments (db-since-days-ago 1))
         comment-count (count comments)
         upvote-count (reduce #(+ %1 (:upvotes %2)) 0 comments)
         downvote-count (reduce #(+ %1 (:downvotes %2)) 0 comments)

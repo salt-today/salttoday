@@ -5,56 +5,63 @@
             [salttoday.pages.common :refer [content make-content make-navbar make-right-offset jumbotron]]))
 
 (def state
-  (r/atom {:daily []
-           :weekly []
-           :all-time []}))
+  (r/atom {:comments []
+           :offset 0
+           :amount 50
+           :sort-type "score"
+           :days "1"}))
 
-(defn comments-handler [days-range response]
+(defn comments-handler [response]
   (js/console.log response)
-  (swap! state assoc days-range response))
+  (swap! state assoc :comments response))
 
 (defn get-comments []
-  (if (empty? (:all-time @state))
-    (do (GET "/comments" {:params {:offset    0
-                                   :amount    3
-                                   :sort-type "score"
-                                   :days      1}
-                          :headers {"Accept" "application/transit"}
-                          :handler (partial comments-handler :daily)})
-        (GET "/comments" {:params {:offset 0
-                                   :amount 5
-                                   :sort-type "score"
-                                   :days 7}
-                          :headers {"Accept" "application/transit"}
-                          :handler (partial comments-handler :weekly)})
-        (GET "/comments" {:params {:offset 0
-                                   :amount 50
-                                   :sort-type "score"}
-                          :headers {"Accept" "application/transit"}
-                          :handler (partial comments-handler :all-time)}))))
+  (GET "/comments" {:params {:offset    (:offset @state)
+                             :amount    (:amount @state)
+                             :sort-type (:sort-type @state)
+                             :days      (:days @state)}
+                    :headers {"Accept" "application/transit"}
+                    :handler comments-handler}))
+
+(get-comments)
+
+(defn get-selected-value
+  [event]
+  (-> event .-target .-value))
+
+(defn filter-by-sort
+  [event]
+  (let [sort (get-selected-value event)]
+    (swap! state assoc :sort-type sort)
+    (get-comments)))
+
+(defn filter-by-days
+  [event]
+  (let [sort (get-selected-value event)]
+    (swap! state assoc :days sort)
+    (get-comments)))
 
 (defn home-content [snapshot]
   (list
-        ; Temporary fix until Today functions properly
-   (if (not (empty? (:daily snapshot)))
-     (list [:div.row.justify-center.header-wrapper
-            [:span.heading "Today"]]
-           [:div.column.justify-center.comments-wrapper
-            (for [comment (:daily snapshot)]
-              (display-comment comment))]))
-   (list [:div.row.justify-center.header-wrapper
-          [:span.heading "Weekly"]]
-         [:div.column.justify-center.comments-wrapper
-          (for [comment (:weekly snapshot)]
-            (display-comment comment))])
-   [:div.row.justify-center.header-wrapper
-    [:span.heading "All Time"]]
-   [:div.column.justify-center.comments-wrapper
-    (for [comment (:all-time snapshot)]
-      (display-comment comment))]))
+   [:div.row.justify-center.header-wrapper.sort-bar
+    [:div.column.sort-item.sort-dropdown
+     [:select {:on-change filter-by-sort}
+      [:option {:value "score"} "Top"]
+      [:option {:value "downvotes"} "Dislikes"]
+      [:option {:value "upvotes"} "Likes"]]]
+    [:div.column.sort-dropdown
+     [:select {:on-change filter-by-days}
+      [:option {:value 1} "Past Day"]
+      [:option {:value 7} "Past Week"]
+      [:option {:value 30} "Past Month"]
+      [:option {:value 365} "Past Year"]
+      [:option {:value 0} "Of All Time"]]]]
+
+   (list [:div.column.justify-center.comments-wrapper
+          (for [comment (:comments snapshot)]
+            (display-comment comment))])))
 
 (defn home-page []
-  (get-comments)
   [:div.page-wrapper
    (make-navbar :home)
    (make-content :home (home-content @state))
