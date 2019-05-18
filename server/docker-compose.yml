@@ -25,9 +25,9 @@ services:
       - salttoday-vol:/data
       - salttoday-logs:/log
 
-  logzio-collector:
+  docker-collector-logs:
     image: logzio/docker-collector-logs
-    container_name: logzio-collector
+    container_name: docker-collector-logs
     environment:
       - LOGZIO_TOKEN=${LOGZ_IO_TOKEN}
       - LOGZIO_URL=listener.logz.io:5015
