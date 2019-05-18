@@ -14,6 +14,7 @@
         </encoder>
     </appender>
 
+    <logger name="datomic.peer" level="warn" />
     <logger name="org.apache.http" level="warn" />
     <logger name="org.xnio.nio" level="warn" />
     <logger name="io.undertow.session" level="warn" />
