@@ -11,7 +11,6 @@ services:
       - "WATCHTOWER_NOTIFICATION_SLACK_HOOK_URL=${DISCORD_HOOK_URL}/slack"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    command: --interval 30
 
   datomic:
     image: akiel/datomic-free:0.9.5656
