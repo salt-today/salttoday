@@ -12,12 +12,12 @@
   :resource-paths ["resources" "target/cljsbuild"]
   :target-path "target/%s/"
 
-  :repositories [["jitpack.io" "https://jitpack.io"]]
+  :repositories []
 
-  :dependencies [[clj-time "0.14.4"]
+  :dependencies [[ch.qos.logback/logback-classic "1.2.3"]
+                 [clj-time "0.14.4"]
                  [cljs-ajax "0.7.3"]
                  [com.datomic/datomic-free "0.9.5697"]
-                 [com.github.humboldtdev/logback-logdna-bulk "1.0"]
                  [com.google.guava/guava "21.0"]
                  [compojure "1.6.1"]
                  [cprop "0.1.11"]

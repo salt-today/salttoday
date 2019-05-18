@@ -2,11 +2,6 @@
 <configuration>
     <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
 
-    <appender name="LogDNA" class="uk.co.humboldt.logging.LogDNABulkAppender">
-        <appName>SaltToday</appName>
-        <ingestKey>${LOGDNA_INGEST_KEY}</ingestKey>
-    </appender>
-
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <charset>UTF-8</charset>
@@ -21,6 +16,5 @@
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
-        <appender-ref ref="LogDNA"/>
     </root>
 </configuration>

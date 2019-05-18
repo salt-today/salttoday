@@ -25,6 +25,17 @@ services:
       - salttoday-vol:/data
       - salttoday-logs:/log
 
+  logzio-collector:
+    image: logzio/docker-collector-logs
+    container_name: logzio-collector
+    environment:
+      - LOGZIO_TOKEN=${LOGZ_IO_TOKEN}
+      - LOGZIO_URL=listener.logz.io:5015
+      - matchContainerName=datomic,salttoday
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers
+
   salttoday:
     image: xtvaser/salttoday:latest
     container_name: salttoday
@@ -33,7 +44,6 @@ services:
       - 443:443
     environment:
       - KEYSTORE_PATH=/opt/keystore.jks
-      - "LOGDNA_INGEST_KEY=${LOGDNA_INGEST_KEY}"
       - "SSL_PASSWORD=${SSL_PASSWORD}"
       - "HONEYCOMB_KEY=${HONEYCOMB_KEY}"
     volumes:
