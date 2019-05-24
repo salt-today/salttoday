@@ -63,22 +63,31 @@
                  :db.install/_attribute :db.part/db}]]
     @(d/transact conn schema)))
 
+(defn ^:private transact-and-log [& args]
+  (log/info "transaction arguments:" args)
+  (let [result @(apply d/transact args)]
+    (log/info "transaction result:" result)
+    result))
+
 (defn ^:private add-or-get-user [conn username]
+  (log/info "add-or-get-user")
   (let [user (-> (d/q '[:find ?e
                         :in $ ?name
                         :where [?e :user/name ?name]] (d/db conn) username)
                  ffirst)]
+    (log/info "was user found?" user)
     (if (nil? user)
       (do
         (honeycomb/send-metrics {"db-operation" "add-or-get-user"
                                  "username" username})
-        (-> @(d/transact conn [{:user/name username
-                                :user/upvotes 0
-                                :user/downvotes 0}])
+        (-> (transact-and-log conn [{:user/name username
+                                     :user/upvotes 0
+                                     :user/downvotes 0}])
             :tempids first second))
       user)))
 
 (defn ^:private add-post [conn {:keys [url title]}]
+  (log/info "add-post")
   ; Check if the post exists, if it doesn't add it.
   (let [post-id (-> (d/q '[:find ?e
                            :in $ ?url
@@ -90,8 +99,8 @@
                                  "post-id" post-id
                                  "post-url" url
                                  "post-title" title})
-        (-> @(d/transact conn [{:post/url url
-                                :post/title title}])
+        (-> (transact-and-log conn [{:post/url url
+                                     :post/title title}])
             :tempids first second))
       post-id)))
 
@@ -102,6 +111,9 @@
 
 ;; TODO: THIS REALLY SHOULD BE A TRANSACTION FUNCTION
 (defn ^:private add-comment [conn post-id post-title {:keys [username comment timestamp upvotes downvotes]}]
+  (log/info "add-comment")
+  (log/info "post-id" post-id)
+  (log/info "comment" comment)
   (let [user-id (add-or-get-user conn username)
         user-stats (-> (d/q '[:find ?upvotes ?downvotes :in $ ?user-id :where
                               [?user-id :user/upvotes ?upvotes]
@@ -131,20 +143,20 @@
         upvote-increase (vote-difference comment-upvotes upvotes)
         downvote-increase (vote-difference comment-downvotes downvotes)]
     (if (zero? comment-id)
-      @(d/transact conn [{:db/id "comment"
-                          :comment/user user-id
-                          :comment/text comment
-                          :comment/time timestamp
-                          :comment/upvotes upvotes
-                          :comment/downvotes downvotes}
-                         {:db/id post-id
-                          :post/comment "comment"}])
-      @(d/transact conn [{:db/id comment-id
-                          :comment/upvotes upvotes
-                          :comment/downvotes downvotes}]))
-    @(d/transact conn [{:db/id user-id
-                        :user/upvotes (+ user-upvotes upvote-increase)
-                        :user/downvotes (+ user-downvotes downvote-increase)}])
+      (transact-and-log conn [{:db/id "comment"
+                               :comment/user user-id
+                               :comment/text comment
+                               :comment/time timestamp
+                               :comment/upvotes upvotes
+                               :comment/downvotes downvotes}
+                              {:db/id post-id
+                               :post/comment "comment"}])
+      (transact-and-log conn [{:db/id comment-id
+                               :comment/upvotes upvotes
+                               :comment/downvotes downvotes}]))
+    (transact-and-log conn [{:db/id user-id
+                             :user/upvotes (+ user-upvotes upvote-increase)
+                             :user/downvotes (+ user-downvotes downvote-increase)}])
     (honeycomb/send-metrics {"db-operation" "add-comment"
                              "post-id" post-id
                              "post-title" post-title
@@ -156,10 +168,15 @@
                              "comment-downvotes" comment-downvotes})))
 
 (defn ^:private add-comments [conn post-id post-title comments]
+  (log/info "add-comments")
+  (log/info "post-id:" post-id)
+  (log/info "post-title" post-title)
+  (log/info "comments:" comments)
   (doseq [comment comments]
     (add-comment conn post-id post-title comment)))
 
 (defn update-stats [posts]
+  (log/info "update-stats")
   (doseq [post posts]
     (let [post-id (add-post conn post)]
       (add-comments conn post-id (:title post) (:comments post)))))
