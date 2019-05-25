@@ -242,8 +242,10 @@
 (defn create-comment-maps
   [comments]
   (for [comment comments]
-    (apply assoc {}
-           (interleave [:upvotes :downvotes :user :text :title :url] comment))))
+    (-> (apply merge comment)
+        ;; TODO This is currently done as it's what the frontend expects, update the frontend.
+        (clojure.set/rename-keys {:comment/upvotes :upvotes :comment/downvotes :downvotes :comment/text :text
+                                  :user/name :user :post/title :title :post/url :url}))))
 
 
 ; Below is how queries with optional conditions are created, taken from here: https://grishaev.me/en/datomic-query
@@ -256,21 +258,18 @@
 
 ; Gets literally every comment in the database.
 (def initial-get-all-comments-query
-  '{:find [?upvotes ?downvotes ?name ?text ?title ?url]
+  '{:find [(pull ?c [:comment/upvotes :comment/downvotes :comment/text])
+           (pull ?u [:user/name])
+           (pull ?p [:post/title :post/url])]
     :in [$]
     :args []
-    :where [[?c :comment/text ?text]
-            [?c :comment/upvotes ?upvotes]
-            [?c :comment/downvotes ?downvotes]
+    :where [[?c :comment/text ?text ?tx]
             [?c :comment/user ?u]
-            [?u :user/name ?name]
-            [?p :post/comment ?c]
-            [?p :post/title ?title]
-            [?p :post/url ?url]]})
+            [?p :post/comment ?c]]})
 
 ; Adds any optional args/conditionals to the query
 (defn create-get-comments-query
-  [db search-text name]
+  [db days-ago-date search-text name]
   (cond-> initial-get-all-comments-query
     true
     (update :args conj db)
@@ -282,23 +281,36 @@
 
     name
     (-> (update :in conj '?name)
-        (update :args conj name))
+        (update :args conj name)
+        (update :where conj '[?u :user/name ?name]))
+
+    days-ago-date
+    (-> (update :in conj '?days-ago-date)
+        (update :args conj days-ago-date)
+        (update :where conj '[?tx :db/txInstant ?inst])
+        (update :where conj '[(.before ^java.util.Date ?days-ago-date ?inst)]))
 
     true
     remap-query))
 
 (defn get-comments
-  ([db search-text name]
-   (let [query-map (create-get-comments-query db search-text name)]
+  ([db days-ago search-text name]
+   (let [days-ago-date (if (<= -1 days-ago)
+                         (-> (java.time.LocalDateTime/now)
+                             (.minusHours 5)
+                             (.minusDays days-ago)
+                             (.atZone (java.time.ZoneId/of "America/Toronto"))
+                             (.toInstant)
+                             (java.util.Date/from)))
+         query-map (create-get-comments-query db days-ago-date search-text name)]
      (-> (apply (partial d/q (:query query-map)) (:args query-map))
          (create-comment-maps))))
   ([db]
-   (get-comments db nil nil)))
+   (get-comments db -1 nil nil)))
 
 (defn get-top-x-comments
   [offset num sort-type days-ago search-text name]
-  (let [db (db-since-days-ago days-ago)
-        comments (get-comments db search-text name)
+  (let [comments (get-comments (d/db conn) days-ago search-text name)
         sorted-comments (sort-by-specified comments sort-type)]
     (paginate-comments offset num sorted-comments)))
 
