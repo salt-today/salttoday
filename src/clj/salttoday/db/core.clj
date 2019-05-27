@@ -293,16 +293,25 @@
     true
     remap-query))
 
+; Returns a date time of the current date minus a number of days.
+; If given a number less than 1, returns nil.
+(defn get-date [days-ago]
+  (if (< 1 days-ago)
+    (-> (java.time.LocalDateTime/now)
+        (.minusHours 5)
+        (.minusDays days-ago)
+        (.atZone (java.time.ZoneId/of "America/Toronto"))
+        (.toInstant)
+        (java.util.Date/from))))
+
+
 (defn get-comments
   ([db days-ago search-text name]
-   (let [days-ago-date (if (<= -1 days-ago)
-                         (-> (java.time.LocalDateTime/now)
-                             (.minusHours 5)
-                             (.minusDays days-ago)
-                             (.atZone (java.time.ZoneId/of "America/Toronto"))
-                             (.toInstant)
-                             (java.util.Date/from)))
-         query-map (create-get-comments-query db days-ago-date search-text name)]
+   (let [days-ago-date (get-date days-ago)
+         query-map (create-get-comments-query db days-ago-date search-text name)
+         x (log/info query-map)
+         y (log/info days-ago)
+         z (log/info days-ago-date)]
      (-> (apply (partial d/q (:query query-map)) (:args query-map))
          (create-comment-maps))))
   ([db]
