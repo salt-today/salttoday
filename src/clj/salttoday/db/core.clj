@@ -308,10 +308,7 @@
 (defn get-comments
   ([db days-ago search-text name]
    (let [days-ago-date (get-date days-ago)
-         query-map (create-get-comments-query db days-ago-date search-text name)
-         x (log/info query-map)
-         y (log/info days-ago)
-         z (log/info days-ago-date)]
+         query-map (create-get-comments-query db days-ago-date search-text name)]
      (-> (apply (partial d/q (:query query-map)) (:args query-map))
          (create-comment-maps))))
   ([db]
