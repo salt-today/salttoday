@@ -304,7 +304,6 @@
         (.toInstant)
         (java.util.Date/from))))
 
-
 (defn get-comments
   ([db days-ago search-text name]
    (let [days-ago-date (get-date days-ago)
