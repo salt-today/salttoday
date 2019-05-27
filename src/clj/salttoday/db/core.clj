@@ -296,7 +296,7 @@
 ; Returns a date time of the current date minus a number of days.
 ; If given a number less than 1, returns nil.
 (defn get-date [days-ago]
-  (if (< 1 days-ago)
+  (if (<= 1 days-ago)
     (-> (java.time.LocalDateTime/now)
         (.minusHours 5)
         (.minusDays days-ago)
