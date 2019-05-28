@@ -4,8 +4,6 @@
             [goog.events :as events]
             [goog.history.EventType :as HistoryEventType]
             [markdown.core :refer [md->html]]
-            [salttoday.ajax :refer [load-interceptors!]]
-            [ajax.core :refer [GET POST]]
             [salttoday.pages.home :as home]
             [salttoday.pages.user-leaderboard :as users]
             [salttoday.pages.about :as about])
@@ -23,7 +21,6 @@
 
 ;; -------------------------
 ;; Routes
-(secretary/set-config! :prefix "#")
 
 (secretary/defroute "/" []
   (swap! session assoc :page :home))
@@ -52,9 +49,9 @@
 ;; Initialize app
 
 (defn mount-components []
+  (js/console.log "Mounting Components")
   (r/render [#'page] (.getElementById js/document "app")))
 
 (defn init! []
-  (load-interceptors!)
   (hook-browser-navigation!)
   (mount-components))

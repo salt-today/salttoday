@@ -1,6 +1,5 @@
 (ns salttoday.pages.about
-  (:require [ajax.core :refer [GET PUT]]
-            [reagent.core :as r]
+  (:require [reagent.core :as r]
             [goog.string :as gstring]
             [salttoday.pages.common :refer [content make-content make-navbar make-right-offset jumbotron]]))
 
@@ -13,10 +12,11 @@
   (reset! state {:name (-> response (get "users") first (get "name"))}))
 
 (defn get-users []
-  (if (empty? @state)
-    (GET "/top-users"
-      {:headers {"Accept" "application/transit"}
-       :handler top-users-handler})))
+  [])
+  ; (if (empty? @state)
+  ;   (GET "/top-users"
+  ;     {:headers {"Accept" "application/transit"}
+  ;      :handler top-users-handler})))
 
 (defn about-content []
   (list [:div.row.justify-center.header-wrapper

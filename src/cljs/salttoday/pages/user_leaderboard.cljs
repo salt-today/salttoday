@@ -1,6 +1,5 @@
 (ns salttoday.pages.user-leaderboard
-  (:require [ajax.core :refer [GET PUT]]
-            [reagent.core :as r]
+  (:require [reagent.core :as r]
             [salttoday.common :refer [display-comment]]
             [salttoday.pages.common :refer [make-navbar make-content make-right-offset]]))
 
@@ -13,10 +12,11 @@
   (reset! state response))
 
 (defn get-users []
-  (if (empty? @state)
-    (GET "/top-users"
-      {:headers {"Accept" "application/transit"}
-       :handler top-users-handler})))
+  [])
+  ; (if (empty? @state)
+  ;   (GET "/top-users"
+  ;     {:headers {"Accept" "application/transit"}
+  ;      :handler top-users-handler})))
 
 (defn display-user
   [user]

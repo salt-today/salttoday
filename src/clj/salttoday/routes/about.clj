@@ -4,10 +4,10 @@
             [compojure.core :refer [defroutes GET PUT]]))
 
 (defn home-page []
-  (layout/render "home.html"))
+  (layout/render "app.html"))
 
 (defroutes about-routes
-  (GET "/#/about" []
+  (GET "/about" []
     (honeycomb/send-metrics {"page-view" "about"})
     (home-page)))
 

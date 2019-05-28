@@ -1,6 +1,7 @@
 (ns salttoday.handler
   (:require
    [salttoday.layout :refer [error-page]]
+   [salttoday.routes.api.v1.endpoints :as v1-api]
    [salttoday.routes.common :refer [common-routes]]
    [salttoday.routes.home :refer [home-routes]]
    [salttoday.routes.users :refer [users-routes]]
@@ -27,8 +28,11 @@
     (-> #'common-routes
         (wrap-routes middleware/wrap-csrf)
         (wrap-routes middleware/wrap-formats))
+    (-> #'v1-api/endpoints
+        (wrap-routes middleware/wrap-csrf)
+        (wrap-routes middleware/wrap-formats))
     (route/not-found
      (:body
       (error-page {:status 404
-                   :title "page not found"}))))))
+                   :title "Page Not Found"}))))))
 

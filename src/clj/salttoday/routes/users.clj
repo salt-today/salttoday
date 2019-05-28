@@ -7,19 +7,9 @@
             [salttoday.db.core :as db]))
 
 (defn home-page []
-  (layout/render "home.html"))
+  (layout/render "app.html"))
 
 (defroutes users-routes
-  (GET "/#/users" []
+  (GET "/users" []
     (honeycomb/send-metrics {"page-view" "users"})
-    (home-page))
-
-  (GET "/top-users" []
-    (honeycomb/send-metrics {"page-view" "top-users"})
-    (-> (response/ok {:users (db/get-top-rated-users 10)})
-        (response/header "Content-Type"
-
-                         "application/json"))))
-
-
-
+    (home-page)))
