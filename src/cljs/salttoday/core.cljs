@@ -4,10 +4,8 @@
             [goog.events :as events]
             [goog.history.EventType :as HistoryEventType]
             [markdown.core :refer [md->html]]
-            [salttoday.ajax :refer [load-interceptors!]]
-            [ajax.core :refer [GET POST]]
             [salttoday.pages.home :as home]
-            [salttoday.pages.user-leaderboard :as users]
+            [salttoday.pages.users :as users]
             [salttoday.pages.about :as about])
   (:import goog.History))
 
@@ -23,6 +21,10 @@
 
 ;; -------------------------
 ;; Routes
+;; Helpful Article - https://github.com/reagent-project/reagent-cookbook/tree/master/recipes/add-routing
+;;
+;; This is required so we can separate our frontend routes
+;; from our backend routes and create a SPA.
 (secretary/set-config! :prefix "#")
 
 (secretary/defroute "/" []
@@ -32,6 +34,7 @@
   (swap! session assoc :page :users))
 
 (secretary/defroute "/about" []
+  (js/console.log "switching to About")
   (swap! session assoc :page :about))
 
 
@@ -52,9 +55,9 @@
 ;; Initialize app
 
 (defn mount-components []
+  (js/console.log "Mounting Components")
   (r/render [#'page] (.getElementById js/document "app")))
 
 (defn init! []
-  (load-interceptors!)
   (hook-browser-navigation!)
   (mount-components))

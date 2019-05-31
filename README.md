@@ -18,7 +18,8 @@ Datomic is used for storage, although you can use an in-mem instance for develop
 
 To start a web server for the application, run:
 
-    lein run
+    lein repl
+    (salttoday.core/-main)
 
 Then run figwheel to get live interactive programming, run:
 

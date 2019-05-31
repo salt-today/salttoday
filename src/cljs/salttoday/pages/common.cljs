@@ -18,11 +18,11 @@
   [current-page]
   [:div.column {:style {:flex 15}}
    [:div.nav-row.navigation
-    [nav-link "#/" "Home " current-page :home [:i.fas.fa-home]]]
+    [nav-link "/#/" "Home " current-page :home [:i.fas.fa-home]]]
    [:div.nav-row.navigation
-    [nav-link "#/users" "Users " current-page :users [:i.fas.fa-users]]]
+    [nav-link "/#/users" "Users " current-page :users [:i.fas.fa-users]]]
    [:div.nav-row.navigation
-    [nav-link "#/about" "About " current-page :about [:i.fas.fa-question-circle]]]])
+    [nav-link "/#/about" "About " current-page :about [:i.fas.fa-question-circle]]]])
 
 (defn make-content
   [current-page content]

@@ -135,6 +135,10 @@ span.nav-link.active {
     font-size: 3em;
 }
 
+.about-heading {
+    margin-top: 1.5em;
+}
+
 .header-wrapper {
     margin-bottom: 2em;
 }
