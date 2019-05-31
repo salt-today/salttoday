@@ -36,7 +36,7 @@
          [:span.heading.small-heading.about-heading "What is this?"]]
         [:div.about-text "A website that ranks both the comments and users on " [:a.about-link {:href "https://sootoday.com"} "SooToday"] "." (gstring/unescapeEntities "&nbsp;&nbsp;")
          "The ranking of both comments and users is based on the number of likes and dislikes they've accumulated. Likes count for one point, dislikes count for two."]
-        
+
         [:div.row.justify-center.header-wrapper
          [:span.heading.small-heading.about-heading "My comment is missing!"]]
         [:div.about-text "It happens. Bear with me, theres a few kinks that need to be worked out yet."]))

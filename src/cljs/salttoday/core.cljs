@@ -5,7 +5,7 @@
             [goog.history.EventType :as HistoryEventType]
             [markdown.core :refer [md->html]]
             [salttoday.pages.home :as home]
-            [salttoday.pages.user-leaderboard :as users]
+            [salttoday.pages.users :as users]
             [salttoday.pages.about :as about])
   (:import goog.History))
 
