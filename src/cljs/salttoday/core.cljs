@@ -21,6 +21,11 @@
 
 ;; -------------------------
 ;; Routes
+;; Helpful Article - https://github.com/reagent-project/reagent-cookbook/tree/master/recipes/add-routing
+;;
+;; This is required so we can separate our frontend routes
+;; from our backend routes and create a SPA.
+(secretary/set-config! :prefix "#")
 
 (secretary/defroute "/" []
   (swap! session assoc :page :home))
@@ -29,6 +34,7 @@
   (swap! session assoc :page :users))
 
 (secretary/defroute "/about" []
+  (js/console.log "switching to About")
   (swap! session assoc :page :about))
 
 

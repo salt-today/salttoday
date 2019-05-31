@@ -22,7 +22,6 @@
 
 (defn filter-by-sort
   [event state]
-  (js/console.log "Filter by Sort")
   (let [sort (get-selected-value event state)]
     (swap! state assoc :sort-type sort)
     (get-comments state)))
@@ -30,7 +29,6 @@
 ; TODO - does nothing!?
 (defn filter-by-days
   [event state]
-  (js/console.log "Filter by Days")
   (let [sort (get-selected-value event state)]
     (swap! state assoc :days sort)
     (get-comments state)))
@@ -56,6 +54,7 @@
           (for [comment (:comments @state)]
             (display-comment comment))])))
 
+; Helpful Docs - https://purelyfunctional.tv/guide/reagent/#form-2
 (defn home-page []
   (let [state (r/atom {:comments []
                        :offset 0

@@ -12,5 +12,4 @@
 (defroutes home-routes
   (GET "/" [sort-type day-range]
     (honeycomb/send-metrics {"page-view" "home"})
-    (println (str "Test - " sort-type day-range))
     (home-page)))
