@@ -233,8 +233,8 @@
 ; Pagination
 (defn paginate-results
   [offset amount results]
-   (->> (drop offset results)
-        (take amount)))
+  (->> (drop offset results)
+       (take amount)))
 
 ; Puts the raw query comment into a map
 (defn create-comment-maps
@@ -337,14 +337,14 @@
 
 (defn get-top-rated-users
   ([offset amount sort-type days-ago db]
-   (let [db (if (nil? days)
+   (let [db (if (nil? days-ago)
               db
               (d/as-of db (get-date days-ago)))
          users (d/q '[:find [(pull ?c [:comment/upvotes :comment/downvotes :comment/text])]
                       :in $
                       :where [?u :user/name ?name]] db)
          user-maps (create-user-maps users)
-         sorted-users (sort-by-specfied user-maps sort-type)]
+         sorted-users (sort-by-specified user-maps sort-type)]
      (paginate-results offset amount sorted-users)))
   ([offset num sort-type days] (get-top-rated-users offset num sort-type days (d/db conn))))
 
