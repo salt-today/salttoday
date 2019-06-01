@@ -231,12 +231,10 @@
     (sort-by-score comments)))
 
 ; Pagination
-(defn paginate-comments
-  ([amount comments]
-   (paginate-comments 0 amount comments))
-  ([offset amount comments]
-   (->> (drop offset comments)
-        (take amount))))
+(defn paginate-results
+  [offset amount results]
+   (->> (drop offset results)
+        (take amount)))
 
 ; Puts the raw query comment into a map
 (defn create-comment-maps
@@ -317,10 +315,10 @@
   [offset num sort-type days-ago search-text name]
   (let [comments (get-comments (d/db conn) days-ago search-text name)
         sorted-comments (sort-by-specified comments sort-type)]
-    (paginate-comments offset num sorted-comments)))
+    (paginate-results offset num sorted-comments)))
 
 ; -----------
-; User stats
+; Users
 ; -----------
 (defn get-user-stats
   [name]
@@ -330,39 +328,25 @@
          [?u :user/downvotes ?downvotes]]
        (d/db conn) name))
 
-(defn get-most-x-users
-  [vote-type num]
-  (let [users (d/q '[:find ?name ?vote :in $ ?vote-type :where
-                     [?u :user/name ?name]
-                     [?u ?vote-type ?vote]]
-                   (d/db conn) vote-type)
-        sorted-users (sort-by second > users)
-        top-users (take num sorted-users)]
-    (for [user top-users]
-      (apply assoc {}
-             (interleave [:name :votes] user)))))
+(defn create-user-maps
+  [users]
+  (for [user users]
+    (-> (apply merge user)
+        ;; TODO This is currently done as it's what the frontend expects, update the frontend.
+        (clojure.set/rename-keys {:user/upvotes :upvotes :user/downvotes :downvotes :user/name :name}))))
 
 (defn get-top-rated-users
-  ([num db]
-   (let [users (d/q '[:find ?upvotes ?downvotes ?name :in $ :where
-                      [?u :user/name ?name]
-                      [?u :user/upvotes ?upvotes]
-                      [?u :user/downvotes ?downvotes]] db)
-         sorted-users (sort #(> (+ (first %1) (second %1)) (+ (first %2) (second %2))) users)
-         top-x (take num sorted-users)]
-     (for [user top-x]
-       (apply assoc {}
-              (interleave [:upvotes :downvotes :name] user)))))
-  ([num] (get-top-rated-users num (d/db conn))))
-
-(defn get-most-negative-users
-  [num]
-  (get-most-x-users :user/downvotes num))
-
-(defn get-most-positive-users
-  [num]
-  (get-most-x-users :user/upvotes num))
-
+  ([offset amount sort-type days-ago db]
+   (let [db (if (nil? days)
+              db
+              (d/as-of db (get-date days-ago)))
+         users (d/q '[:find [(pull ?c [:comment/upvotes :comment/downvotes :comment/text])]
+                      :in $
+                      :where [?u :user/name ?name]] db)
+         user-maps (create-user-maps users)
+         sorted-users (sort-by-specfied user-maps sort-type)]
+     (paginate-results offset amount sorted-users)))
+  ([offset num sort-type days] (get-top-rated-users offset num sort-type days (d/db conn))))
 
 ;; Stats
 

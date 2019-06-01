@@ -4,7 +4,8 @@
             [compojure.core :refer [defroutes GET PUT]]
             [ring.util.http-response :as response]
             [clojure.java.io :as io]
-            [salttoday.db.core :as db]))
+            [salttoday.db.core :as db]
+            [salttoday.routes.common :refer [string->number]]))
 
 (defn home-page []
   (layout/render "home.html"))
@@ -20,14 +21,6 @@
   (GET "/" []
     (honeycomb/send-metrics {"page-view" "home"})
     (home-page))
-
-  (GET "/top-comments" []
-    (honeycomb/send-metrics {"page-view" "top-comments"})
-    (-> (response/ok {:daily (db/get-top-x-comments 0 3 "score" 1)
-                      :weekly (db/get-top-x-comments 0 5 "score" 7)
-                      :all-time (db/get-top-x-comments 0 50 "score" -1)})
-        (response/header "Content-Type"
-                         "application/json")))
 
   (GET "/comments" [offset amount sort-type days search-text user]
     (let [offset-num (string->number offset)
