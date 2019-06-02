@@ -65,11 +65,35 @@
   (-> (html/select comment-html [:a.comment-un])
       get-content-helper))
 
+(defn ^:private tag-type->encoding [tag-type content]
+  (cond
+    (= tag-type :p) (str content "\n")
+    (= tag-type :b) (str "**" content "**")
+    (= tag-type :strong) (str "**" content "**")
+    (= tag-type :i) (str "_" content "_")
+    (= tag-type :em) (str "_" content "_")
+    (= tag-type :br) "\n"
+    :else content))
+
+(defn ^:private collect-content [tag]
+  (if (nil? (:content tag))
+    (tag-type->encoding (:tag tag) "")
+    (let [tag-contents (:content tag)
+          tag-type (:tag tag)
+          result (for [content tag-contents]
+                   (if (map? content)
+                     (collect-content content)
+                     content))]
+      (tag-type->encoding tag-type
+                          (clojure.string/join result)))))
+
 (defn ^:private get-comment-text
   "Gets the comment text given the html of a comment"
   [comment-html]
-  (-> (html/select comment-html [:p])
-      get-content-helper))
+  (-> (html/select comment-html [:div.comment-text])
+      first
+      (collect-content)
+      (clojure.string/trim-newline)))
 
 (defn ^:private get-upvotes
   "Gets the number of downvotes for a comment."
