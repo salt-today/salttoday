@@ -1,4 +1,5 @@
-(ns salttoday.pages.common)
+(ns salttoday.pages.common
+  (:require [salttoday.routing.util :refer [update-query-parameters!]]))
 
 (defn jumbotron
   "Big name at the top?"
@@ -38,3 +39,8 @@
 (defn get-selected-value
   [event]
   (-> event .-target .-value))
+
+(defn update-query-params-with-state
+  "Updates the query parameters with a state, except for the exclusions."
+  [state & exclusions]
+  (update-query-parameters! (apply dissoc @state exclusions)))

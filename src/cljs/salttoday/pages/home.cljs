@@ -4,8 +4,8 @@
             [clojure.core.async :as a]
             [reagent.core :as r]
             [salttoday.common :refer [display-comment]]
-            [salttoday.pages.common :refer [content get-selected-value make-content make-navbar make-right-offset jumbotron]]
-            [salttoday.routing.util :refer [update-query-parameters!]]))
+            [salttoday.pages.common :refer [content get-selected-value jumbotron make-content make-navbar
+                                            make-right-offset update-query-params-with-state]]))
 
 (defn get-comments [state]
   (go (let [options {:query-params {:offset    (:offset @state)
@@ -36,7 +36,7 @@
      [:select {:value [(:sort-type @state)]
                :on-change (fn [e]
                             (filter-by-sort e state)
-                            (update-query-parameters! {:sort-type (get-selected-value e)}))}
+                            (update-query-params-with-state state :comments))}
       [:option {:value "score"} "Top"]
       [:option {:value "downvotes"} "Dislikes"]
       [:option {:value "upvotes"} "Likes"]]]
@@ -44,7 +44,7 @@
      [:select {:value [(:days @state)]
                :on-change (fn [e]
                             (filter-by-days e state)
-                            (update-query-parameters! {:days (get-selected-value e)}))}
+                            (update-query-params-with-state state :comments))}
       [:option {:value 1} "Past Day"]
       [:option {:value 7} "Past Week"]
       [:option {:value 30} "Past Month"]
@@ -56,10 +56,9 @@
 
 ; Helpful Docs - https://purelyfunctional.tv/guide/reagent/#form-2
 (defn home-page [query-params]
-  (cljs.pprint/pprint query-params)
   (let [state (r/atom {:comments []
-                       :offset 0
-                       :amount 50
+                       :offset (or (:offset query-prams) 0)
+                       :amount (or (:amount query-params) 50)
                        :sort-type (or (:sort-type query-params) "score")
                        :days (or (:days query-params) "1")})]
     (get-comments state)

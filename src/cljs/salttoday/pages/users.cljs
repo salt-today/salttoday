@@ -4,7 +4,8 @@
             [clojure.core.async :as a]
             [cljs-http.client :as http]
             [salttoday.common :refer [display-comment]]
-            [salttoday.pages.common :refer [get-selected-value make-navbar make-content make-right-offset]]))
+            [salttoday.pages.common :refer [get-selected-value make-navbar make-content make-right-offset
+                                            update-query-params-with-state]]))
 
 (defn get-users [state]
   (go (let [options {:query-params {:offset    (:offset @state)
@@ -18,13 +19,13 @@
 
 (defn filter-by-sort
   [event state]
-  (let [sort (get-selected-value event state)]
+  (let [sort (get-selected-value event)]
     (swap! state assoc :sort-type sort)
     (get-users state)))
 
 (defn filter-by-days
   [event state]
-  (let [sort (get-selected-value event state)]
+  (let [sort (get-selected-value event)]
     (swap! state assoc :days sort)
     (get-users state)))
 
@@ -47,14 +48,18 @@
 (defn leaderboard-content [state]
   (list [:div.row.justify-center.header-wrapper.sort-bar
          [:div.column.sort-item.sort-dropdown
-          [:select {:on-change (fn [e]
-                                 (filter-by-sort e state))}
+          [:select {:value [(:sort-type @state)]
+                    :on-change (fn [e]
+                                 (filter-by-sort e state)
+                                 (update-query-params-with-state state :users))}
            [:option {:value "score"} "Top"]
            [:option {:value "downvotes"} "Dislikes"]
            [:option {:value "upvotes"} "Likes"]]]
          [:div.column.sort-dropdown
-          [:select {:on-change (fn [e]
-                                 (filter-by-days e state))}
+          [:select {:value [(:days @state)]
+                    :on-change (fn [e]
+                                 (filter-by-days e state)
+                                 (update-query-params-with-state state :users))}
            [:option {:value 1} "Past Day"]
            [:option {:value 7} "Past Week"]
            [:option {:value 30} "Past Month"]
@@ -64,11 +69,12 @@
          (for [user (:users @state)]
            (display-user user))]))
 
-(defn users-page []
+(defn users-page [query-params]
   (let [state (r/atom {:users []
-                       :offset 0
-                       :amount 10
-                       :days "0"})]
+                       :offset (or (:offset query-params) 0)
+                       :amount (or (:amount query-params) 10)
+                       :days (or (:days query-params) "0")
+                       :sort-type (or (:sort-type query-params) "score")})]
     (get-users state)
     (fn []
       [:div.page-wrapper
