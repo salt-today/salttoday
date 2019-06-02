@@ -4,7 +4,7 @@
             [clojure.core.async :as a]
             [reagent.core :as r]
             [salttoday.common :refer [display-comment]]
-            [salttoday.pages.common :refer [content make-content make-navbar make-right-offset jumbotron]]))
+            [salttoday.pages.common :refer [content get-selected-value make-content make-navbar make-right-offset jumbotron]]))
 
 (defn get-comments [state]
   (go (let [options {:query-params {:offset    (:offset @state)
@@ -16,21 +16,16 @@
             {:keys [status headers body error] :as resp} (a/<! (http/get "/api/v1/comments" options))]
         (swap! state assoc :comments body))))
 
-(defn get-selected-value
+(defn filter-by-days
   [event state]
-  (-> event .-target .-value))
+  (let [sort (get-selected-value event state)]
+    (swap! state assoc :days sort)
+    (get-comments state)))
 
 (defn filter-by-sort
   [event state]
   (let [sort (get-selected-value event state)]
     (swap! state assoc :sort-type sort)
-    (get-comments state)))
-
-; TODO - does nothing!?
-(defn filter-by-days
-  [event state]
-  (let [sort (get-selected-value event state)]
-    (swap! state assoc :days sort)
     (get-comments state)))
 
 (defn home-content [state]

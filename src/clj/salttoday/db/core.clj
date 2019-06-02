@@ -64,9 +64,9 @@
     @(d/transact conn schema)))
 
 (defn ^:private transact-and-log [& args]
-  (log/info "transaction arguments:" args)
+  (log/debug "transaction arguments:" args)
   (let [result @(apply d/transact args)]
-    (log/info "transaction result:" result)
+    (log/debug "transaction result:" result)
     result))
 
 (defn ^:private add-or-get-user [conn username]
@@ -331,22 +331,45 @@
 (defn create-user-maps
   [users]
   (for [user users]
-    (-> (apply merge user)
-        ;; TODO This is currently done as it's what the frontend expects, update the frontend.
+    (-> user first
         (clojure.set/rename-keys {:user/upvotes :upvotes :user/downvotes :downvotes :user/name :name}))))
 
-(defn get-top-rated-users
-  ([offset amount sort-type days-ago db]
-   (let [db (if (nil? days-ago)
-              db
-              (d/as-of db (get-date days-ago)))
-         users (d/q '[:find [(pull ?c [:comment/upvotes :comment/downvotes :comment/text])]
-                      :in $
-                      :where [?u :user/name ?name]] db)
+(def get-all-users-query '[:find (pull ?u [:user/upvotes :user/downvotes :user/name])
+                           :in $
+                           :where [?u :user/name ?name]])
+
+(defn extract-name-to-outer-map
+  [user-maps]
+  (apply merge
+         (for [user-map user-maps]
+           {(:name user-map) user-map})))
+
+; Used as a default if user can't be found in past
+(def empty-user-map {:upvotes 0 :downvotes 0})
+
+(defn get-user-scores-for-time-range
+  [db current-users-map days-ago-date]
+  (let [past-users (d/q get-all-users-query (d/as-of db days-ago-date))
+        past-users-maps (create-user-maps past-users)
+        new-past-users-map (extract-name-to-outer-map past-users-maps)
+        new-current-users-map (extract-name-to-outer-map current-users-map)]
+    (for [user-key (keys new-current-users-map)]
+      (let [current-user-map (get new-current-users-map user-key)
+            past-user-map (get new-past-users-map user-key empty-user-map)]
+        (assoc current-user-map
+          :upvotes (- (:upvotes current-user-map) (:upvotes past-user-map))
+          :downvotes (- (:downvotes current-user-map) (:downvotes past-user-map)))))))
+
+(defn get-top-x-users
+  ([db offset amount sort-type days-ago]
+   (let [users (d/q get-all-users-query db)
          user-maps (create-user-maps users)
+         days-ago-date (get-date days-ago)
+         user-maps (if days-ago-date (get-user-scores-for-time-range db user-maps days-ago) user-maps)
          sorted-users (sort-by-specified user-maps sort-type)]
      (paginate-results offset amount sorted-users)))
-  ([offset num sort-type days] (get-top-rated-users offset num sort-type days (d/db conn))))
+  ([offset amount sort-type days-ago]
+   (get-top-x-users (d/db conn) offset amount sort-type days-ago)))
 
 ;; Stats
 

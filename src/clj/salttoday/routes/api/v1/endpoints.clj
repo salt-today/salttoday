@@ -4,11 +4,12 @@
             [compojure.core :refer [defroutes GET PUT]]
             [ring.util.http-response :as response]
             [clojure.java.io :as io]
-            [salttoday.db.core :as db]))
+            [salttoday.db.core :as db]
+            [clojure.tools.logging :as log]))
 
 (defn string->number [str]
   "Converts a string to a number, if nil or not a number, returns 0."
-  (if (nil? str)
+  (if (clojure.string/blank? str)
     0
     (let [n (read-string str)]
       (if (number? n) n 0))))
@@ -33,6 +34,6 @@
     (let [offset-num (string->number offset)
           amount-num (string->number amount)
           days-num (string->number days)]
-      (-> (response/ok {:users (db/get-top-rated-users offset-num amount-num sort-type days-num)})
+      (-> (response/ok (db/get-top-x-users offset-num amount-num sort-type days-num))
           (response/header "Content-Type"
                            "application/json")))))
