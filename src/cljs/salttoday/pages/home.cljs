@@ -41,7 +41,7 @@
                :on-change (fn [e]
                             (filter-by-sort e state)
                             (update-query-parameters! {:sort-type (get-selected-value e)}))}
-      [:option {:value "score" } "Top"]
+      [:option {:value "score"} "Top"]
       [:option {:value "downvotes"} "Dislikes"]
       [:option {:value "upvotes"} "Likes"]]]
     [:div.column.sort-dropdown
