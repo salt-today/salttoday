@@ -357,8 +357,8 @@
       (let [current-user-map (get new-current-users-map user-key)
             past-user-map (get new-past-users-map user-key empty-user-map)]
         (assoc current-user-map
-          :upvotes (- (:upvotes current-user-map) (:upvotes past-user-map))
-          :downvotes (- (:downvotes current-user-map) (:downvotes past-user-map)))))))
+               :upvotes (- (:upvotes current-user-map) (:upvotes past-user-map))
+               :downvotes (- (:downvotes current-user-map) (:downvotes past-user-map)))))))
 
 (defn get-top-x-users
   ([db offset amount sort-type days-ago]
