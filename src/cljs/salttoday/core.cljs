@@ -1,23 +1,26 @@
 (ns salttoday.core
-  (:require [reagent.core :as r]
-            [secretary.core :as secretary :include-macros true]
+  (:require-macros [secretary.core :refer [defroute]])
+  (:import goog.history.Html5History)
+  (:require [secretary.core :as secretary]
             [goog.events :as events]
-            [goog.history.EventType :as HistoryEventType]
-            [markdown.core :refer [md->html]]
+            [goog.history.EventType :as EventType]
+            [reagent.core :as r]
             [salttoday.pages.home :as home]
             [salttoday.pages.users :as users]
-            [salttoday.pages.about :as about])
-  (:import goog.History))
+            [salttoday.pages.about :as about]))
 
-(defonce session (r/atom {:page :home}))
+(defonce app-state (r/atom {:page :home
+                            :query-params {}}))
 
-(def pages
-  {:home #'home/home-page
-   :users #'users/users-page
-   :about #'about/about-page})
-
-(defn page []
-  [(pages (:page @session))])
+(defmulti current-page #(@app-state :page))
+;; TODO - add filters on query parameters, get rid of those that aren't relevant to the page
+(defmethod current-page :home []
+  (js/console.log (:query-params @app-state))
+  [home/home-page (:query-params @app-state)])
+(defmethod current-page :users []
+  [users/users-page (:query-params @app-state)])
+(defmethod current-page :about []
+  [about/about-page (:query-params @app-state)])
 
 ;; -------------------------
 ;; Routes
@@ -27,26 +30,27 @@
 ;; from our backend routes and create a SPA.
 (secretary/set-config! :prefix "#")
 
-(secretary/defroute "/" []
-  (swap! session assoc :page :home))
+(defroute "/" [query-params]
+  (swap! app-state assoc :page :home)
+  (swap! app-state assoc :query-params query-params))
 
-(secretary/defroute "/users" []
-  (swap! session assoc :page :users))
+(defroute "/home" [query-params]
+  (swap! app-state assoc :page :home)
+  (swap! app-state assoc :query-params query-params))
 
-(secretary/defroute "/about" []
-  (js/console.log "switching to About")
-  (swap! session assoc :page :about))
+(defroute "/users" []
+  (swap! app-state assoc :page :users))
 
+(defroute "/about" []
+  (swap! app-state assoc :page :about))
 
 ;; -------------------------
 ;; History
 ;; must be called after routes have been defined
-
-
 (defn hook-browser-navigation! []
-  (doto (History.)
+  (doto (Html5History.)
     (events/listen
-     HistoryEventType/NAVIGATE
+     EventType/NAVIGATE
      (fn [event]
        (secretary/dispatch! (.-token event))))
     (.setEnabled true)))
@@ -56,7 +60,8 @@
 
 (defn mount-components []
   (js/console.log "Mounting Components")
-  (r/render [#'page] (.getElementById js/document "app")))
+  (r/render [current-page]
+            (.getElementById js/document "app")))
 
 (defn init! []
   (hook-browser-navigation!)
