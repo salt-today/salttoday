@@ -36,5 +36,5 @@
   [:div.column.right-offset {:style {:flex 15 :overflow "hidden"}}])
 
 (defn get-selected-value
-  [event state]
+  [event]
   (-> event .-target .-value))

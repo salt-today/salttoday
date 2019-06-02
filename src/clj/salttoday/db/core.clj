@@ -70,12 +70,12 @@
     result))
 
 (defn ^:private add-or-get-user [conn username]
-  (log/info "add-or-get-user")
+  (log/debug "add-or-get-user")
   (let [user (-> (d/q '[:find ?e
                         :in $ ?name
                         :where [?e :user/name ?name]] (d/db conn) username)
                  ffirst)]
-    (log/info "was user found?" user)
+    (log/debug "was user found?" user)
     (if (nil? user)
       (do
         (honeycomb/send-metrics {"db-operation" "add-or-get-user"
@@ -87,7 +87,7 @@
       user)))
 
 (defn ^:private add-post [conn {:keys [url title]}]
-  (log/info "add-post")
+  (log/debug "add-post")
   ; Check if the post exists, if it doesn't add it.
   (let [post-id (-> (d/q '[:find ?e
                            :in $ ?url
@@ -111,9 +111,9 @@
 
 ;; TODO: THIS REALLY SHOULD BE A TRANSACTION FUNCTION
 (defn ^:private add-comment [conn post-id post-title {:keys [username comment timestamp upvotes downvotes]}]
-  (log/info "add-comment")
-  (log/info "post-id" post-id)
-  (log/info "comment" comment)
+  (log/debug "add-comment")
+  (log/debug "post-id" post-id)
+  (log/debug "comment" comment)
   (let [user-id (add-or-get-user conn username)
         user-stats (-> (d/q '[:find ?upvotes ?downvotes :in $ ?user-id :where
                               [?user-id :user/upvotes ?upvotes]
@@ -168,15 +168,15 @@
                              "comment-downvotes" comment-downvotes})))
 
 (defn ^:private add-comments [conn post-id post-title comments]
-  (log/info "add-comments")
-  (log/info "post-id:" post-id)
-  (log/info "post-title" post-title)
-  (log/info "comments:" comments)
+  (log/debug "add-comments")
+  (log/debug "post-id:" post-id)
+  (log/debug "post-title" post-title)
+  (log/debug "comments:" comments)
   (doseq [comment comments]
     (add-comment conn post-id post-title comment)))
 
 (defn update-stats [posts]
-  (log/info "update-stats")
+  (log/debug "update-stats")
   (doseq [post posts]
     (let [post-id (add-post conn post)]
       (add-comments conn post-id (:title post) (:comments post)))))
