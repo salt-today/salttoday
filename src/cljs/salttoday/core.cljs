@@ -38,8 +38,9 @@
   (swap! app-state assoc :page :home)
   (swap! app-state assoc :query-params query-params))
 
-(defroute "/users" []
-  (swap! app-state assoc :page :users))
+(defroute "/users" [query-params]
+  (swap! app-state assoc :page :users)
+  (swap! app-state assoc :query-params query-params))
 
 (defroute "/about" []
   (swap! app-state assoc :page :about))
