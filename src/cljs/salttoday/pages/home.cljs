@@ -11,7 +11,8 @@
   (go (let [options {:query-params {:offset    (:offset @state)
                                     :amount    (:amount @state)
                                     :sort-type (:sort-type @state)
-                                    :days      (:days @state)}
+                                    :days      (:days @state)
+                                    :id        (:id @state)}
                      :with-credentials? false
                      :headers {}}
             {:keys [status headers body error] :as resp} (a/<! (http/get "/api/v1/comments" options))]
@@ -57,10 +58,12 @@
 ; Helpful Docs - https://purelyfunctional.tv/guide/reagent/#form-2
 (defn home-page [query-params]
   (let [state (r/atom {:comments []
-                       :offset (or (:offset query-prams) 0)
+                       :offset (or (:offset query-params) 0)
                        :amount (or (:amount query-params) 50)
                        :sort-type (or (:sort-type query-params) "score")
-                       :days (or (:days query-params) "1")})]
+                       :days (or (:days query-params) "1")
+                       :id (or (:id query-params) nil)})]
+    (js/console.log (:id @state))
     (get-comments state)
     (fn []
       [:div.page-wrapper

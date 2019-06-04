@@ -8,13 +8,7 @@
             [clj-time.core :as t]
             [clj-time.coerce :as c]))
 
-(defstate conn
-  :start (let [db-url (:database-url env)]
-           (d/create-database db-url)
-           (d/connect db-url))
-  :stop (-> conn .release))
-
-(defn create-schema []
+(defn create-schema [conn]
   (let [schema [{:db/ident              :user/name
                  :db/valueType          :db.type/string
                  :db/cardinality        :db.cardinality/one
@@ -62,6 +56,14 @@
                  :db/cardinality        :db.cardinality/many
                  :db.install/_attribute :db.part/db}]]
     @(d/transact conn schema)))
+
+(defstate conn
+  :start (let [db-url (:database-url env)
+               db (d/create-database db-url)
+               conn (d/connect db-url)]
+           (create-schema conn)
+           conn)
+  :stop (-> conn .release))
 
 (defn ^:private transact-and-log [& args]
   (log/debug "transaction arguments:" args)
@@ -206,8 +208,6 @@
 ; -----------------------------------------------------------------------------------
 
 ; Sorting
-
-
 (defn sort-by-upvotes
   [comments]
   (sort #(> (:upvotes %1) (:upvotes %2)) comments))
@@ -242,13 +242,16 @@
   (for [comment comments]
     (-> (apply merge comment)
         ;; TODO This is currently done as it's what the frontend expects, update the frontend.
-        (clojure.set/rename-keys {:comment/upvotes :upvotes :comment/downvotes :downvotes :comment/text :text
-                                  :user/name :user :post/title :title :post/url :url}))))
+        (clojure.set/rename-keys {:db/id :comment-id
+                                  :comment/upvotes :upvotes
+                                  :comment/downvotes :downvotes
+                                  :comment/text :text
+                                  :user/name :user
+                                  :post/title :title
+                                  :post/url :url}))))
 
 
 ; Below is how queries with optional conditions are created, taken from here: https://grishaev.me/en/datomic-query
-
-
 (defn remap-query
   [{args :args :as m}]
   {:query (dissoc m :args)
@@ -256,7 +259,7 @@
 
 ; Gets literally every comment in the database.
 (def initial-get-all-comments-query
-  '{:find [(pull ?c [:comment/upvotes :comment/downvotes :comment/text])
+  '{:find [(pull ?c [:db/id :comment/upvotes :comment/downvotes :comment/text])
            (pull ?u [:user/name])
            (pull ?p [:post/title :post/url])]
     :in [$]
@@ -265,31 +268,52 @@
             [?c :comment/user ?u]
             [?p :post/comment ?c]]})
 
+(def initial-get-specific-comment-query
+  '{:find [?upvotes ?downvotes ?text ?user-name ?title ?url]
+    :in [$]
+    :args []
+    :where [[?cid :comment/upvotes ?upvotes]
+            [?cid :comment/downvotes ?downvotes]
+            [?cid :comment/text ?text]
+            [?cid :comment/user ?u]
+            [?u :user/name ?user-name]
+            [?p :post/comment ?cid]
+            [?p :post/title ?title]
+            [?p :post/url ?url]]})
+
 ; Adds any optional args/conditionals to the query
 (defn create-get-comments-query
-  [db days-ago-date search-text name]
-  (cond-> initial-get-all-comments-query
-    true
-    (update :args conj db)
+  ; TODO - probably better if this function took a map of keys instead of positional args
+  [db days-ago-date search-text name cid]
+  (let [initial-query (if (not= 0 cid)
+                        initial-get-specific-comment-query
+                        initial-get-all-comments-query)]
+    (cond-> initial-query
+      true
+      (update :args conj db)
 
-    search-text
-    (-> (update :in conj '?search-text)
-        (update :args conj search-text)
-        (update :where conj '[(.contains ^String ?text ?search-text)]))
+      cid
+      (-> (update :in conj '?cid)
+          (update :args conj cid))
 
-    name
-    (-> (update :in conj '?name)
-        (update :args conj name)
-        (update :where conj '[?u :user/name ?name]))
+      search-text
+      (-> (update :in conj '?search-text)
+          (update :args conj search-text)
+          (update :where conj '[(.contains ^String ?text ?search-text)]))
 
-    days-ago-date
-    (-> (update :in conj '?days-ago-date)
-        (update :args conj days-ago-date)
-        (update :where conj '[?tx :db/txInstant ?inst])
-        (update :where conj '[(.before ^java.util.Date ?days-ago-date ?inst)]))
+      name
+      (-> (update :in conj '?name)
+          (update :args conj name)
+          (update :where conj '[?u :user/name ?name]))
 
-    true
-    remap-query))
+      days-ago-date
+      (-> (update :in conj '?days-ago-date)
+          (update :args conj days-ago-date)
+          (update :where conj '[?tx :db/txInstant ?inst])
+          (update :where conj '[(.before ^java.util.Date ?days-ago-date ?inst)]))
+
+      true
+      remap-query)))
 
 ; Returns a date time of the current date minus a number of days.
 ; If given a number less than 1, returns nil.
@@ -302,18 +326,37 @@
         (.toInstant)
         (java.util.Date/from))))
 
+; (get-comments db 0 nil nil 17592186045650)
+
+; TODO this should be able to return a single item, but later code depends on it being a list!
+(defn single-comment-map [id results]
+  (let [comment (first results)]
+    (if (nil? comment)
+      '()
+      (list {:comment-id id
+             :upvotes (get (first results) 0)
+             :downvotes (get (first results) 1)
+             :text (get (first results) 2)
+             :user (get (first results) 3)
+             :title (get (first results) 4)
+             :url (get (first results) 5)}))))
+
 (defn get-comments
-  ([db days-ago search-text name]
+  ([db days-ago search-text name id]
    (let [days-ago-date (get-date days-ago)
-         query-map (create-get-comments-query db days-ago-date search-text name)]
-     (-> (apply (partial d/q (:query query-map)) (:args query-map))
-         (create-comment-maps))))
+         query-map (create-get-comments-query db days-ago-date search-text name id)]
+     (let [results (apply (partial d/q (:query query-map)) (:args query-map))]
+       (if (not= id 0)
+         (let [formatted (single-comment-map id results)]
+           (println formatted)
+           formatted)
+         (create-comment-maps results)))))
   ([db]
    (get-comments db -1 nil nil)))
 
 (defn get-top-x-comments
-  [offset num sort-type days-ago search-text name]
-  (let [comments (get-comments (d/db conn) days-ago search-text name)
+  [offset num sort-type days-ago search-text name id]
+  (let [comments (get-comments (d/db conn) days-ago search-text name id)
         sorted-comments (sort-by-specified comments sort-type)]
     (paginate-results offset num sorted-comments)))
 
@@ -375,7 +418,7 @@
 
 
 (defn get-todays-stats []
-  (let [comments (get-comments (db-since-days-ago 1))
+  (let [comments (get-comments (d/db conn))
         comment-count (count comments)
         upvote-count (reduce #(+ %1 (:upvotes %2)) 0 comments)
         downvote-count (reduce #(+ %1 (:downvotes %2)) 0 comments)

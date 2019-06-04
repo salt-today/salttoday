@@ -15,7 +15,6 @@
 (defmulti current-page #(@app-state :page))
 ;; TODO - add filters on query parameters, get rid of those that aren't relevant to the page
 (defmethod current-page :home []
-  (js/console.log (:query-params @app-state))
   [home/home-page (:query-params @app-state)])
 (defmethod current-page :users []
   [users/users-page (:query-params @app-state)])

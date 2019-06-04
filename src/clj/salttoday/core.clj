@@ -52,9 +52,9 @@
     (log/info component "started"))
   (.addShutdownHook (Runtime/getRuntime) (Thread. stop-app)))
 
+; TODO - scraper needs to be put into a defstate so we re-scrape when reloading state.
 (defn -main [& args]
   (start-app args)
-  (db/create-schema)
   (let [seconds 1000
         minutes (* seconds 60)
         interval (* 15 minutes)

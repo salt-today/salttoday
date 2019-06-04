@@ -18,8 +18,12 @@ Datomic is used for storage, although you can use an in-mem instance for develop
 
 To start a web server for the application, run:
 
-    lein repl
-    (salttoday.core/-main)
+```bash
+lein repl
+```
+```clj
+(salttoday.core/-main)
+```
 
 Then run figwheel to get live interactive programming, run:
 
@@ -33,3 +37,15 @@ docker run -d -p 4334-4336:4334-4336 --name datomic-free akiel/datomic-free
 Then modify the :database-url in [this file](env/dev/clj/salttoday/env.clj) to `datomic:free://localhost:4334/salttoday`.
 
 For more information on running Datomic in docker check out these [docs](https://github.com/alexanderkiel/datomic-free).
+
+### Running Locally Against Local In-Mem Database
+
+```clj
+(require '[datomic.api :as d])
+(def conn salttoday.db.core/conn)
+(def db (d/db conn))
+(def query (create-get-comments-query db nil nil nil 17592186045462))
+(def results (apply (partial d/q (:query query)) (:args query)))
+```
+
+{:query {:find [?upvotes ?downvotes ?text (pull ?u [:user/name]) (pull ?p [:post/title :post/url])], :in [$ ?cid], :where [[?cid :comment/upvotes ?upvotes] [?cid :comment/downvotes ?downvotes] [?cid :comment/text ?text] [?cid :comment/user ?u] [?p :post/comment ?cid]]}, :args [datomic.db.Db@77482fe1 17592186045462]}

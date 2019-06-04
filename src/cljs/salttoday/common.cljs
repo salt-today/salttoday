@@ -1,7 +1,8 @@
 (ns salttoday.common)
 
 (defn display-comment [comment]
-  (let [upvotes (:upvotes comment)
+  (let [id (:comment-id comment)
+        upvotes (:upvotes comment)
         downvotes (:downvotes comment)
         vote-total (max 1 (+ upvotes downvotes))
         pos-percent (if (zero? vote-total)
@@ -11,12 +12,15 @@
                        100
                        (max 0 (- pos-percent 2.5)))
         neg-gradient (min 100 (+ pos-gradient 5))]
-
     [:div.row
      ; Title
      [:div.article-title
       [:a.article-link {:href (:url comment) :target "_blank"}
-       (:title comment)]]
+       (:title comment)]
+      ; TODO - change this to just copy the link to the clipboard eventually
+      ; could be used elsewhere, developed generically.
+      [:a.comment-link {:href (str "/#/home?id=" id) :target "_blank"}
+       [:i.fas.fa-link]]]
      [:div.row.comment-metadata-row
       ; Comment Body / Link to Article
       [:div.column.comment-body {:style {:flex 70 :border-image (str "linear-gradient(90deg, #0072bc " pos-gradient "%, #ed1c24 " neg-gradient "%) 2 / 4px")}}
