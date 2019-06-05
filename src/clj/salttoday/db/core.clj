@@ -6,7 +6,8 @@
             [salttoday.scraper :as scraper]
             [clojure.tools.logging :as log]
             [clj-time.core :as t]
-            [clj-time.coerce :as c]))
+            [clj-time.coerce :as c]
+            [clojure.set :refer [rename-keys]]))
 
 (defstate conn
   :start (let [db-url (:database-url env)]
@@ -242,8 +243,8 @@
   (for [comment comments]
     (-> (apply merge comment)
         ;; TODO This is currently done as it's what the frontend expects, update the frontend.
-        (clojure.set/rename-keys {:comment/upvotes :upvotes :comment/downvotes :downvotes :comment/text :text
-                                  :user/name :user :post/title :title :post/url :url}))))
+        (rename-keys {:comment/upvotes :upvotes :comment/downvotes :downvotes :comment/text :text
+                      :user/name :user :post/title :title :post/url :url}))))
 
 
 ; Below is how queries with optional conditions are created, taken from here: https://grishaev.me/en/datomic-query
@@ -332,7 +333,7 @@
   [users]
   (for [user users]
     (-> user first
-        (clojure.set/rename-keys {:user/upvotes :upvotes :user/downvotes :downvotes :user/name :name}))))
+        (rename-keys {:user/upvotes :upvotes :user/downvotes :downvotes :user/name :name}))))
 
 (def get-all-users-query '[:find (pull ?u [:user/upvotes :user/downvotes :user/name])
                            :in $

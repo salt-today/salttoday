@@ -5,11 +5,13 @@
             [ring.util.http-response :as response]
             [clojure.java.io :as io]
             [salttoday.db.core :as db]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [clojure.string :refer [blank?]]))
 
-(defn string->number [str]
+(defn string->number
   "Converts a string to a number, if nil or not a number, returns 0."
-  (if (clojure.string/blank? str)
+  [str]
+  (if (blank? str)
     0
     (let [n (read-string str)]
       (if (number? n) n 0))))
