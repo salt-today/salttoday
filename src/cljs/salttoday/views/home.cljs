@@ -56,7 +56,6 @@
 
 ; Helpful Docs - https://purelyfunctional.tv/guide/reagent/#form-2
 (defn home-page [query-params]
-  (cljs.pprint/pprint query-params)
   (let [state (r/atom {:comments []
                        :offset (or (:offset query-params) 0)
                        :amount (or (:amount query-params) 50)
