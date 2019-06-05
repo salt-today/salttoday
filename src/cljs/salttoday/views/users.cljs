@@ -3,8 +3,8 @@
   (:require [reagent.core :as r]
             [clojure.core.async :as a]
             [cljs-http.client :as http]
-            [salttoday.common :refer [display-comment]]
-            [salttoday.pages.common :refer [get-selected-value make-navbar make-content make-right-offset
+            [salttoday.components.comment :refer [comment-component]]
+            [salttoday.views.common :refer [get-selected-value make-navbar make-content make-right-offset
                                             update-query-params-with-state]]))
 
 (defn get-users [state]
