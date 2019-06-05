@@ -18,3 +18,4 @@ profiles.clj
 .nrepl-port
 /src/clj/salttoday/log
 *.jks
+.eastwood
