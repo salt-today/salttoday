@@ -1,6 +1,29 @@
-(ns salttoday.common)
+(ns salttoday.components.comment
+  (:require [cuerdas.core :as string]))
 
-(defn display-comment [comment]
+(def blue "#0072bc")
+(def red "#ed1c24")
+(def gray "#636363")
+(def border-size "2 / 4px")
+
+(defn comment-gradient [upvotes downvotes pos-gradient neg-gradient]
+  (cond
+    (and (= downvotes 0) (= upvotes 0)) (string/format "linear-gradient(90deg, %s, %s) %s" gray gray border-size)
+    (= downvotes 0) (string/format "linear-gradient(90deg, %s, %s) %s" blue blue border-size)
+    (= upvotes 0) (string/format "linear-gradient(90deg, %s, %s) %s" red red border-size)
+    :else (string/format "linear-gradient(90deg, %s %s%, %s %s%) %s" blue pos-gradient red neg-gradient border-size)))
+
+(defn upvote-color [upvotes]
+  (if (= upvotes 0)
+    gray
+    blue))
+
+(defn downvote-color [downvotes]
+  (if (= downvotes 0)
+    gray
+    red))
+
+(defn comment-component [comment]
   (let [upvotes (:upvotes comment)
         downvotes (:downvotes comment)
         vote-total (max 1 (+ upvotes downvotes))
@@ -19,16 +42,17 @@
        (:title comment)]]
      [:div.row.comment-metadata-row
       ; Comment Body / Link to Article
-      [:div.column.comment-body {:style {:flex 70 :border-image (str "linear-gradient(90deg, #0072bc " pos-gradient "%, #ed1c24 " neg-gradient "%) 2 / 4px")}}
+      [:div.column.comment-body {:style {:flex 70
+                                         :border-image (comment-gradient upvotes downvotes pos-gradient neg-gradient)}}
        ; Likes
-       [:span.counter.like-counter
+       [:span.counter.like-counter {:style {:color (upvote-color upvotes)}}
         [:span.fa-stack.fa-1x.counter-icon
          [:i.fas.fa-thumbs-up.fa-stack-2x]
          [:i.fas.fa-stack-1x.vote-counter-text (str upvotes " ")]]]
        ; Comment text
        [:span.comment-text (:text comment)]
        ; Dislikes
-       [:span.counter.dislike-counter
+       [:span.counter.dislike-counter {:style {:color (downvote-color downvotes)}}
         [:span.fa-stack.fa-1x.counter-icon
          [:i.fas.fa-thumbs-down.fa-stack-2x]
          [:i.fas.fa-stack-1x.vote-counter-text (str downvotes " ")]]]]]

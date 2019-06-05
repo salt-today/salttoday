@@ -178,14 +178,12 @@ span.nav-link.active {
 
 .dislike-counter {
     margin-right: 13px;
-    color: #ed1c24;
     font-size: 1.75em;
     align-items: start;
 }
 
 .like-counter {
     width: 10px;
-    color: #0072bc;
     margin-left: 13px;
     font-size: 1.75em;
     align-items: end;

@@ -41,12 +41,13 @@
                  [selmer "1.12.12"]
                  ; Frontend Depedencies
                  [cljs-http "0.1.46"]
+                 [funcool/cuerdas "2.2.0"]
                  [markdown-clj "1.10.0"]
                  [reagent "0.8.1" :exclusions [com.google.guava/guava]]
                  [secretary "1.2.3"]
                  ; Web Jars
                  [org.webjars.bower/tether "1.4.4"]
-                 [org.webjars/font-awesome "5.8.2"]
+                 [org.webjars/font-awesome "5.0.13"]
                  [org.webjars/webjars-locator "0.36"]]
 
   :plugins [[lein-cljsbuild "1.1.5"]
@@ -99,7 +100,7 @@
                                  [ring/ring-devel "1.7.1"]
                                  [ring/ring-mock "0.4.0"]]
                   :plugins      [[com.jakemccrary/lein-test-refresh "0.19.0"]
-                                 [lein-figwheel "0.5.16"]
+                                 [lein-figwheel "0.5.18"]
                                  [org.clojure/clojurescript "1.10.520"]]
                   :cljsbuild
                   {:builds
