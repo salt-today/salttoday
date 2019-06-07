@@ -6,7 +6,8 @@
             [salttoday.scraper :as scraper]
             [clojure.tools.logging :as log]
             [clj-time.core :as t]
-            [clj-time.coerce :as c]))
+            [clj-time.coerce :as c]
+            [clojure.set :refer [rename-keys]]))
 
 (defn create-schema [conn]
   (let [schema [{:db/ident              :user/name
@@ -375,7 +376,7 @@
   [users]
   (for [user users]
     (-> user first
-        (clojure.set/rename-keys {:user/upvotes :upvotes :user/downvotes :downvotes :user/name :name}))))
+        (rename-keys {:user/upvotes :upvotes :user/downvotes :downvotes :user/name :name}))))
 
 (def get-all-users-query '[:find (pull ?u [:user/upvotes :user/downvotes :user/name])
                            :in $

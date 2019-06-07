@@ -4,15 +4,17 @@
             [clojure.core.async :as a]
             [cljs-http.client :as http]
             [goog.string :as gstring]
-            [salttoday.pages.common :refer [content make-content make-navbar make-right-offset jumbotron]]))
+            [salttoday.views.common :refer [content make-content make-navbar make-right-offset jumbotron]]))
 
 (defn get-users [state]
-  (go (let [options {:query-params {}
+  (go (let [options {:query-params {:offset    0
+                                    :amount    1
+                                    :sort-type "score"
+                                    :days      0}
                      :with-credentials? false
                      :headers {}}
-            {:keys [status headers body error] :as resp} (a/<! (http/get "/api/v1/top-users" options))]
+            {:keys [status headers body error] :as resp} (a/<! (http/get "/api/v1/users" options))]
         (swap! state assoc :name (-> body
-                                     (:users)
                                      first
                                      (:name))))))
 

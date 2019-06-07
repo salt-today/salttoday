@@ -1,4 +1,4 @@
-(ns salttoday.pages.common
+(ns salttoday.views.common
   (:require [salttoday.routing.util :refer [update-query-parameters!]]))
 
 (defn jumbotron

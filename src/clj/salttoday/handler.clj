@@ -2,7 +2,7 @@
   (:require
    [salttoday.layout :refer [error-page]]
    [salttoday.routes.api.v1.endpoints :as v1-api]
-   [salttoday.routes.home :refer [home-routes]]
+   [salttoday.routes.app :refer [app-routes]]
    [compojure.core :refer [routes wrap-routes]]
    [compojure.route :as route]
    [salttoday.env :refer [defaults]]
@@ -13,12 +13,11 @@
   :start ((or (:init defaults) identity))
   :stop  ((or (:stop defaults) identity)))
 
-; Should Swap home-routes for compojure.route :refer resources
 (mount/defstate app
   :start
   (middleware/wrap-base
    (routes
-    (-> #'home-routes
+    (-> #'app-routes
         (wrap-routes middleware/wrap-csrf)
         (wrap-routes middleware/wrap-formats))
     (-> #'v1-api/endpoints
@@ -27,5 +26,6 @@
     (route/not-found
      (:body
       (error-page {:status 404
-                   :title "Page Not Found"}))))))
+                   :message "All out of Salt"
+                   :reason "Page Not Found"}))))))
 

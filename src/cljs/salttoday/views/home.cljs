@@ -3,8 +3,8 @@
   (:require [cljs-http.client :as http]
             [clojure.core.async :as a]
             [reagent.core :as r]
-            [salttoday.common :refer [display-comment]]
-            [salttoday.pages.common :refer [content get-selected-value jumbotron make-content make-navbar
+            [salttoday.components.comment :refer [comment-component]]
+            [salttoday.views.common :refer [content get-selected-value jumbotron make-content make-navbar
                                             make-right-offset update-query-params-with-state]]))
 
 (defn get-comments [state]
@@ -53,7 +53,7 @@
       [:option {:value 0} "Of All Time"]]]]
    (list [:div.column.justify-center.comments-wrapper
           (for [comment (:comments @state)]
-            (display-comment comment))])))
+            (comment-component comment))])))
 
 ; Helpful Docs - https://purelyfunctional.tv/guide/reagent/#form-2
 (defn home-page [query-params]

@@ -43,7 +43,7 @@ jobs:
           paths:
             - ~/.m2
 
-  lint_code:
+  check_formatting:
     docker:
       - image: circleci/clojure:lein-2.8.3
     working_directory: ~/build
@@ -55,6 +55,19 @@ jobs:
           keys:
             - v1-dependencies-{{ checksum "project.clj" }}
       - run: lein cljfmt check
+
+  lint_code:
+    docker:
+      - image: circleci/clojure:lein-2.8.3
+    working_directory: ~/build
+    steps:
+      - restore_cache:
+          keys:
+            - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "project.clj" }}
+      - run: lein eastwood
 
   unit_tests:
     docker:
@@ -113,7 +126,7 @@ jobs:
 
 workflows:
   version: 2.1
-  lint_build_deploy:
+  build_salttoday:
     jobs:
       - checkout_code:
           filters:
@@ -122,6 +135,12 @@ workflows:
       - bundle_dependencies:
           requires:
             - checkout_code
+          filters:
+            tags:
+              only: /.*/
+      - check_formatting:
+          requires:
+            - bundle_dependencies
           filters:
             tags:
               only: /.*/
@@ -140,6 +159,7 @@ workflows:
       - uberjar:
           requires:
             - lint_code
+            - check_formatting
             - unit_tests
           filters:
             tags:
