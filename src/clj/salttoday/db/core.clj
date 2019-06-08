@@ -209,6 +209,8 @@
 ; -----------------------------------------------------------------------------------
 
 ; Sorting
+
+
 (defn sort-by-upvotes
   [comments]
   (sort #(> (:upvotes %1) (:upvotes %2)) comments))
@@ -253,6 +255,8 @@
 
 
 ; Below is how queries with optional conditions are created, taken from here: https://grishaev.me/en/datomic-query
+
+
 (defn remap-query
   [{args :args :as m}]
   {:query (dissoc m :args)

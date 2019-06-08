@@ -16,9 +16,9 @@
         (swap! state assoc :comments body))))
 
 (defn component-content [state]
-   (list [:div.column.justify-center.comments-wrapper
-          (for [comment (:comments @state)]
-            (comment-component comment))]))
+  (list [:div.column.justify-center.comments-wrapper
+         (for [comment (:comments @state)]
+           (comment-component comment))]))
 
 ; Helpful Docs - https://purelyfunctional.tv/guide/reagent/#form-2
 (defn comment-page [query-params]
