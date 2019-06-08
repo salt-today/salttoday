@@ -1,4 +1,4 @@
-(ns salttoday.pages.users
+(ns salttoday.views.users
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [reagent.core :as r]
             [clojure.core.async :as a]

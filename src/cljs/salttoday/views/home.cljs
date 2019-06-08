@@ -1,4 +1,4 @@
-(ns salttoday.pages.home
+(ns salttoday.views.home
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [cljs-http.client :as http]
             [clojure.core.async :as a]
@@ -61,9 +61,7 @@
                        :offset (or (:offset query-params) 0)
                        :amount (or (:amount query-params) 50)
                        :sort-type (or (:sort-type query-params) "score")
-                       :days (or (:days query-params) "1")
-                       :id (or (:id query-params) nil)})]
-    (js/console.log (:id @state))
+                       :days (or (:days query-params) "1")})]
     (get-comments state)
     (fn []
       [:div.page-wrapper

@@ -30,7 +30,6 @@
           days-num (string->number days)
           id-num (string->number id)
           results (db/get-top-x-comments offset-num amount-num sort-type days-num search-text user id-num)]
-      (println results)
       (-> (response/ok results)
           (response/header "Content-Type"
                            "application/json"))))

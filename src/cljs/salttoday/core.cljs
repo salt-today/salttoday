@@ -5,9 +5,10 @@
             [goog.events :as events]
             [goog.history.EventType :as EventType]
             [reagent.core :as r]
-            [salttoday.pages.home :as home]
-            [salttoday.pages.users :as users]
-            [salttoday.pages.about :as about]))
+            [salttoday.views.home :as home]
+            [salttoday.views.comment :as comment]
+            [salttoday.views.users :as users]
+            [salttoday.views.about :as about]))
 
 (defonce app-state (r/atom {:page :home
                             :query-params {}}))
@@ -16,6 +17,8 @@
 ;; TODO - add filters on query parameters, get rid of those that aren't relevant to the page
 (defmethod current-page :home []
   [home/home-page (:query-params @app-state)])
+(defmethod current-page :comment []
+  [comment/comment-page (:query-params @app-state)])
 (defmethod current-page :users []
   [users/users-page (:query-params @app-state)])
 (defmethod current-page :about []
@@ -35,6 +38,10 @@
 
 (defroute "/home" [query-params]
   (swap! app-state assoc :page :home)
+  (swap! app-state assoc :query-params query-params))
+
+(defroute "/comment" [query-params]
+  (swap! app-state assoc :page :comment)
   (swap! app-state assoc :query-params query-params))
 
 (defroute "/users" [query-params]

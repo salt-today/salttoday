@@ -24,7 +24,8 @@
     red))
 
 (defn comment-component [comment]
-  (let [upvotes (:upvotes comment)
+  (let [id (:comment-id comment)
+        upvotes (:upvotes comment)
         downvotes (:downvotes comment)
         vote-total (max 1 (+ upvotes downvotes))
         pos-percent (if (zero? vote-total)
@@ -39,7 +40,11 @@
      ; Title
      [:div.article-title
       [:a.article-link {:href (:url comment) :target "_blank"}
-       (:title comment)]]
+       (:title comment)]
+      ; TODO - change this to just copy the link to the clipboard eventually
+      ; could be used elsewhere, develop it generically.
+      [:a.comment-link {:href (str "/#/comment?id=" id)}
+       [:i.fas.fa-link]]]
      [:div.row.comment-metadata-row
       ; Comment Body / Link to Article
       [:div.column.comment-body {:style {:flex 70

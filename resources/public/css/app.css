@@ -171,7 +171,6 @@ span.nav-link.active {
     align-items: flex-end;
 }
 
-
 .comment-author {
     margin-left: 1em;
 }
@@ -201,6 +200,13 @@ span.nav-link.active {
     right: -25px;
     position: absolute;
     font-size: 0.5em;
+}
+
+.comment-link {
+    text-decoration: none;
+    color: white;
+    margin-left: 0.5em;
+    font-size: 0.85em;
 }
 
 .vote-counter-text {
