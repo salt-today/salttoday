@@ -353,7 +353,7 @@
            formatted)
          (create-comment-maps results)))))
   ([db]
-   (get-comments db -1 nil nil)))
+   (get-comments db -1 nil nil nil)))
 
 (defn get-top-x-comments
   [offset num sort-type days-ago search-text name id]
