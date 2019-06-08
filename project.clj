@@ -43,6 +43,7 @@
                  [cljs-http "0.1.46"]
                  [funcool/cuerdas "2.2.0"]
                  [markdown-clj "1.10.0"]
+                 [metosin/komponentit "0.3.8"]
                  [reagent "0.8.1" :exclusions [com.google.guava/guava]]
                  [secretary "1.2.3"]
                  ; Web Jars

@@ -1,5 +1,6 @@
 (ns salttoday.components.comment
-  (:require [cuerdas.core :as string]))
+  (:require [cuerdas.core :as string]
+            [komponentit.clipboard :as clipboard]))
 
 (def blue "#0072bc")
 (def red "#ed1c24")
@@ -23,6 +24,10 @@
     gray
     red))
 
+(extend-type js/NodeList
+  ISeqable
+  (-seq [array] (array-seq array 0)))
+
 (defn comment-component [comment]
   (let [id (:comment-id comment)
         upvotes (:upvotes comment)
@@ -43,8 +48,22 @@
        (:title comment)]
       ; TODO - change this to just copy the link to the clipboard eventually
       ; could be used elsewhere, develop it generically.
-      [:a.comment-link {:href (str "/#/comment?id=" id)}
-       [:i.fas.fa-link]]]
+      [:a.comment-link {:on-mouse-over (fn [e]
+                                         (let [tooltip (-> e
+                                                           .-currentTarget
+                                                           .-childNodes
+                                                           (second))]
+                                           (set! (.-innerHTML tooltip) "Copy Link")))
+                        :on-click (fn [e]
+                                    (clipboard/copy-text (str (.-origin (.-location js/window))
+                                                              "/#/comment?id=" id))
+                                    (let [tooltip (-> e
+                                                      .-currentTarget
+                                                      .-childNodes
+                                                      (second))]
+                                      (set! (.-innerHTML tooltip) "Copied")))}
+       [:i.fas.fa-link]
+       [:span.tooltip "Copy Link"]]]
      [:div.row.comment-metadata-row
       ; Comment Body / Link to Article
       [:div.column.comment-body {:style {:flex 70
