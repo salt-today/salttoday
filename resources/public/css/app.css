@@ -35,6 +35,7 @@ body {
     max-width: 100%;
     display: flex;
     flex-wrap: wrap;
+    height: 100vh;
 }
 
 .justify-center {
@@ -135,6 +136,10 @@ span.nav-link.active {
     font-size: 3em;
 }
 
+.about-heading {
+    margin-top: 1.5em;
+}
+
 .header-wrapper {
     margin-bottom: 2em;
 }
@@ -173,14 +178,12 @@ span.nav-link.active {
 
 .dislike-counter {
     margin-right: 13px;
-    color: #ed1c24;
     font-size: 1.75em;
     align-items: start;
 }
 
 .like-counter {
     width: 10px;
-    color: #0072bc;
     margin-left: 13px;
     font-size: 1.75em;
     align-items: end;

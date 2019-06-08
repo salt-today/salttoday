@@ -6,7 +6,8 @@
             [salttoday.scraper :as scraper]
             [clojure.tools.logging :as log]
             [clj-time.core :as t]
-            [clj-time.coerce :as c]))
+            [clj-time.coerce :as c]
+            [clojure.set :refer [rename-keys]]))
 
 (defstate conn
   :start (let [db-url (:database-url env)]
@@ -64,18 +65,18 @@
     @(d/transact conn schema)))
 
 (defn ^:private transact-and-log [& args]
-  (log/info "transaction arguments:" args)
+  (log/debug "transaction arguments:" args)
   (let [result @(apply d/transact args)]
-    (log/info "transaction result:" result)
+    (log/debug "transaction result:" result)
     result))
 
 (defn ^:private add-or-get-user [conn username]
-  (log/info "add-or-get-user")
+  (log/debug "add-or-get-user")
   (let [user (-> (d/q '[:find ?e
                         :in $ ?name
                         :where [?e :user/name ?name]] (d/db conn) username)
                  ffirst)]
-    (log/info "was user found?" user)
+    (log/debug "was user found?" user)
     (if (nil? user)
       (do
         (honeycomb/send-metrics {"db-operation" "add-or-get-user"
@@ -87,7 +88,7 @@
       user)))
 
 (defn ^:private add-post [conn {:keys [url title]}]
-  (log/info "add-post")
+  (log/debug "add-post")
   ; Check if the post exists, if it doesn't add it.
   (let [post-id (-> (d/q '[:find ?e
                            :in $ ?url
@@ -111,9 +112,9 @@
 
 ;; TODO: THIS REALLY SHOULD BE A TRANSACTION FUNCTION
 (defn ^:private add-comment [conn post-id post-title {:keys [username comment timestamp upvotes downvotes]}]
-  (log/info "add-comment")
-  (log/info "post-id" post-id)
-  (log/info "comment" comment)
+  (log/debug "add-comment")
+  (log/debug "post-id" post-id)
+  (log/debug "comment" comment)
   (let [user-id (add-or-get-user conn username)
         user-stats (-> (d/q '[:find ?upvotes ?downvotes :in $ ?user-id :where
                               [?user-id :user/upvotes ?upvotes]
@@ -168,15 +169,15 @@
                              "comment-downvotes" comment-downvotes})))
 
 (defn ^:private add-comments [conn post-id post-title comments]
-  (log/info "add-comments")
-  (log/info "post-id:" post-id)
-  (log/info "post-title" post-title)
-  (log/info "comments:" comments)
+  (log/debug "add-comments")
+  (log/debug "post-id:" post-id)
+  (log/debug "post-title" post-title)
+  (log/debug "comments:" comments)
   (doseq [comment comments]
     (add-comment conn post-id post-title comment)))
 
 (defn update-stats [posts]
-  (log/info "update-stats")
+  (log/debug "update-stats")
   (doseq [post posts]
     (let [post-id (add-post conn post)]
       (add-comments conn post-id (:title post) (:comments post)))))
@@ -231,12 +232,10 @@
     (sort-by-score comments)))
 
 ; Pagination
-(defn paginate-comments
-  ([amount comments]
-   (paginate-comments 0 amount comments))
-  ([offset amount comments]
-   (->> (drop offset comments)
-        (take amount))))
+(defn paginate-results
+  [offset amount results]
+  (->> (drop offset results)
+       (take amount)))
 
 ; Puts the raw query comment into a map
 (defn create-comment-maps
@@ -244,8 +243,8 @@
   (for [comment comments]
     (-> (apply merge comment)
         ;; TODO This is currently done as it's what the frontend expects, update the frontend.
-        (clojure.set/rename-keys {:comment/upvotes :upvotes :comment/downvotes :downvotes :comment/text :text
-                                  :user/name :user :post/title :title :post/url :url}))))
+        (rename-keys {:comment/upvotes :upvotes :comment/downvotes :downvotes :comment/text :text
+                      :user/name :user :post/title :title :post/url :url}))))
 
 
 ; Below is how queries with optional conditions are created, taken from here: https://grishaev.me/en/datomic-query
@@ -296,7 +295,7 @@
 ; Returns a date time of the current date minus a number of days.
 ; If given a number less than 1, returns nil.
 (defn get-date [days-ago]
-  (if (< 1 days-ago)
+  (if (<= 1 days-ago)
     (-> (java.time.LocalDateTime/now)
         (.minusHours 5)
         (.minusDays days-ago)
@@ -317,10 +316,10 @@
   [offset num sort-type days-ago search-text name]
   (let [comments (get-comments (d/db conn) days-ago search-text name)
         sorted-comments (sort-by-specified comments sort-type)]
-    (paginate-comments offset num sorted-comments)))
+    (paginate-results offset num sorted-comments)))
 
 ; -----------
-; User stats
+; Users
 ; -----------
 (defn get-user-stats
   [name]
@@ -330,39 +329,48 @@
          [?u :user/downvotes ?downvotes]]
        (d/db conn) name))
 
-(defn get-most-x-users
-  [vote-type num]
-  (let [users (d/q '[:find ?name ?vote :in $ ?vote-type :where
-                     [?u :user/name ?name]
-                     [?u ?vote-type ?vote]]
-                   (d/db conn) vote-type)
-        sorted-users (sort-by second > users)
-        top-users (take num sorted-users)]
-    (for [user top-users]
-      (apply assoc {}
-             (interleave [:name :votes] user)))))
+(defn create-user-maps
+  [users]
+  (for [user users]
+    (-> user first
+        (rename-keys {:user/upvotes :upvotes :user/downvotes :downvotes :user/name :name}))))
 
-(defn get-top-rated-users
-  ([num db]
-   (let [users (d/q '[:find ?upvotes ?downvotes ?name :in $ :where
-                      [?u :user/name ?name]
-                      [?u :user/upvotes ?upvotes]
-                      [?u :user/downvotes ?downvotes]] db)
-         sorted-users (sort #(> (+ (first %1) (second %1)) (+ (first %2) (second %2))) users)
-         top-x (take num sorted-users)]
-     (for [user top-x]
-       (apply assoc {}
-              (interleave [:upvotes :downvotes :name] user)))))
-  ([num] (get-top-rated-users num (d/db conn))))
+(def get-all-users-query '[:find (pull ?u [:user/upvotes :user/downvotes :user/name])
+                           :in $
+                           :where [?u :user/name ?name]])
 
-(defn get-most-negative-users
-  [num]
-  (get-most-x-users :user/downvotes num))
+(defn extract-name-to-outer-map
+  [user-maps]
+  (apply merge
+         (for [user-map user-maps]
+           {(:name user-map) user-map})))
 
-(defn get-most-positive-users
-  [num]
-  (get-most-x-users :user/upvotes num))
+; Used as a default if user can't be found in past
+(def empty-user-map {:upvotes 0 :downvotes 0})
 
+(defn get-user-scores-for-time-range
+  [db current-users-map days-ago-date]
+  (let [past-users (d/q get-all-users-query (d/as-of db days-ago-date))
+        past-users-maps (create-user-maps past-users)
+        new-past-users-map (extract-name-to-outer-map past-users-maps)
+        new-current-users-map (extract-name-to-outer-map current-users-map)]
+    (for [user-key (keys new-current-users-map)]
+      (let [current-user-map (get new-current-users-map user-key)
+            past-user-map (get new-past-users-map user-key empty-user-map)]
+        (assoc current-user-map
+               :upvotes (- (:upvotes current-user-map) (:upvotes past-user-map))
+               :downvotes (- (:downvotes current-user-map) (:downvotes past-user-map)))))))
+
+(defn get-top-x-users
+  ([db offset amount sort-type days-ago]
+   (let [users (d/q get-all-users-query db)
+         user-maps (create-user-maps users)
+         days-ago-date (get-date days-ago)
+         user-maps (if days-ago-date (get-user-scores-for-time-range db user-maps days-ago) user-maps)
+         sorted-users (sort-by-specified user-maps sort-type)]
+     (paginate-results offset amount sorted-users)))
+  ([offset amount sort-type days-ago]
+   (get-top-x-users (d/db conn) offset amount sort-type days-ago)))
 
 ;; Stats
 

@@ -1,9 +1,8 @@
 (ns salttoday.handler
   (:require
    [salttoday.layout :refer [error-page]]
-   [salttoday.routes.common :refer [common-routes]]
-   [salttoday.routes.home :refer [home-routes]]
-   [salttoday.routes.users :refer [users-routes]]
+   [salttoday.routes.api.v1.endpoints :as v1-api]
+   [salttoday.routes.app :refer [app-routes]]
    [compojure.core :refer [routes wrap-routes]]
    [compojure.route :as route]
    [salttoday.env :refer [defaults]]
@@ -18,17 +17,15 @@
   :start
   (middleware/wrap-base
    (routes
-    (-> #'home-routes
+    (-> #'app-routes
         (wrap-routes middleware/wrap-csrf)
         (wrap-routes middleware/wrap-formats))
-    (-> #'users-routes
-        (wrap-routes middleware/wrap-csrf)
-        (wrap-routes middleware/wrap-formats))
-    (-> #'common-routes
+    (-> #'v1-api/endpoints
         (wrap-routes middleware/wrap-csrf)
         (wrap-routes middleware/wrap-formats))
     (route/not-found
      (:body
       (error-page {:status 404
-                   :title "page not found"}))))))
+                   :message "All out of Salt"
+                   :reason "Page Not Found"}))))))
 
