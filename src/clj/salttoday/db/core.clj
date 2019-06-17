@@ -246,12 +246,12 @@
     (-> (apply merge comment)
         ;; TODO This is currently done as it's what the frontend expects, update the frontend.
         (rename-keys {:db/id :comment-id
-                                  :comment/upvotes :upvotes
-                                  :comment/downvotes :downvotes
-                                  :comment/text :text
-                                  :user/name :user
-                                  :post/title :title
-                                  :post/url :url}))))
+                      :comment/upvotes :upvotes
+                      :comment/downvotes :downvotes
+                      :comment/text :text
+                      :user/name :user
+                      :post/title :title
+                      :post/url :url}))))
 
 
 ; Below is how queries with optional conditions are created, taken from here: https://grishaev.me/en/datomic-query
@@ -277,32 +277,32 @@
 (defn create-get-comments-query
   ; TODO - probably better if this function took a map of keys instead of positional args
   [db days-ago-date search-text name cid]
-    (cond-> initial-get-all-comments-query
-      true
-      (update :args conj db)
+  (cond-> initial-get-all-comments-query
+    true
+    (update :args conj db)
 
-      (not= 0 cid)
-      (-> (update :in conj '?c)
-          (update :args conj cid))
+    (not= 0 cid)
+    (-> (update :in conj '?c)
+        (update :args conj cid))
 
-      search-text
-      (-> (update :in conj '?search-text)
-          (update :args conj search-text)
-          (update :where conj '[(.contains ^String ?text ?search-text)]))
+    search-text
+    (-> (update :in conj '?search-text)
+        (update :args conj search-text)
+        (update :where conj '[(.contains ^String ?text ?search-text)]))
 
-      name
-      (-> (update :in conj '?name)
-          (update :args conj name)
-          (update :where conj '[?u :user/name ?name]))
+    name
+    (-> (update :in conj '?name)
+        (update :args conj name)
+        (update :where conj '[?u :user/name ?name]))
 
-      days-ago-date
-      (-> (update :in conj '?days-ago-date)
-          (update :args conj days-ago-date)
-          (update :where conj '[?tx :db/txInstant ?inst])
-          (update :where conj '[(.before ^java.util.Date ?days-ago-date ?inst)]))
+    days-ago-date
+    (-> (update :in conj '?days-ago-date)
+        (update :args conj days-ago-date)
+        (update :where conj '[?tx :db/txInstant ?inst])
+        (update :where conj '[(.before ^java.util.Date ?days-ago-date ?inst)]))
 
-      true
-      remap-query))
+    true
+    remap-query))
 
 ; Returns a date time of the current date minus a number of days.
 ; If given a number less than 1, returns nil.
@@ -321,7 +321,7 @@
    (let [days-ago-date (get-date days-ago)
          query-map (create-get-comments-query db days-ago-date search-text name id)]
      (let [results (apply (partial d/q (:query query-map)) (:args query-map))]
-         (create-comment-maps results))))
+       (create-comment-maps results))))
   ([db]
    (get-comments db -1 nil nil nil)))
 
