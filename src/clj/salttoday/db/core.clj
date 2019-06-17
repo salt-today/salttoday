@@ -245,7 +245,7 @@
   (for [comment comments]
     (-> (apply merge comment)
         ;; TODO This is currently done as it's what the frontend expects, update the frontend.
-        (clojure.set/rename-keys {:db/id :comment-id
+        (rename-keys {:db/id :comment-id
                                   :comment/upvotes :upvotes
                                   :comment/downvotes :downvotes
                                   :comment/text :text
@@ -273,32 +273,16 @@
             [?c :comment/user ?u]
             [?p :post/comment ?c]]})
 
-(def initial-get-specific-comment-query
-  '{:find [?upvotes ?downvotes ?text ?user-name ?title ?url]
-    :in [$]
-    :args []
-    :where [[?cid :comment/upvotes ?upvotes]
-            [?cid :comment/downvotes ?downvotes]
-            [?cid :comment/text ?text]
-            [?cid :comment/user ?u]
-            [?u :user/name ?user-name]
-            [?p :post/comment ?cid]
-            [?p :post/title ?title]
-            [?p :post/url ?url]]})
-
 ; Adds any optional args/conditionals to the query
 (defn create-get-comments-query
   ; TODO - probably better if this function took a map of keys instead of positional args
   [db days-ago-date search-text name cid]
-  (let [initial-query (if (not= 0 cid)
-                        initial-get-specific-comment-query
-                        initial-get-all-comments-query)]
-    (cond-> initial-query
+    (cond-> initial-get-all-comments-query
       true
       (update :args conj db)
 
-      cid
-      (-> (update :in conj '?cid)
+      (not= 0 cid)
+      (-> (update :in conj '?c)
           (update :args conj cid))
 
       search-text
@@ -318,7 +302,7 @@
           (update :where conj '[(.before ^java.util.Date ?days-ago-date ?inst)]))
 
       true
-      remap-query)))
+      remap-query))
 
 ; Returns a date time of the current date minus a number of days.
 ; If given a number less than 1, returns nil.
@@ -332,30 +316,12 @@
         (java.util.Date/from))))
 
 ; (get-comments db 0 nil nil 17592186045650)
-
-; TODO this should be able to return a single item, but later code depends on it being a list!
-(defn single-comment-map [id results]
-  (let [comment (first results)]
-    (if (nil? comment)
-      '()
-      (list {:comment-id id
-             :upvotes (get (first results) 0)
-             :downvotes (get (first results) 1)
-             :text (get (first results) 2)
-             :user (get (first results) 3)
-             :title (get (first results) 4)
-             :url (get (first results) 5)}))))
-
 (defn get-comments
   ([db days-ago search-text name id]
    (let [days-ago-date (get-date days-ago)
          query-map (create-get-comments-query db days-ago-date search-text name id)]
      (let [results (apply (partial d/q (:query query-map)) (:args query-map))]
-       (if (not= id 0)
-         (let [formatted (single-comment-map id results)]
-           (println formatted)
-           formatted)
-         (create-comment-maps results)))))
+         (create-comment-maps results))))
   ([db]
    (get-comments db -1 nil nil nil)))
 
