@@ -20,7 +20,7 @@
                    (str (name k) "=" v))]
       (str "?" (clojure.string/join "&" params)))))
 
-;; TODO - this is my best attempt at updating query parameters
+;; NOTE - this is my best attempt at updating query parameters
 ;; I can't find any documentation, or examples around this.
 ;; This may need to be changed in the future.
 (defn update-query-parameters! [new-params]
@@ -31,9 +31,6 @@
         current-params (url->map current-url)
         updated-params (merge current-params new-params)
         filtered-params (into {} (remove (comp nil? second) updated-params))]
-    (js/console.log current-url)
-    (js/console.log path)
-    (js/console.log filtered-params)
     (.replaceState
      history "", ""
      (str path (map->search-string filtered-params)))))

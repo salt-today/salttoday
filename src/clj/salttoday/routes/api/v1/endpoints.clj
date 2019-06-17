@@ -23,11 +23,14 @@
         (response/header "Content-Type"
                          "application/json")))
 
-  (GET "/api/v1/comments" [offset amount sort-type days search-text user]
+  ; TODO Would be better if we passed in nil instead of 0, see string->number function.
+  (GET "/api/v1/comments" [offset amount sort-type days search-text user id]
     (let [offset-num (string->number offset)
           amount-num (string->number amount)
-          days-num (string->number days)]
-      (-> (response/ok (db/get-top-x-comments offset-num amount-num sort-type days-num search-text user))
+          days-num (string->number days)
+          id-num (string->number id)
+          results (db/get-top-x-comments offset-num amount-num sort-type days-num search-text user id-num)]
+      (-> (response/ok results)
           (response/header "Content-Type"
                            "application/json"))))
 

@@ -1,4 +1,4 @@
-(ns salttoday.pages.home
+(ns salttoday.views.home
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [cljs-http.client :as http]
             [clojure.core.async :as a]
@@ -11,7 +11,8 @@
   (go (let [options {:query-params {:offset    (:offset @state)
                                     :amount    (:amount @state)
                                     :sort-type (:sort-type @state)
-                                    :days      (:days @state)}
+                                    :days      (:days @state)
+                                    :id        (:id @state)}
                      :with-credentials? false
                      :headers {}}
             {:keys [status headers body error] :as resp} (a/<! (http/get "/api/v1/comments" options))]

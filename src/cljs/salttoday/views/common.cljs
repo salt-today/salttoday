@@ -19,7 +19,7 @@
   [current-page]
   [:div.column {:style {:flex 15}}
    [:div.nav-row.navigation
-    [nav-link "/#/" "Home " current-page :home [:i.fas.fa-home]]]
+    [nav-link "/#/home" "Home " current-page :home [:i.fas.fa-home]]]
    [:div.nav-row.navigation
     [nav-link "/#/users" "Users " current-page :users [:i.fas.fa-users]]]
    [:div.nav-row.navigation

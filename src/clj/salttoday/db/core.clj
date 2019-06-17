@@ -9,13 +9,7 @@
             [clj-time.coerce :as c]
             [clojure.set :refer [rename-keys]]))
 
-(defstate conn
-  :start (let [db-url (:database-url env)]
-           (d/create-database db-url)
-           (d/connect db-url))
-  :stop (-> conn .release))
-
-(defn create-schema []
+(defn create-schema [conn]
   (let [schema [{:db/ident              :user/name
                  :db/valueType          :db.type/string
                  :db/cardinality        :db.cardinality/one
@@ -63,6 +57,14 @@
                  :db/cardinality        :db.cardinality/many
                  :db.install/_attribute :db.part/db}]]
     @(d/transact conn schema)))
+
+(defstate conn
+  :start (let [db-url (:database-url env)
+               db (d/create-database db-url)
+               conn (d/connect db-url)]
+           (create-schema conn)
+           conn)
+  :stop (-> conn .release))
 
 (defn ^:private transact-and-log [& args]
   (log/debug "transaction arguments:" args)
@@ -243,8 +245,13 @@
   (for [comment comments]
     (-> (apply merge comment)
         ;; TODO This is currently done as it's what the frontend expects, update the frontend.
-        (rename-keys {:comment/upvotes :upvotes :comment/downvotes :downvotes :comment/text :text
-                      :user/name :user :post/title :title :post/url :url}))))
+        (rename-keys {:db/id :comment-id
+                      :comment/upvotes :upvotes
+                      :comment/downvotes :downvotes
+                      :comment/text :text
+                      :user/name :user
+                      :post/title :title
+                      :post/url :url}))))
 
 
 ; Below is how queries with optional conditions are created, taken from here: https://grishaev.me/en/datomic-query
@@ -257,7 +264,7 @@
 
 ; Gets literally every comment in the database.
 (def initial-get-all-comments-query
-  '{:find [(pull ?c [:comment/upvotes :comment/downvotes :comment/text])
+  '{:find [(pull ?c [:db/id :comment/upvotes :comment/downvotes :comment/text])
            (pull ?u [:user/name])
            (pull ?p [:post/title :post/url])]
     :in [$]
@@ -268,10 +275,15 @@
 
 ; Adds any optional args/conditionals to the query
 (defn create-get-comments-query
-  [db days-ago-date search-text name]
+  ; TODO - probably better if this function took a map of keys instead of positional args
+  [db days-ago-date search-text name cid]
   (cond-> initial-get-all-comments-query
     true
     (update :args conj db)
+
+    (not= 0 cid)
+    (-> (update :in conj '?c)
+        (update :args conj cid))
 
     search-text
     (-> (update :in conj '?search-text)
@@ -303,18 +315,19 @@
         (.toInstant)
         (java.util.Date/from))))
 
+; (get-comments db 0 nil nil 17592186045650)
 (defn get-comments
-  ([db days-ago search-text name]
+  ([db days-ago search-text name id]
    (let [days-ago-date (get-date days-ago)
-         query-map (create-get-comments-query db days-ago-date search-text name)]
-     (-> (apply (partial d/q (:query query-map)) (:args query-map))
-         (create-comment-maps))))
+         query-map (create-get-comments-query db days-ago-date search-text name id)]
+     (let [results (apply (partial d/q (:query query-map)) (:args query-map))]
+       (create-comment-maps results))))
   ([db]
-   (get-comments db -1 nil nil)))
+   (get-comments db -1 nil nil nil)))
 
 (defn get-top-x-comments
-  [offset num sort-type days-ago search-text name]
-  (let [comments (get-comments (d/db conn) days-ago search-text name)
+  [offset num sort-type days-ago search-text name id]
+  (let [comments (get-comments (d/db conn) days-ago search-text name id)
         sorted-comments (sort-by-specified comments sort-type)]
     (paginate-results offset num sorted-comments)))
 
@@ -376,7 +389,7 @@
 
 
 (defn get-todays-stats []
-  (let [comments (get-comments (db-since-days-ago 1))
+  (let [comments (get-comments (d/db conn))
         comment-count (count comments)
         upvote-count (reduce #(+ %1 (:upvotes %2)) 0 comments)
         downvote-count (reduce #(+ %1 (:downvotes %2)) 0 comments)
