@@ -27,10 +27,13 @@ lein repl
 
 Then run figwheel to get live interactive programming, run:
 
-    lein figwheel
+```bash
+lein figwheel
+```
 
 By default, SaltToday connects to a in-memory Datomic instance. If you wish to have your data persisted, you can run your instance of Datomic with:
-```
+
+```bash
 docker run -d -p 4334-4336:4334-4336 --name datomic-free akiel/datomic-free
 ```
 
@@ -49,4 +52,16 @@ You can run queries and such in the REPL once it is spun up, This allows for rap
 (def query (salttoday.db.core/create-get-comments-query db nil nil nil 17592186045892))
 (def results (apply (partial d/q (:query query)) (:args query)))
 ;(def results (salttoday.db.core/get-comments db 0 nil nil 17592186045650))
+```
+
+## Datomic Usage on Server
+
+It's also possible to use a repl in the server to query the live database:
+
+```clj
+(require '[datomic.api :as d])
+(def conn (d/connect "datomic:free://localhost:4334/salttoday"))
+(def db (d/db conn))
+(def query (salttoday.db.core/create-get-comments-query db "Trudumb" nil))
+(def results (apply (partial d/q (:query query)) (:args query)))
 ```
