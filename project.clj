@@ -46,6 +46,7 @@
                  [metosin/komponentit "0.3.8"]
                  [reagent "0.8.1" :exclusions [com.google.guava/guava]]
                  [secretary "1.2.3"]
+                 [venantius/accountant "0.2.4"]
                  ; Web Jars
                  [org.webjars.bower/tether "1.4.4"]
                  [org.webjars/font-awesome "5.0.13"]
