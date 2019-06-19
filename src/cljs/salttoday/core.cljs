@@ -1,7 +1,8 @@
 (ns salttoday.core
   (:require-macros [secretary.core :refer [defroute]])
   (:import goog.history.Html5History)
-  (:require [secretary.core :as secretary]
+  (:require [accountant.core :as accountant]
+            [secretary.core :as secretary]
             [goog.events :as events]
             [goog.history.EventType :as EventType]
             [reagent.core :as r]
@@ -27,10 +28,8 @@
 ;; -------------------------
 ;; Routes
 ;; Helpful Article - https://github.com/reagent-project/reagent-cookbook/tree/master/recipes/add-routing
-;;
-;; This is required so we can separate our frontend routes
-;; from our backend routes and create a SPA.
-(secretary/set-config! :prefix "#")
+;; - https://pupeno.com/2015/08/26/no-hashes-bidirectional-routing-in-re-frame-with-bidi-and-pushy/
+;; - https://pez.github.io/2016/03/01/Reagent-clientside-routing-with-Bidi-and-Accountant.html
 
 (defroute "/" [query-params]
   (swap! app-state assoc :page :home)
@@ -55,21 +54,23 @@
 ;; History
 ;; must be called after routes have been defined
 (defn hook-browser-navigation! []
-  (doto (Html5History.)
-    (events/listen
-     EventType/NAVIGATE
-     (fn [event]
-       (secretary/dispatch! (.-token event))))
-    (.setEnabled true)))
+  (accountant/configure-navigation!
+   {:nav-handler   (fn [path]
+                     (js/console.log path)
+                     (secretary/dispatch! path))
+    :path-exists?  (fn [path]
+                     (secretary/locate-route path))
+    :reload-same-path? true}))
 
 ;; -------------------------
 ;; Initialize app
 
 (defn mount-components []
-  (js/console.log "Mounting Components")
   (r/render [current-page]
             (.getElementById js/document "app")))
 
 (defn init! []
   (hook-browser-navigation!)
+  ; Route to the current URL (User hasn't made an action yet!)
+  (accountant/dispatch-current!)
   (mount-components))
