@@ -56,7 +56,7 @@
                                            (set! (.-innerHTML tooltip) "Copy Link")))
                         :on-click (fn [e]
                                     (clipboard/copy-text (str (.-origin (.-location js/window))
-                                                              "/#/comment?id=" id))
+                                                              "/comment?id=" id))
                                     (let [tooltip (-> e
                                                       .-currentTarget
                                                       .-childNodes

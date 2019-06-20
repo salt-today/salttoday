@@ -8,6 +8,7 @@
             [clojure.tools.logging :as log]
             [clojure.string :refer [blank?]]))
 
+; TODO - return nil and move to a common namespace
 (defn string->number
   "Converts a string to a number, if nil or not a number, returns 0."
   [str]
