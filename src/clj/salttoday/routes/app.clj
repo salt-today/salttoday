@@ -4,7 +4,7 @@
             [salttoday.metrics.core :as honeycomb]
             [compojure.core :refer [defroutes GET PUT]]))
 
-(def default-opengraph-tags {:og-image "/img/favicon.png"
+(def default-opengraph-tags {:og-image "/img/logo/white-with-stroke.png"
                              :og-site-name "SaltToday"
                              :og-type "object"
                              :og-title "SaltToday.ca"
@@ -33,7 +33,7 @@
       (clojure.pprint/pprint comment)
       (if (nil? comment)
         (app-page)
-        (app-page {:og-image "/img/favicon.png"
+        (app-page {:og-image "/img/logo/white-with-stroke.png"
                    :og-site-name "SaltToday"
                    :og-type "object"
                    :og-title (format "%s's Comment on \"%s\"" (:user comment) (:title comment))
