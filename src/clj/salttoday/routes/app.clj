@@ -6,7 +6,7 @@
 
 (def default-opengraph-tags {:og-image "/img/logo/white-with-stroke.png"
                              :og-site-name "SaltToday"
-                             :og-type "object"
+                             :og-type "website"
                              :og-title "SaltToday.ca"
                              :og-url "https://www.salttoday.ca"
                              :og-description "A Leaderboard for SooToday's users and comments."})
@@ -27,15 +27,15 @@
   (GET "/about" []
     (app-page))
   (GET "/comment" [id]
-    (clojure.pprint/pprint id)
     ; TODO - end the passing of '0'
     (let [comment (first (db/get-top-x-comments 0 1 nil 0 nil nil (salttoday.routes.api.v1.endpoints/string->number id)))]
-      (clojure.pprint/pprint comment)
       (if (nil? comment)
         (app-page)
-        (app-page {:og-image "/img/logo/white-with-stroke.png"
+        (app-page {:og-image (if (> (:upvotes comment) (:downvotes comment))
+                               "/img/icons/upvote.png"
+                               "/img/icons/downvote.png")
                    :og-site-name "SaltToday"
-                   :og-type "object"
+                   :og-type "website"
                    :og-title (format "%s's Comment on \"%s\"" (:user comment) (:title comment))
                    :og-url (format "https://www.salttoday.com/comment?id=%s" id)
                    :og-description (:text comment)})))))
