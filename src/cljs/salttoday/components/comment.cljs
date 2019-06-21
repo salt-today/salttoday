@@ -28,7 +28,7 @@
   ISeqable
   (-seq [array] (array-seq array 0)))
 
-(defn comment-component [comment]
+(defn comment-component [comment lorem]
   (let [id (:comment-id comment)
         upvotes (:upvotes comment)
         downvotes (:downvotes comment)
@@ -74,7 +74,10 @@
          [:i.fas.fa-thumbs-up.fa-stack-2x]
          [:i.fas.fa-stack-1x.vote-counter-text (str upvotes " ")]]]
        ; Comment text
-       [:span.comment-text (:text comment)]
+       [:span.comment-text (if lorem
+                             (str "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                                  "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.")
+                             (:text comment))]
        ; Dislikes
        [:span.counter.dislike-counter {:style {:color (downvote-color downvotes)}}
         [:span.fa-stack.fa-1x.counter-icon
