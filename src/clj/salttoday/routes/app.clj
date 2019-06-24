@@ -2,6 +2,7 @@
   (:require [salttoday.db.core :as db]
             [salttoday.layout :as layout]
             [salttoday.metrics.core :as honeycomb]
+            [salttoday.routes.util :as routing-util]
             [compojure.core :refer [defroutes GET PUT]]))
 
 (def default-opengraph-tags {:og-image "/img/logo/white-with-stroke.png"
@@ -28,7 +29,7 @@
     (app-page))
   (GET "/comment" [id]
     ; TODO - end the passing of '0'
-    (let [comment (first (db/get-top-x-comments 0 1 nil 0 nil nil (salttoday.routes.api.v1.endpoints/string->number id)))]
+    (let [comment (first (db/get-top-x-comments 0 1 nil 0 nil nil (routing-util/string->number id) false))]
       (if (nil? comment)
         (app-page)
         (app-page {:og-image (if (> (:upvotes comment) (:downvotes comment))
