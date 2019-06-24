@@ -43,6 +43,10 @@
                  :db/valueType          :db.type/ref
                  :db/cardinality        :db.cardinality/one
                  :db.install/_attribute :db.part/db}
+                {:db/ident              :comment/deleted
+                 :db/valueType          :db.type/boolean
+                 :db/cardinality        :db.cardinality/one
+                 :db.install/_attribute :db.part/db}
 
                 {:db/ident              :post/url
                  :db/valueType          :db.type/string
@@ -113,10 +117,10 @@
     (- new old)))
 
 ;; TODO: THIS REALLY SHOULD BE A TRANSACTION FUNCTION
-(defn ^:private add-comment [conn post-id post-title {:keys [username comment timestamp upvotes downvotes]}]
+(defn ^:private add-comment [conn post-id post-title {:keys [username text timestamp upvotes downvotes]}]
   (log/debug "add-comment")
   (log/debug "post-id" post-id)
-  (log/debug "comment" comment)
+  (log/debug "comment" text)
   (let [user-id (add-or-get-user conn username)
         user-stats (-> (d/q '[:find ?upvotes ?downvotes :in $ ?user-id :where
                               [?user-id :user/upvotes ?upvotes]
@@ -148,7 +152,7 @@
     (if (zero? comment-id)
       (transact-and-log conn [{:db/id "comment"
                                :comment/user user-id
-                               :comment/text comment
+                               :comment/text text
                                :comment/time timestamp
                                :comment/upvotes upvotes
                                :comment/downvotes downvotes}
@@ -175,6 +179,22 @@
   (log/debug "post-id:" post-id)
   (log/debug "post-title" post-title)
   (log/debug "comments:" comments)
+  ; Determine if comments were deleted by sootoday, and mark them as such
+  (let [db-comments-result (d/q '[:find (pull ?c [:db/id :comment/text :comment/time])
+                                  (pull ?u [:user/name])
+                                  :in $ ?pid
+                                  :where [?pid :post/comment ?c]
+                                  [?c :comment/user ?u]] (d/db conn) post-id)
+        db-comments (for [comment db-comments-result] (apply merge comment))
+        ; Create a map as such {["comment text" "username"] comment-id}
+        db-text-name-vec-to-id-map (reduce #(assoc %1 [(:comment/text %2) (:user/name %2)] (:db/id %2)) {} db-comments)
+        db-comments-set (set (keys db-text-name-vec-to-id-map)) ; get the keys as a set so we can do a diff with the new comments
+        scraped-comments-set (set (for [comment comments] [(:text comment) (:username comment)])) ; create a set of text and usernames
+        comment-difference (clojure.set/difference db-comments-set scraped-comments-set)] ; find which comments are in the db but not scraped
+    (if (pos? (count comment-difference))                   ; if we found comments we didn't scrape, transact them
+      (doseq [text-name-vec comment-difference]
+        (transact-and-log conn [{:db/id (get db-text-name-vec-to-id-map text-name-vec)
+                                 :comment/deleted true}]))))
   (doseq [comment comments]
     (add-comment conn post-id post-title comment)))
 
@@ -264,7 +284,7 @@
 
 ; Gets literally every comment in the database.
 (def initial-get-all-comments-query
-  '{:find [(pull ?c [:db/id :comment/upvotes :comment/downvotes :comment/text])
+  '{:find [(pull ?c [:db/id :comment/upvotes :comment/downvotes :comment/text :comment/deleted])
            (pull ?u [:user/name])
            (pull ?p [:post/title :post/url])]
     :in [$]
@@ -276,7 +296,7 @@
 ; Adds any optional args/conditionals to the query
 (defn create-get-comments-query
   ; TODO - probably better if this function took a map of keys instead of positional args
-  [db days-ago-date search-text name cid]
+  [db days-ago-date search-text name cid deleted]
   (cond-> initial-get-all-comments-query
     true
     (update :args conj db)
@@ -294,6 +314,9 @@
     (-> (update :in conj '?name)
         (update :args conj name)
         (update :where conj '[?u :user/name ?name]))
+
+    deleted
+    (-> (update :where conj '[?c :comment/deleted true]))
 
     days-ago-date
     (-> (update :in conj '?days-ago-date)
@@ -315,19 +338,19 @@
         (.toInstant)
         (java.util.Date/from))))
 
-; (get-comments db 0 nil nil 17592186045650)
+; (get-comments db 0 nil nil 17592186045650 false)
 (defn get-comments
-  ([db days-ago search-text name id]
+  ([db days-ago search-text name id deleted]
    (let [days-ago-date (get-date days-ago)
-         query-map (create-get-comments-query db days-ago-date search-text name id)]
+         query-map (create-get-comments-query db days-ago-date search-text name id deleted)]
      (let [results (apply (partial d/q (:query query-map)) (:args query-map))]
        (create-comment-maps results))))
   ([db]
-   (get-comments db -1 nil nil nil)))
+   (get-comments db -1 nil nil nil false)))
 
 (defn get-top-x-comments
-  [offset num sort-type days-ago search-text name id]
-  (let [comments (get-comments (d/db conn) days-ago search-text name id)
+  [offset num sort-type days-ago search-text name id deleted]
+  (let [comments (get-comments (d/db conn) days-ago search-text name id deleted)
         sorted-comments (sort-by-specified comments sort-type)]
     (paginate-results offset num sorted-comments)))
 

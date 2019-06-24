@@ -131,7 +131,7 @@
                   :comments (for [comment-html comments-html]
                               {:username (get-username comment-html)
                                :timestamp (get-comment-time comment-html)
-                               :comment (get-comment-text comment-html)
+                               :text (get-comment-text comment-html)
                                :upvotes (get-upvotes comment-html)
                                :downvotes (get-downvotes comment-html)})}]
     (honeycomb/send-metrics {"context" "scraper"

@@ -12,7 +12,8 @@
                                     :amount    (:amount @state)
                                     :sort-type (:sort-type @state)
                                     :days      (:days @state)
-                                    :id        (:id @state)}
+                                    :id        (:id @state)
+                                    :deleted   (:deleted @state)}
                      :with-credentials? false
                      :headers {}}
             {:keys [status headers body error] :as resp} (a/<! (http/get "/api/v1/comments" options))]
@@ -30,6 +31,12 @@
     (swap! state assoc :sort-type sort)
     (get-comments state)))
 
+(defn filter-by-deleted
+  [event state]
+  (let [deleted (get-selected-value event)]
+    (swap! state assoc :deleted deleted)
+    (get-comments state)))
+
 (defn home-content [state]
   (list
    [:div.row.justify-center.header-wrapper.sort-bar
@@ -41,7 +48,7 @@
       [:option {:value "score"} "Top"]
       [:option {:value "downvotes"} "Dislikes"]
       [:option {:value "upvotes"} "Likes"]]]
-    [:div.column.sort-dropdown
+    [:div.column.sort-item.sort-dropdown
      [:select {:value [(:days @state)]
                :on-change (fn [e]
                             (filter-by-days e state)
@@ -50,7 +57,14 @@
       [:option {:value 7} "Past Week"]
       [:option {:value 30} "Past Month"]
       [:option {:value 365} "Past Year"]
-      [:option {:value 0} "Of All Time"]]]]
+      [:option {:value 0} "Of All Time"]]]
+    [:div.column.sort-item.sort-dropdown
+     [:select {:value [(:deleted @state)]
+               :on-change (fn [e]
+                            (filter-by-deleted e state)
+                            (update-query-params-with-state state :comments))}
+      [:option {:value false} "All"]
+      [:option {:value true} "Deleted"]]]]
    (list [:div.column.justify-center.comments-wrapper
           (for [comment (:comments @state)]
             (comment-component comment))])))
@@ -61,7 +75,8 @@
                        :offset (or (:offset query-params) 0)
                        :amount (or (:amount query-params) 50)
                        :sort-type (or (:sort-type query-params) "score")
-                       :days (or (:days query-params) "1")})]
+                       :days (or (:days query-params) 1)
+                       :deleted (or (:deleted query-params) false)})]
     (get-comments state)
     (fn []
       [:div.page-wrapper

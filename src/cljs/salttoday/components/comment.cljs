@@ -28,6 +28,14 @@
   ISeqable
   (-seq [array] (array-seq array 0)))
 
+(defn create-tooltip [text]
+  (fn [e]
+    (let [tooltip (-> e
+                      .-currentTarget
+                      .-childNodes
+                      (second))]
+      (set! (.-innerHTML tooltip) text))))
+
 (defn comment-component [comment]
   (let [id (:comment-id comment)
         upvotes (:upvotes comment)
@@ -43,17 +51,12 @@
 
     [:div.row
      ; Title
-     [:div.article-title
+     [:div.article-title {:style {}}
       [:a.article-link {:href (:url comment) :target "_blank"}
        (:title comment)]
       ; TODO - change this to just copy the link to the clipboard eventually
       ; could be used elsewhere, develop it generically.
-      [:a.comment-link {:on-mouse-over (fn [e]
-                                         (let [tooltip (-> e
-                                                           .-currentTarget
-                                                           .-childNodes
-                                                           (second))]
-                                           (set! (.-innerHTML tooltip) "Copy Link")))
+      [:a.comment-link {:on-mouse-over (create-tooltip "Copy Link")
                         :on-click (fn [e]
                                     (clipboard/copy-text (str (.-origin (.-location js/window))
                                                               "/comment?id=" id))
@@ -86,5 +89,6 @@
       [:div.column.comment-author {:style {:flex 70}}
        [:a.author-link {:href "/#/user"} "- "
         (:user comment)]]
+      (if (:comment/deleted comment) [:div.column.deleted "DELETED"])
       ; Empty Offset
-      [:div.column {:style {:flex 15}}]]]))
+      [:div.column {:style {:flex 5}}]]]))

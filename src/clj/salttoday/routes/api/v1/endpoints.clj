@@ -17,6 +17,14 @@
     (let [n (read-string str)]
       (if (number? n) n 0))))
 
+(defn string->bool
+  "Converts a string to a number, if nil or not a number, returns 0."
+  [str]
+  (if (blank? str)
+    false
+    (let [b (read-string str)]
+      (if (boolean? b) b false))))
+
 (defroutes endpoints
   (GET "/api/v1/todays-stats" []
     (honeycomb/send-metrics {"api-hit" "todays-stats"})
@@ -25,12 +33,13 @@
                          "application/json")))
 
   ; TODO Would be better if we passed in nil instead of 0, see string->number function.
-  (GET "/api/v1/comments" [offset amount sort-type days search-text user id]
+  (GET "/api/v1/comments" [offset amount sort-type days search-text user id deleted]
     (let [offset-num (string->number offset)
           amount-num (string->number amount)
           days-num (string->number days)
           id-num (string->number id)
-          results (db/get-top-x-comments offset-num amount-num sort-type days-num search-text user id-num)]
+          deleted-bool (string->bool deleted)
+          results (db/get-top-x-comments offset-num amount-num sort-type days-num search-text user id-num deleted-bool)]
       (-> (response/ok results)
           (response/header "Content-Type"
                            "application/json"))))
