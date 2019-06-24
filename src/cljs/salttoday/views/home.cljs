@@ -67,11 +67,12 @@
       [:option {:value true} "Deleted"]]]]
    (list [:div.column.justify-center.comments-wrapper
           (for [comment (:comments @state)]
-            (comment-component comment))])))
+            (comment-component comment (:lorem @state)))])))
 
 ; Helpful Docs - https://purelyfunctional.tv/guide/reagent/#form-2
 (defn home-page [query-params]
   (let [state (r/atom {:comments []
+                       :lorem (= (:lorem query-params) "true")
                        :offset (or (:offset query-params) 0)
                        :amount (or (:amount query-params) 50)
                        :sort-type (or (:sort-type query-params) "score")
