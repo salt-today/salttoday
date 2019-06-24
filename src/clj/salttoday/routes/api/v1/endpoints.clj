@@ -8,7 +8,6 @@
             [salttoday.db.core :as db]
             [clojure.tools.logging :as log]))
 
-
 (defroutes endpoints
   (GET "/api/v1/todays-stats" []
     (honeycomb/send-metrics {"api-hit" "todays-stats"})
