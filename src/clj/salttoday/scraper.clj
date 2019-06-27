@@ -2,6 +2,7 @@
   (:require [net.cgrand.enlive-html :as html]
             [org.httpkit.client :as http]
             [clojure.string :as str]
+            [clojure.tools.logging :as log]
             [salttoday.metrics.core :as honeycomb]))
 
 (defn ^:private starts-with-strings
@@ -116,31 +117,109 @@
       :attrs
       :datetime))
 
-(defn ^:private get-comments-from-article
-  [{:keys [id url]}]
-  (let [comment-url (format "https://www.sootoday.com/comments/load?Type=Comment&ContentId=%s&TagId=2346&TagType=Content" id)
-        comments-html (-> (html/html-snippet
-                           (:body @(http/get comment-url {:insecure? true})))
-                          (html/select [:div.comment]))
-        title-div (-> (html/html-snippet
-                       (:body @(http/get url {:insecure? true})))
-                      (html/select [:h1]))
-        title (get-title-from-div title-div)
-        comments {:url url
-                  :title title
-                  :comments (for [comment-html comments-html]
-                              {:username (get-username comment-html)
-                               :timestamp (get-comment-time comment-html)
-                               :comment (get-comment-text comment-html)
-                               :upvotes (get-upvotes comment-html)
-                               :downvotes (get-downvotes comment-html)})}]
-    (honeycomb/send-metrics {"context" "scraper"
-                             "article-id" id
-                             "article-title" title
-                             "comment-url" comment-url
-                             "num-comments" (count (:comments comments))})
-    comments))
+; NOTE - this relies on the fact that on SooToday's comments they do not consider
+; replies as a comment, the number of comments is == to the top level comments
+; It also relies on the fact that only 20 comments can be displayed per article
+; and this includes replies!
+(defn num-comment-api-calls [initial-payload]
+  (let [comments-wrapper (html/select initial-payload [:div#comments])
+        ; TODO - error handling here incase nothing is found
+        num-top-level-comments (Integer/parseInt (:data-count (:attrs (first comments-wrapper))))]
+    (int (Math/ceil (/ num-top-level-comments 20)))))
 
+; Logging and Tracing around scraping
+; TODO - last-id is currently unused because I've yet to see a reply chain >20 comments
+; we can only surmise on the usage currently
+(defn get-replies [article-id last-id parent-id-str]
+  (let [req (format "https://www.sootoday.com/comments/get?ContentId=%s&TagId=2346&TagType=Content&Sort=Oldest&lastId=%22%22&ParentId=%s" article-id parent-id-str)
+        resp (-> (html/html-snippet
+                  (:body @(http/get req {:insecure? true}))))
+        replies-html (html/select resp [:div.comment])]
+    (for [reply-html replies-html]
+      ; TODO - store reply relationship
+      {:username (get-username reply-html)
+       :timestamp (get-comment-time reply-html)
+       :comment (get-comment-text reply-html)
+       :upvotes (get-upvotes reply-html)
+       :downvotes (get-downvotes reply-html)})))
+
+; Result should be flattened
+(defn get-comments [comments-html article-id]
+  (for [comment-html comments-html
+        :let [num-replies (Integer/parseInt (:data-replies (:attrs comment-html)))]]
+    ; If the comment has no replies, just get the comment itself
+    (if (= 0 num-replies)
+      ; TODO - store reply relationship
+      {:username (get-username comment-html)
+       :timestamp (get-comment-time comment-html)
+       :comment (get-comment-text comment-html)
+       :upvotes (get-upvotes comment-html)
+       :downvotes (get-downvotes comment-html)}
+      ; If the comment has replies, check for a "Load More" button
+      (let [load-more-html (first (html/select comment-html [:button.comments-more]))]
+        ; If the button doesn't exist, just get the comments
+        (if (nil? load-more-html)
+          ; Replies cannot be replies to at this time, if they can, this needs to be refactored into a recursive format
+          (for [reply-html (html/select comment-html [:div.comment])]
+            ; TODO - store reply relationship
+            {:username (get-username reply-html)
+             :timestamp (get-comment-time reply-html)
+             :comment (get-comment-text reply-html)
+             :upvotes (get-upvotes reply-html)
+             :downvotes (get-downvotes reply-html)})
+          ; If the button exists, get all replies
+          ; TODO - the reply endpoint is different, I'm not sure what happens if there are more than 20 replies
+          ; log added to deal with this
+          (if (> num-replies 20)
+            (log/info "HUGE REPLY CHAIN FOUND! ARTICLE ID: " article-id)
+            (get-replies article-id nil (:data-parent (:attrs load-more-html)))))))))
+
+; SooToday has two types of return values from their API
+; 1 - contains a div.comments element - returned from page-load
+; 2 - just contains a body tag with a collection of comments
+(defn select-top-level-comments [html]
+  (if (empty? (html/select html [:div#comments]))
+    ; This isn't completely necessary anymore because i found a selector that works for both
+    ; However, separating this might still be a good idea incase sootoday changes and allows
+    ; for deeply nested replies.  This only works but only top level comments have the
+    ; data-replies attr
+    (html/select html [[:div (html/attr? :data-replies)]])
+    (html/select html [:div#comments :> :div.comment])))
+
+(defn comment-search [comments calls-left html-payload article-id]
+  (println calls-left)
+  ; If calls-left == 0, return comments
+  (if (<= calls-left 0)
+    comments
+    ; Grab all _top_ level comments
+    (let [comments-html (select-top-level-comments html-payload)
+          new-comments (flatten (get-comments comments-html article-id))
+          last-id (:data-id (:attrs (last comments-html)))
+          next-url (format "https://www.sootoday.com/comments/get?ContentId=%s&TagId=2346&TagType=Content&ParentId=&lastId=%s" article-id last-id)
+          next-resp (-> (html/html-snippet
+                         (:body @(http/get next-url {:insecure? true
+                                                     :timeout 5000}))))]
+      (println (last comments-html))
+      (println last-id)
+      (println next-url)
+      ; Tail Recursion - Performant
+      (comment-search (concat comments new-comments)
+                      (dec calls-left)
+                      next-resp
+                      article-id))))
+
+(defn get-comments-from-article [article-id]
+  (let [comment-url (format "https://www.sootoday.com/comments/load?Type=Comment&ContentId=%s&TagId=2346&TagType=Content&Sort=Oldest" article-id)
+        initial-comment-payload (html/html-snippet
+                                 (:body @(http/get comment-url {:insecure? true
+                                                                :timeout 5000})))
+        ; This is the number of times we have to hit the API to get all top-level comments
+        num-comment-api-calls (num-comment-api-calls initial-comment-payload)]
+    (comment-search [] num-comment-api-calls initial-comment-payload article-id)))
+
+; https://www.sootoday.com/comments/load?Type=Comment&ContentId=1538042&TagId=2346&TagType=Content&Sort=Oldest
+; https://www.sootoday.com/comments/get?ContentId=1538042&TagId=2346&TagType=Content&Sort=Oldest&lastId=2586892
+; https://www.sootoday.com/comments/get?ContentId=1538042&TagId=2346&TagType=Content&Sort=Oldest&lastId=2591187
 (defn scrape-sootoday
   []
   (flatten
