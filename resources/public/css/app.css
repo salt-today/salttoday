@@ -299,6 +299,17 @@ span.nav-link.active {
   text-decoration: underline;
 }
 
+.deleted {
+    background: #ed1c24;
+    color: white;
+    font-size: 1.25em;
+    text-decoration: none;
+    margin-top: 0.25em;
+    margin-right: 1em;
+    padding: 0.2em 0.25em 0.2em 0.25em;
+    border-radius: 0.2em;
+}
+
 .user-name-row {
   justify-content: center;
 }
