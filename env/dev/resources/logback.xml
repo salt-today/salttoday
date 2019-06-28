@@ -16,7 +16,7 @@
     <logger name="datomic.db" level="info" />
     <logger name="io.honeycomb" level="info"/>
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="STDOUT" />
     </root>
 </configuration>
