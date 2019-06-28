@@ -56,7 +56,6 @@
                           {:url (get-url-from-article-link link)
                            :id (get-id-from-article-link link)
                            :title (render-node title)})]
-    titles-and-urls
     (set
      (filter #(starts-with-strings (:url %)
                                    ["https://www.sootoday.com/local-news/"
@@ -149,8 +148,8 @@
 ; we can only surmise on the usage currently
 (defn get-replies [article-id last-id parent-id-str]
   (let [req (format "https://www.sootoday.com/comments/get?ContentId=%s&TagId=2346&TagType=Content&Sort=Oldest&lastId=%22%22&ParentId=%s" article-id parent-id-str)
-        resp (-> (html/html-snippet
-                  (:body @(http/get req {:insecure? true}))))
+        resp (html/html-snippet
+              (:body @(http/get req {:insecure? true})))
         replies-html (html/select resp [:div.comment])]
     (for [reply-html replies-html]
       ; TODO - store reply relationship
@@ -212,9 +211,9 @@
           new-comments (flatten (get-comments comments-html article-id))
           last-id (:data-id (:attrs (last comments-html)))
           next-url (format "https://www.sootoday.com/comments/get?ContentId=%s&TagId=2346&TagType=Content&ParentId=&lastId=%s" article-id last-id)
-          next-resp (-> (html/html-snippet
-                         (:body @(http/get next-url {:insecure? true
-                                                     :timeout 5000}))))]
+          next-resp (html/html-snippet
+                     (:body @(http/get next-url {:insecure? true
+                                                 :timeout 5000})))]
       ; Tail Recursion - Performant
       (comment-search (concat comments new-comments)
                       (dec calls-left)
