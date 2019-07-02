@@ -155,7 +155,7 @@
       ; TODO - store reply relationship
       {:username (get-username reply-html)
        :timestamp (get-comment-time reply-html)
-       :comment (get-comment-text reply-html)
+       :text (get-comment-text reply-html)
        :upvotes (get-upvotes reply-html)
        :downvotes (get-downvotes reply-html)})))
 
@@ -168,7 +168,7 @@
       ; TODO - store reply relationship
       {:username (get-username comment-html)
        :timestamp (get-comment-time comment-html)
-       :comment (get-comment-text comment-html)
+       :text (get-comment-text comment-html)
        :upvotes (get-upvotes comment-html)
        :downvotes (get-downvotes comment-html)}
       ; If the comment has replies, check for a "Load More" button
@@ -180,7 +180,7 @@
             ; TODO - store reply relationship
             {:username (get-username reply-html)
              :timestamp (get-comment-time reply-html)
-             :comment (get-comment-text reply-html)
+             :text (get-comment-text reply-html)
              :upvotes (get-upvotes reply-html)
              :downvotes (get-downvotes reply-html)})
           ; If the button exists, get all replies
