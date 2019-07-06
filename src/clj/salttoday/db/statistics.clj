@@ -3,8 +3,9 @@
             [salttoday.db.comments :refer [get-comments]]
             [salttoday.db.connection :refer [conn]]))
 
-(defn get-todays-stats []
+(defn get-todays-stats
   "General statistics about today on SooToday"
+  []
   (let [comments (get-comments (d/db conn))
         comment-count (count comments)
         upvote-count (reduce #(+ %1 (:upvotes %2)) 0 comments)

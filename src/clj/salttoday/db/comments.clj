@@ -30,8 +30,9 @@
                           :post/url :url}))))
 
 ;; TODO: THIS REALLY SHOULD BE A TRANSACTION FUNCTION
-(defn add-comment [conn post-id post-title {:keys [username text timestamp upvotes downvotes]}]
+(defn add-comment
   "Given a comments payload, transact it to the database"
+  [conn post-id post-title {:keys [username text timestamp upvotes downvotes]}]
   (let [user-id (add-or-get-user conn username)
         user-stats (-> (d/q '[:find ?upvotes ?downvotes :in $ ?user-id :where
                               [?user-id :user/upvotes ?upvotes]
