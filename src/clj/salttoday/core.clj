@@ -1,7 +1,7 @@
 (ns salttoday.core
   (:require [salttoday.routes.handler :as handler]
             [salttoday.db.posts :refer [update-posts-and-comments]]
-            [salttoday.scraper :refer [scrape-sootoday]]
+            [salttoday.scraper.core :refer [scrape-sootoday]]
             [overtone.at-at :as at-at]
             [luminus.repl-server :as repl]
             [luminus.http-server :as http]
