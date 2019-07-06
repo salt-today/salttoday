@@ -22,7 +22,8 @@
           days-num (routing-util/string->number days)
           id-num (routing-util/string->number id)
           deleted-bool (routing-util/string->bool deleted)
-          results (db/get-top-x-comments offset-num amount-num sort-type days-num search-text user id-num deleted-bool)]
+          user-str (if (not (clojure.string/blank? user)) user)   ; convert to nil if string is blank
+          results (db/get-top-x-comments offset-num amount-num sort-type days-num search-text user-str id-num deleted-bool)]
       (-> (response/ok results)
           (response/header "Content-Type"
                            "application/json"))))

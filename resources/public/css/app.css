@@ -379,6 +379,19 @@ span.nav-link.active {
   color: white;
 }
 
+.sort-textfield input {
+  font-family: BebasNeue;
+  font-size: 1em;
+  background-color: #1d1d1d;
+  color: white;
+  padding-left: 0.5em;
+  width: 150px;
+}
+
+input::-webkit-calendar-picker-indicator {
+  display: none;
+}
+
 .footer-pile {
   max-width: 100%;
 }

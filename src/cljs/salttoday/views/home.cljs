@@ -13,11 +13,20 @@
                                     :sort-type (:sort-type @state)
                                     :days      (:days @state)
                                     :id        (:id @state)
-                                    :deleted   (:deleted @state)}
+                                    :deleted   (:deleted @state)
+                                    :user      (:user @state)}
                      :with-credentials? false
                      :headers {}}
             {:keys [status headers body error] :as resp} (a/<! (http/get "/api/v1/comments" options))]
         (swap! state assoc :comments body))))
+
+; Get all of the users - this is needed for the users dropdown
+(defn get-users [state]
+  (go (let [options {:query-params {:amount    99999}
+                     :with-credentials? false
+                     :headers {}}
+            {:keys [status headers body error] :as resp} (a/<! (http/get "/api/v1/users" options))]
+        (swap! state assoc :users (for [user body] (:name user))))))
 
 (defn filter-by-days
   [event state]
@@ -37,6 +46,13 @@
     (swap! state assoc :deleted deleted)
     (get-comments state)))
 
+(defn filter-by-user
+  [event state]
+  (let [user (get-selected-value event)]
+    (if (or (clojure.string/blank? user) (some #{user} (:users @state))) ; if the user is in the list, get them
+      (do (swap! state assoc :user user)
+          (get-comments state)))))
+
 (defn home-content [state]
   (list
    [:div.row.justify-center.header-wrapper.sort-bar
@@ -44,7 +60,7 @@
      [:select {:value [(:sort-type @state)]
                :on-change (fn [e]
                             (filter-by-sort e state)
-                            (update-query-params-with-state state :comments))}
+                            (update-query-params-with-state state :comments :users))}
       [:option {:value "score"} "Top"]
       [:option {:value "downvotes"} "Dislikes"]
       [:option {:value "upvotes"} "Likes"]]]
@@ -52,7 +68,7 @@
      [:select {:value [(:days @state)]
                :on-change (fn [e]
                             (filter-by-days e state)
-                            (update-query-params-with-state state :comments))}
+                            (update-query-params-with-state state :comments :users))}
       [:option {:value 1} "Past Day"]
       [:option {:value 7} "Past Week"]
       [:option {:value 30} "Past Month"]
@@ -62,9 +78,19 @@
      [:select {:value [(:deleted @state)]
                :on-change (fn [e]
                             (filter-by-deleted e state)
-                            (update-query-params-with-state state :comments))}
+                            (update-query-params-with-state state :comments :users))}
       [:option {:value false} "All"]
-      [:option {:value true} "Deleted"]]]]
+      [:option {:value true} "Deleted"]]]
+    [:div.column.sort-item.sort-textfield
+     [:input {:list "usernames"
+              :placeholder "All Users"
+              :on-change (fn [e]
+                           (filter-by-user e state)
+                           (update-query-params-with-state state :comments :users))}]
+     [:datalist {:id "usernames"}
+      (for [user (:users @state)]
+        [:option {:value user}])
+      ]]]
    (list [:div.column.justify-center.comments-wrapper
           (for [comment (:comments @state)]
             (comment-component comment (:lorem @state)))])))
@@ -77,8 +103,10 @@
                        :amount (or (:amount query-params) 50)
                        :sort-type (or (:sort-type query-params) "score")
                        :days (or (:days query-params) 1)
-                       :deleted (or (:deleted query-params) false)})]
+                       :deleted (or (:deleted query-params) false)
+                       :user (or (:user query-params) "")})]
     (get-comments state)
+    (get-users state)
     (fn []
       [:div.page-wrapper
        (make-navbar :home)
