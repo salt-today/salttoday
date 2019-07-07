@@ -44,45 +44,43 @@
   (do (swap! state assoc :user user)
       (get-comments state)))
 
-
-
 (defn home-content [state]
   (list
-    [:div.row.justify-center.header-wrapper.sort-bar
-     [:div.column.sort-item.sort-dropdown
-      (sort-dropdown state (partial get-comments state))]
+   [:div.row.justify-center.header-wrapper.sort-bar
+    [:div.column.sort-item.sort-dropdown
+     (sort-dropdown state (partial get-comments state))]
 
      ; Days dropdown
-     [:div.column.sort-item.sort-dropdown
-      (days-dropdown state (partial get-comments state))]
+    [:div.column.sort-item.sort-dropdown
+     (days-dropdown state (partial get-comments state))]
 
      ; Deleted dropdown
-     [:div.column.sort-item.sort-dropdown
-      [select {:state state
-               :multi false
-               :is-searchable false
-               :value {:label (deleted-options (:deleted @state)) :value (:deleted @state)}
-               :options (create-select-options deleted-options)
-               :on-change (fn [selected]
-                            (filter-by-deleted selected state)
-                            (update-query-params-with-state state :comments :users))}]]
+    [:div.column.sort-item.sort-dropdown
+     [select {:state state
+              :multi false
+              :is-searchable false
+              :value {:label (deleted-options (:deleted @state)) :value (:deleted @state)}
+              :options (create-select-options deleted-options)
+              :on-change (fn [selected]
+                           (filter-by-deleted selected state)
+                           (update-query-params-with-state state :comments :users))}]]
 
      ; Users dropdown
-     [:div.column.sort-item.sort-dropdown
-      [select {:state state
-               :multi false
-               :options (conj
-                          (for [user (:users @state)] {:label user :value user})
-                          {:label "All Users" :value ""})
-               :value {:label (if (clojure.string/blank? (:user @state)) "All Users" (:user @state))
-                       :value (if (clojure.string/blank? (:user @state)) "" (:user @state))}
-               :on-change (fn [selected] (let [user (get-selected-value selected)]
-                                           (filter-by-user user state)
-                                           (update-query-params-with-state state :comments :users)))}]]]
+    [:div.column.sort-item.sort-dropdown
+     [select {:state state
+              :multi false
+              :options (conj
+                        (for [user (:users @state)] {:label user :value user})
+                        {:label "All Users" :value ""})
+              :value {:label (if (clojure.string/blank? (:user @state)) "All Users" (:user @state))
+                      :value (if (clojure.string/blank? (:user @state)) "" (:user @state))}
+              :on-change (fn [selected] (let [user (get-selected-value selected)]
+                                          (filter-by-user user state)
+                                          (update-query-params-with-state state :comments :users)))}]]]
 
-    (list [:div.column.justify-center.comments-wrapper
-           (for [comment (:comments @state)]
-             (comment-component comment (:lorem @state)))])))
+   (list [:div.column.justify-center.comments-wrapper
+          (for [comment (:comments @state)]
+            (comment-component comment (:lorem @state)))])))
 
 ; Helpful Docs - https://purelyfunctional.tv/guide/reagent/#form-2
 (defn home-page [query-params]
