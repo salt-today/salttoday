@@ -41,6 +41,7 @@
                  [selmer "1.12.12"]
                  ; Frontend Depedencies
                  [cljs-http "0.1.46"]
+                 [cljsjs/react-select "2.4.4-0" :exclusions [cljsjs/react]]
                  [funcool/cuerdas "2.2.0"]
                  [markdown-clj "1.10.0"]
                  [metosin/komponentit "0.3.8"]

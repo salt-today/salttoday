@@ -370,26 +370,8 @@ span.nav-link.active {
 
 .sort-dropdown {
   width: 150px;
-}
-
-.sort-dropdown select {
-  font-family: BebasNeue;
   font-size: 1em;
-  background-color: #1d1d1d;
-  color: white;
-}
-
-.sort-textfield input {
-  font-family: BebasNeue;
-  font-size: 1em;
-  background-color: #1d1d1d;
-  color: white;
-  padding-left: 0.5em;
-  width: 150px;
-}
-
-input::-webkit-calendar-picker-indicator {
-  display: none;
+  color: #1b1b1b;
 }
 
 .footer-pile {
