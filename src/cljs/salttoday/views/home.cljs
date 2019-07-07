@@ -77,6 +77,7 @@
                        :amount (or (:amount query-params) 50)
                        :sort-type (or (:sort-type query-params) "score")
                        :days (or (:days query-params) 1)
+                       :id nil
                        :deleted (or (:deleted query-params) false)})]
     (get-comments state)
     (fn []

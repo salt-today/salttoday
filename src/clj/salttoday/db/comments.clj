@@ -163,7 +163,7 @@
          query-map (create-get-comments-query db days-ago-date search-text name id deleted)
          comments (apply (partial d/q (:query query-map)) (:args query-map))
          formatted-comments (db-comments->frontend-comments comments)
-         sorted-comments (sort-by-specified (keyword sort-type) formatted-comments)]
+         sorted-comments (sort-by-specified sort-type formatted-comments)]
      (paginate-results offset num sorted-comments)))
   ([offset num sort-type days-ago search-text name id deleted]
    (get-comments (d/db conn) offset num sort-type days-ago search-text name id deleted))
