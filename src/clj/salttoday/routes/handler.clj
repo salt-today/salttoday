@@ -1,4 +1,4 @@
-(ns salttoday.handler
+(ns salttoday.routes.handler
   (:require
    [salttoday.layout :refer [error-page]]
    [salttoday.routes.api.v1.endpoints :as v1-api]
@@ -18,10 +18,8 @@
   (middleware/wrap-base
    (routes
     (-> #'app-routes
-        (wrap-routes middleware/wrap-csrf)
         (wrap-routes middleware/wrap-formats))
     (-> #'v1-api/endpoints
-        (wrap-routes middleware/wrap-csrf)
         (wrap-routes middleware/wrap-formats))
     (route/not-found
      (:body
