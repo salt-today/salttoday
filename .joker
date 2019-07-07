@@ -1,0 +1,3 @@
+{:known-macros [compojure.core/defroutes
+                compojure.core/GET
+                mount.core/defstate]}
