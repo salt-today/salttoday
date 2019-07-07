@@ -169,4 +169,4 @@
    (get-comments (d/db conn) offset num sort-type days-ago search-text name id deleted))
   ; TODO - get rid of the usage in statistics.clj
   ([db]
-   (get-comments db -1 nil nil nil false)))
+   (get-comments db 0 1 nil -1 nil nil nil false)))
