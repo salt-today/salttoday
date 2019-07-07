@@ -4,13 +4,14 @@
             [selmer.filters :as filters]
             [markdown.core :refer [md-to-html-string]]
             [ring.util.response :refer [content-type]]
-            [ring.util.http-response :refer [ok]]
-            [ring.util.anti-forgery :refer [anti-forgery-field]]
-            [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]))
+            [ring.util.http-response :refer [ok]]))
 
-(parser/set-resource-path!  (resource "templates"))
-(parser/add-tag! :csrf-field (fn [_ _] (anti-forgery-field)))
-(filters/add-filter! :markdown (fn [content] [:safe (md-to-html-string content)]))
+(parser/set-resource-path!
+ (resource "templates"))
+; Converts Markdown to HTML
+(filters/add-filter! :markdown
+                     (fn [content]
+                       [:safe (md-to-html-string content)]))
 
 (defn render
   "renders the HTML template located relative to resources/templates"
@@ -20,8 +21,7 @@
     (parser/render-file
      template
      (assoc params
-            :page template
-            :csrf-token *anti-forgery-token*)))
+            :page template)))
    "text/html; charset=utf-8"))
 
 (defn error-page

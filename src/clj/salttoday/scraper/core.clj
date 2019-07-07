@@ -1,4 +1,4 @@
-(ns salttoday.scraper
+(ns salttoday.scraper.core
   (:require [net.cgrand.enlive-html :as html]
             [org.httpkit.client :as http]
             [clojure.string :as str]
