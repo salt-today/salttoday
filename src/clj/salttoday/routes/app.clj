@@ -1,5 +1,5 @@
 (ns salttoday.routes.app
-  (:require [salttoday.db.comments :refer [get-comments-paginated]]
+  (:require [salttoday.db.comments :refer [get-comments]]
             [salttoday.layout :as layout]
             [salttoday.routes.util :as routing-util]
             [compojure.core :refer [defroutes GET PUT]]))
@@ -28,7 +28,7 @@
     (app-page))
   (GET "/comment" [id]
     ; TODO - end the passing of '0'
-    (let [comment (first (get-comments-paginated 0 1 nil 0 nil nil (routing-util/string->number id) false))]
+    (let [comment (first (get-comments 0 1 nil 0 nil nil (routing-util/string->number id) false))]
       (if (nil? comment)
         (app-page)
         (app-page {:og-image (if (> (:upvotes comment) (:downvotes comment))

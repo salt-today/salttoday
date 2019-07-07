@@ -24,7 +24,6 @@
                         :in $ ?name
                         :where [?e :user/name ?name]] (d/db conn) username)
                  ffirst)]
-    (log/debug "was user found?" user)
     (if (nil? user)
       (do
         (honeycomb/send-metrics {"db-operation" "add-or-get-user"
@@ -75,8 +74,8 @@
                :downvotes (- (:downvotes current-user-map)
                              (:downvotes past-user-map)))))))
 
-; TODO - we must pass in a keyword for sorting!!!
-(defn get-users-paginated
+; TODO - change these large arg lists to maps with defaults
+(defn get-users
   "Get users paginated"
   ([db offset amount sort-type days-ago]
    (let [users (d/q get-all-users-query db)
@@ -85,7 +84,7 @@
          user-maps (if days-ago-date
                      (get-user-scores-for-time-range db user-maps days-ago)
                      user-maps)
-         sorted-users (sort-by-specified user-maps sort-type)]
+         sorted-users (sort-by-specified (keyword user-maps) sort-type)]
      (paginate-results offset amount sorted-users)))
   ([offset amount sort-type days-ago]
-   (get-users-paginated (d/db conn) offset amount sort-type days-ago)))
+   (get-users (d/db conn) offset amount sort-type days-ago)))

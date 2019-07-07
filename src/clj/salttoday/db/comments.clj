@@ -155,20 +155,18 @@
     true
     remap-query))
 
+; TODO - change these large arg lists to maps with defaults
 (defn get-comments
   "Retrieve comments from the database."
-  ([db days-ago search-text name id deleted]
+  ([db offset num sort-type days-ago search-text name id deleted]
    (let [days-ago-date (get-date days-ago)
-         query-map (create-get-comments-query db days-ago-date search-text name id deleted)]
-     (let [results (apply (partial d/q (:query query-map)) (:args query-map))]
-       (db-comments->frontend-comments results))))
+         query-map (create-get-comments-query db days-ago-date search-text name id deleted)
+         comments (apply (partial d/q (:query query-map)) (:args query-map))
+         formatted-comments (db-comments->frontend-comments comments)
+         sorted-comments (sort-by-specified (keyword sort-type) formatted-comments)]
+     (paginate-results offset num sorted-comments)))
+  ([offset num sort-type days-ago search-text name id deleted]
+   (get-comments (d/db conn) offset num sort-type days-ago search-text name id deleted))
+  ; TODO - get rid of the usage in statistics.clj
   ([db]
    (get-comments db -1 nil nil nil false)))
-
-; TODO - we must pass in a keyword for sorting!!!
-(defn get-comments-paginated
-  "Get comments paginated"
-  [offset num sort-type days-ago search-text name id deleted]
-  (let [comments (get-comments (d/db conn) days-ago search-text name id deleted)
-        sorted-comments (sort-by-specified sort-type comments)]
-    (paginate-results offset num sorted-comments)))

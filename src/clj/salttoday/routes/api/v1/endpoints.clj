@@ -1,6 +1,6 @@
 (ns salttoday.routes.api.v1.endpoints
-  (:require [salttoday.db.comments :refer [get-comments-paginated]]
-            [salttoday.db.users :refer [get-users-paginated]]
+  (:require [salttoday.db.comments :refer [get-comments]]
+            [salttoday.db.users :refer [get-users]]
             [salttoday.db.statistics :refer [get-todays-stats]]
             [salttoday.metrics.core :as honeycomb]
             [salttoday.routes.util :as routing-util]
@@ -21,7 +21,7 @@
           days-num (routing-util/string->number days)
           id-num (routing-util/string->number id)
           deleted-bool (routing-util/string->bool deleted)
-          results (get-comments-paginated offset-num amount-num sort-type days-num search-text user id-num deleted-bool)]
+          results (get-comments offset-num amount-num sort-type days-num search-text user id-num deleted-bool)]
       (-> (response/ok results)
           (response/header "Content-Type"
                            "application/json"))))
@@ -31,6 +31,6 @@
     (let [offset-num (routing-util/string->number offset)
           amount-num (routing-util/string->number amount)
           days-num (routing-util/string->number days)]
-      (-> (response/ok (get-users-paginated offset-num amount-num sort-type days-num))
+      (-> (response/ok (get-users offset-num amount-num sort-type days-num))
           (response/header "Content-Type"
                            "application/json")))))
