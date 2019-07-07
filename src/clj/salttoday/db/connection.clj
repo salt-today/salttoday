@@ -5,7 +5,7 @@
             [salttoday.db.schema :refer [schema]]))
 
 (defstate conn
-  "Connection management, init the databse on startup"
+  "Connection management, init the database on startup"
   :start (let [db-url (:database-url env)
                db (d/create-database db-url)
                conn (d/connect db-url)]
