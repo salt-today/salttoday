@@ -84,7 +84,7 @@
          user-maps (if days-ago-date
                      (get-user-scores-for-time-range db user-maps days-ago)
                      user-maps)
-         sorted-users (sort-by-specified (keyword user-maps) sort-type)]
+         sorted-users (sort-by-specified (keyword sort-type) user-maps)]
      (paginate-results offset amount sorted-users)))
   ([offset amount sort-type days-ago]
    (get-users (d/db conn) offset amount sort-type days-ago)))
