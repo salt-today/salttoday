@@ -57,7 +57,8 @@
   [:> js/Select
    (-> props
        (dissoc state)
-       (assoc :class-name "sort-dropdown"))])
+       (assoc :class-name "sort-dropdown"
+              :class-name-prefix "sort-dropdown"))])
 
 (def days-options
   {"1" "Today"

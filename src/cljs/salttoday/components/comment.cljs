@@ -1,6 +1,7 @@
 (ns salttoday.components.comment
   (:require [cuerdas.core :as string]
-            [komponentit.clipboard :as clipboard]))
+            [komponentit.clipboard :as clipboard]
+            [accountant.core :as accountant]))
 
 (def blue "#0072bc")
 (def red "#ed1c24")
@@ -90,7 +91,7 @@
      [:div.row
       ; Empty Offset
       [:div.column.comment-author {:style {:flex 70}}
-       [:a.author-link {:href "/#/user"} "- "
+       [:a.author-link {:on-click (fn [] (accountant/navigate! (str "/home?user=" (:user comment))))} "- "
         (:user comment)]]
       (if (:comment/deleted comment) [:div.column.deleted "DELETED"])
       ; Empty Offset

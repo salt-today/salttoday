@@ -318,6 +318,14 @@ span.nav-link.active {
   font-size: 2em;
 }
 
+.user-name-row > a {
+    color: white;
+}
+
+.user-name-row > span > a {
+    color: white;
+}
+
 .user-stats-row {
   justify-content: center;
 }
@@ -372,6 +380,15 @@ span.nav-link.active {
   width: 150px;
   font-size: 1em;
   color: #1b1b1b;
+}
+
+.sort-dropdown__indicator-separator {
+    display: none;
+}
+
+.sort-dropdown__input{
+    font-size: 1em;
+    font-family: BebasNeue, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .footer-pile {

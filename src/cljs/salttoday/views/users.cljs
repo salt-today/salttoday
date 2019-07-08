@@ -1,6 +1,7 @@
 (ns salttoday.views.users
   (:require-macros [cljs.core.async.macros :refer [go]])
-  (:require [reagent.core :as r]
+  (:require [accountant.core :as accountant]
+            [reagent.core :as r]
             [clojure.core.async :as a]
             [cljs-http.client :as http]
             [salttoday.components.comment :refer [comment-component]]
@@ -34,7 +35,7 @@
   [:div.row
    [:div.row.user-name-row
     [:span
-     (:name user)]]
+     [:a {:on-click (fn [] (accountant/navigate! (str "/home?user=" (:name user))))} (:name user)]]]
    [:div.row.user-stats-row
     [:span.positive
      (:upvotes user)
