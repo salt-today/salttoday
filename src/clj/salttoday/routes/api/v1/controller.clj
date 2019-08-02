@@ -19,7 +19,7 @@
         days-num (routing-util/string->number days)
         id-num (routing-util/string->number id)
         deleted-bool (routing-util/string->bool deleted)
-        user-str (if (not (clojure.string/blank? user)) user)   ; convert to nil if string is blank
+        user-str (if (not (blank? user)) user)   ; convert to nil if string is blank
         results (get-comments offset-num amount-num (keyword sort-type) days-num search-text user-str id-num deleted-bool)]
     (-> (http-response/ok results)
         (response/header "Content-Type"
