@@ -18,8 +18,8 @@
         (swap! state assoc :users (sort (for [user body] (:name user)))))))
 
 (def deleted-options
-  {"false" "All"
-   "true" "Deleted"})
+  {false "All"
+   true "Deleted"})
 
 (defn filter-by-deleted
   [selected state]
@@ -77,8 +77,9 @@
                        :offset (or (:offset query-params) 0)
                        :amount (or (:amount query-params) 50)
                        :sort-type (or (:sort-type query-params) "score")
-                       :days (or (:days query-params) "1")
-                       :deleted (or (:deleted query-params) "false")
+                       :days (or (:days query-params) 1)
+                       :id nil
+                       :deleted (or (:deleted query-params) false)
                        :user (or (:user query-params) "")})]
     (get-comments state)
     (get-users state)
