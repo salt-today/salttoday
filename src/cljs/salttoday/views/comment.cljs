@@ -4,7 +4,7 @@
             [clojure.core.async :as a]
             [reagent.core :as r]
             [salttoday.components.comment :refer [comment-component]]
-            [salttoday.views.common :refer [content get-selected-value jumbotron make-content make-navbar
+            [salttoday.views.common :refer [content get-comments get-selected-value jumbotron make-content make-navbar
                                             make-right-offset update-query-params-with-state]]))
 
 (defn get-comment [state]
@@ -18,7 +18,7 @@
 (defn component-content [state]
   (list [:div.column.justify-center.comments-wrapper
          (for [comment (:comments @state)]
-           (comment-component comment (:lorem @state)))]))
+           (comment-component comment state))]))
 
 ; Helpful Docs - https://purelyfunctional.tv/guide/reagent/#form-2
 (defn comment-page [query-params]

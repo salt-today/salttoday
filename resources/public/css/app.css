@@ -326,6 +326,11 @@ span.nav-link.active {
     color: white;
 }
 
+.user-name-row > span > a:hover {
+    color: white;
+    text-decoration: underline;
+}
+
 .user-stats-row {
   justify-content: center;
 }
@@ -388,7 +393,6 @@ span.nav-link.active {
 
 .sort-dropdown__input{
     font-size: 1em;
-    font-family: BebasNeue, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .footer-pile {

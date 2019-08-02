@@ -5,21 +5,9 @@
             [cljsjs.react-select]
             [reagent.core :as r]
             [salttoday.components.comment :refer [comment-component]]
-            [salttoday.views.common :refer [content create-select-options days-dropdown get-selected-value jumbotron make-content make-navbar
+            [salttoday.views.comment :refer [get-comments]]
+            [salttoday.views.common :refer [content create-select-options days-dropdown get-comments get-selected-value jumbotron make-content make-navbar
                                             make-right-offset select sort-dropdown update-query-params-with-state]]))
-
-(defn get-comments [state]
-  (go (let [options {:query-params {:offset    (:offset @state)
-                                    :amount    (:amount @state)
-                                    :sort-type (:sort-type @state)
-                                    :days      (:days @state)
-                                    :id        (:id @state)
-                                    :deleted   (:deleted @state)
-                                    :user      (:user @state)}
-                     :with-credentials? false
-                     :headers {}}
-            {:keys [status headers body error] :as resp} (a/<! (http/get "/api/v1/comments" options))]
-        (swap! state assoc :comments body))))
 
 ; Get all of the users - this is needed for the users dropdown
 (defn get-users [state]
@@ -80,7 +68,7 @@
 
    (list [:div.column.justify-center.comments-wrapper
           (for [comment (:comments @state)]
-            (comment-component comment (:lorem @state)))])))
+            (comment-component comment state))])))
 
 ; Helpful Docs - https://purelyfunctional.tv/guide/reagent/#form-2
 (defn home-page [query-params]

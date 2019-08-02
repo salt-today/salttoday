@@ -1,6 +1,9 @@
 (ns salttoday.views.common
+  (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [salttoday.routing.util :refer [update-query-parameters!]]
-            [cljsjs.react-select]))
+            [cljsjs.react-select]
+            [cljs-http.client :as http]
+            [clojure.core.async :as a]))
 
 (defn jumbotron
   "Big name at the top?"
@@ -107,3 +110,16 @@
            :on-change (fn [selected]
                         (filter-by-sort selected state action)
                         (update-query-params-with-state state :comments :users))}])
+
+(defn get-comments [state]
+  (go (let [options {:query-params {:offset    (:offset @state)
+                                    :amount    (:amount @state)
+                                    :sort-type (:sort-type @state)
+                                    :days      (:days @state)
+                                    :id        (:id @state)
+                                    :deleted   (:deleted @state)
+                                    :user      (:user @state)}
+                     :with-credentials? false
+                     :headers {}}
+            {:keys [status headers body error] :as resp} (a/<! (http/get "/api/v1/comments" options))]
+        (swap! state assoc :comments body))))
