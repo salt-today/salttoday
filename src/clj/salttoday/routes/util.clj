@@ -18,3 +18,8 @@
     false
     (let [b (read-string str)]
       (if (boolean? b) b false))))
+
+(defn blank-str->nil
+  "If a string is blank, returns nil, otherwise returns the string"
+  [str]
+  (if (not (blank? str)) str))

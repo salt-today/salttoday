@@ -2,72 +2,73 @@
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [cljs-http.client :as http]
             [clojure.core.async :as a]
+            [cljsjs.react-select]
             [reagent.core :as r]
             [salttoday.components.comment :refer [comment-component]]
-            [salttoday.views.common :refer [content get-selected-value jumbotron make-content make-navbar
-                                            make-right-offset update-query-params-with-state]]))
+            [salttoday.views.comment :refer [get-comments]]
+            [salttoday.views.common :refer [content create-select-options days-dropdown get-comments get-selected-value jumbotron make-content make-navbar
+                                            make-right-offset select sort-dropdown update-query-params-with-state]]))
 
-(defn get-comments [state]
-  (go (let [options {:query-params {:offset    (:offset @state)
-                                    :amount    (:amount @state)
-                                    :sort-type (:sort-type @state)
-                                    :days      (:days @state)
-                                    :id        (:id @state)
-                                    :deleted   (:deleted @state)}
+; Get all of the users - this is needed for the users dropdown
+(defn get-users [state]
+  (go (let [options {:query-params {:amount    99999}
                      :with-credentials? false
                      :headers {}}
-            {:keys [status headers body error] :as resp} (a/<! (http/get "/api/v1/comments" options))]
-        (swap! state assoc :comments body))))
+            {:keys [status headers body error] :as resp} (a/<! (http/get "/api/v1/users" options))]
+        (swap! state assoc :users (sort (for [user body] (:name user)))))))
 
-(defn filter-by-days
-  [event state]
-  (let [sort (get-selected-value event)]
-    (swap! state assoc :days sort)
-    (get-comments state)))
-
-(defn filter-by-sort
-  [event state]
-  (let [sort (get-selected-value event)]
-    (swap! state assoc :sort-type sort)
-    (get-comments state)))
+(def deleted-options
+  {false "All"
+   true "Deleted"})
 
 (defn filter-by-deleted
-  [event state]
-  (let [deleted (get-selected-value event)]
+  [selected state]
+  (let [deleted (get-selected-value selected)]
     (swap! state assoc :deleted deleted)
     (get-comments state)))
+
+(defn filter-by-user
+  [user state]
+  (do (swap! state assoc :user user)
+      (get-comments state)))
 
 (defn home-content [state]
   (list
    [:div.row.justify-center.header-wrapper.sort-bar
     [:div.column.sort-item.sort-dropdown
-     [:select {:value [(:sort-type @state)]
-               :on-change (fn [e]
-                            (filter-by-sort e state)
-                            (update-query-params-with-state state :comments))}
-      [:option {:value "score"} "Top"]
-      [:option {:value "downvotes"} "Dislikes"]
-      [:option {:value "upvotes"} "Likes"]]]
+     (sort-dropdown state (partial get-comments state))]
+
+     ; Days dropdown
     [:div.column.sort-item.sort-dropdown
-     [:select {:value [(:days @state)]
-               :on-change (fn [e]
-                            (filter-by-days e state)
-                            (update-query-params-with-state state :comments))}
-      [:option {:value 1} "Past Day"]
-      [:option {:value 7} "Past Week"]
-      [:option {:value 30} "Past Month"]
-      [:option {:value 365} "Past Year"]
-      [:option {:value 0} "Of All Time"]]]
+     (days-dropdown state (partial get-comments state))]
+
+     ; Deleted dropdown
     [:div.column.sort-item.sort-dropdown
-     [:select {:value [(:deleted @state)]
-               :on-change (fn [e]
-                            (filter-by-deleted e state)
-                            (update-query-params-with-state state :comments))}
-      [:option {:value false} "All"]
-      [:option {:value true} "Deleted"]]]]
+     [select {:state state
+              :multi false
+              :is-searchable false
+              :value {:label (deleted-options (:deleted @state)) :value (:deleted @state)}
+              :options (create-select-options deleted-options)
+              :on-change (fn [selected]
+                           (filter-by-deleted selected state)
+                           (update-query-params-with-state state :comments :users))}]]
+
+     ; Users dropdown
+    [:div.column.sort-item.sort-dropdown
+     [select {:state state
+              :multi false
+              :options (conj
+                        (for [user (:users @state)] {:label user :value user})
+                        {:label "All Users" :value ""})
+              :value {:label (if (clojure.string/blank? (:user @state)) "All Users" (:user @state))
+                      :value (if (clojure.string/blank? (:user @state)) "" (:user @state))}
+              :on-change (fn [selected] (let [user (get-selected-value selected)]
+                                          (filter-by-user user state)
+                                          (update-query-params-with-state state :comments :users)))}]]]
+
    (list [:div.column.justify-center.comments-wrapper
           (for [comment (:comments @state)]
-            (comment-component comment (:lorem @state)))])))
+            (comment-component comment state))])))
 
 ; Helpful Docs - https://purelyfunctional.tv/guide/reagent/#form-2
 (defn home-page [query-params]
@@ -78,8 +79,10 @@
                        :sort-type (or (:sort-type query-params) "score")
                        :days (or (:days query-params) 1)
                        :id nil
-                       :deleted (or (:deleted query-params) false)})]
+                       :deleted (or (:deleted query-params) false)
+                       :user (or (:user query-params) "")})]
     (get-comments state)
+    (get-users state)
     (fn []
       [:div.page-wrapper
        (make-navbar :home)
