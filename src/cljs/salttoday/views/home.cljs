@@ -5,6 +5,7 @@
             [cljsjs.react-select]
             [reagent.core :as r]
             [salttoday.components.comment :refer [comment-component]]
+            [salttoday.components.pagination :refer [pagination-component]]
             [salttoday.views.comment :refer [get-comments]]
             [salttoday.views.common :refer [content create-select-options days-dropdown get-comments get-selected-value jumbotron make-content make-navbar
                                             make-right-offset select sort-dropdown update-query-params-with-state]]))
@@ -66,9 +67,11 @@
                                           (filter-by-user user state)
                                           (update-query-params-with-state state :comments :users)))}]]]
 
-   (list [:div.column.justify-center.comments-wrapper
-          (for [comment (:comments @state)]
-            (comment-component comment state))])))
+  ;  (list [:div.column.justify-center.comments-wrapper
+  ;         (for [comment (:comments @state)]
+  ;           (comment-component comment state))])
+   
+   (pagination-component 2 20 5 state)))
 
 ; Helpful Docs - https://purelyfunctional.tv/guide/reagent/#form-2
 (defn home-page [query-params]
