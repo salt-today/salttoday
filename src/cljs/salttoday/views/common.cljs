@@ -64,11 +64,11 @@
               :class-name-prefix "sort-dropdown"))])
 
 (def days-options
-  {1 "Today"
-   7 "Past Week"
-   30 "Past Month"
-   365 "Past Year"
-   0 "All Time"})
+  {"1" "Today"
+   "7" "Past Week"
+   "30" "Past Month"
+   "365" "Past Year"
+   "0" "All Time"})
 
 (defn filter-by-days
   [selected state action]
