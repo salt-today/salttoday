@@ -34,7 +34,7 @@
            "Being salty is when you are upset over something little."]
           ; TODO - link to this user once supported
           [:div [:a.about-link {:on-click (fn [] (accountant/navigate! (str "/home?user=" (:name @state) "&days=" 0)))}
-                      (:name @state)] " was so salty after reading a SooToday article."]]]
+                 (:name @state)] " was so salty after reading a SooToday article."]]]
 
         [:div.row.justify-center.header-wrapper
          [:span.heading.small-heading.about-heading "What is this?"]]
