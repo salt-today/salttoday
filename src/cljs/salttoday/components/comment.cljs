@@ -94,7 +94,7 @@
       ; Empty Offset
       [:div.column.comment-author {:style {:flex 70}}
        [:a.author-link {:on-click (fn [] (do
-                                           (swap! state assoc :user (:user comment))
+                                           (swap! state assoc :user (:user comment) :days "0")
                                            (update-query-params-with-state state :comments :users)
                                            (get-comments state)))} "- "
         (:user comment)]]
