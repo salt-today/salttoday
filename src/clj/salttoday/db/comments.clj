@@ -68,12 +68,14 @@
                               :comment/text text
                               :comment/time timestamp
                               :comment/upvotes upvotes
-                              :comment/downvotes downvotes}
+                              :comment/downvotes downvotes
+                              :comment/deleted false}
                              {:db/id post-id
                               :post/comment "comment"}])
       (tx-with-logging conn [{:db/id comment-id
                               :comment/upvotes upvotes
-                              :comment/downvotes downvotes}]))
+                              :comment/downvotes downvotes
+                              :comment/deleted false}]))
     (tx-with-logging conn [{:db/id user-id
                             :user/upvotes (+ user-upvotes upvote-increase)
                             :user/downvotes (+ user-downvotes downvote-increase)}])
