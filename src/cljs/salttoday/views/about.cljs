@@ -1,6 +1,7 @@
 (ns salttoday.views.about
   (:require-macros [cljs.core.async.macros :refer [go]])
-  (:require [reagent.core :as r]
+  (:require [accountant.core :as accountant]
+            [reagent.core :as r]
             [clojure.core.async :as a]
             [cljs-http.client :as http]
             [goog.string :as gstring]
@@ -32,7 +33,8 @@
           [:a.about-link {:href "https://www.urbandictionary.com/define.php?term=salty"}
            "Being salty is when you are upset over something little."]
           ; TODO - link to this user once supported
-          [:div [:i  (:name @state) " was so salty after reading a SooToday article."]]]]
+          [:div [:a.about-link {:on-click (fn [] (accountant/navigate! (str "/home?user=" (:name @state) "&days=" 0)))}
+                 (:name @state)] " was so salty after reading a SooToday article."]]]
 
         [:div.row.justify-center.header-wrapper
          [:span.heading.small-heading.about-heading "What is this?"]]
@@ -40,8 +42,8 @@
          "The ranking of both comments and users is based on the number of likes and dislikes they've accumulated. Likes count for one point, dislikes count for two."]
 
         [:div.row.justify-center.header-wrapper
-         [:span.heading.small-heading.about-heading "My comment is missing!"]]
-        [:div.about-text "It happens. Bear with me, theres a few kinks that need to be worked out yet."]))
+         [:span.heading.small-heading.about-heading "Your site is broken!"]]
+        [:div.about-text "It's far from perfect, " [:a.about-link {:href "https://github.com/salt-today/salttoday/issues" :target "_blank"} [:u "click here"]] " to let me know about it. Maybe even contribute?"]))
 
 (defn about-page []
   (js/console.log "whatup")
