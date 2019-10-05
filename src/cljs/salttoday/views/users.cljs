@@ -35,7 +35,7 @@
   [:div.row
    [:div.row.user-name-row
     [:span
-     [:a {:on-click (fn [] (accountant/navigate! (str "/home?user=" (:name user))))}
+     [:a {:on-click (fn [] (accountant/navigate! (str "/home?user=" (:name user) "&days=" 0)))}
       (:name user)]]]
    [:div.row.user-stats-row
     [:span.positive
