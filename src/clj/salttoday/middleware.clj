@@ -4,13 +4,11 @@
             [cognitect.transit :as transit]
             [clojure.tools.logging :as log]
             [salttoday.layout :refer [error-page]]
-            [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
             [ring.middleware.webjars :refer [wrap-webjars]]
             [muuntaja.core :as muuntaja]
             [muuntaja.format.json :refer [json-format]]
             [muuntaja.format.transit :as transit-format]
             [muuntaja.middleware :refer [wrap-format wrap-params]]
-            [salttoday.config :refer [env]]
             [ring.middleware.flash :refer [wrap-flash]]
             [immutant.web.middleware :refer [wrap-session]]
             [ring.middleware.defaults :refer [site-defaults wrap-defaults]])
@@ -26,14 +24,6 @@
         (error-page {:status 500
                      :title "Something very bad has happened!"
                      :message "We've dispatched a team of highly trained gnomes to take care of the problem."})))))
-
-(defn wrap-csrf [handler]
-  (wrap-anti-forgery
-   handler
-   {:error-response
-    (error-page
-     {:status 403
-      :title "Invalid anti-forgery token"})}))
 
 (def joda-time-writer
   (transit/write-handler
@@ -63,7 +53,9 @@
                   {:handlers {org.joda.time.DateTime joda-time-writer}}))]}}))
 
 (defn wrap-formats [handler]
-  (let [wrapped (-> handler wrap-params (wrap-format restful-format-options))]
+  (let [wrapped (-> handler
+                    wrap-params
+                    (wrap-format restful-format-options))]
     (fn [request]
       ;; disable wrap-formats for websockets
       ;; since they're not compatible with this middleware

@@ -1,20 +1,14 @@
 (ns salttoday.core
-  (:require [salttoday.handler :as handler]
-            [salttoday.db.core :as db]
-            [salttoday.metrics.core :as honeycomb]
-            [salttoday.scraper :refer [scrape-sootoday]]
+  (:require [salttoday.routes.handler :as handler]
+            [salttoday.db.posts :refer [update-posts-and-comments]]
+            [salttoday.scraper.core :refer [scrape-sootoday]]
             [overtone.at-at :as at-at]
             [luminus.repl-server :as repl]
             [luminus.http-server :as http]
             [salttoday.config :refer [env]]
-            [clojure.tools.cli :refer [parse-opts]]
             [clojure.tools.logging :as log]
             [mount.core :as mount])
   (:gen-class))
-
-(def cli-options
-  [["-p" "--port PORT" "Port number"
-    :parse-fn #(Integer/parseInt %)]])
 
 (mount/defstate ^{:on-reload :noop} http-server
   :start
@@ -39,24 +33,27 @@
   (when repl-server
     (repl/stop repl-server)))
 
-(defn stop-app []
+(defn start-app
+  "Mounts all stateful components"
+  []
+  (doseq [component (:started (mount/start))]
+    (log/info component "started")))
+
+(defn stop-app
+  "Gracefully closes all components"
+  []
   (doseq [component (:stopped (mount/stop))]
     (log/info component "stopped"))
   (shutdown-agents))
 
-(defn start-app [args]
-  (doseq [component (-> args
-                        (parse-opts cli-options)
-                        mount/start-with-args
-                        :started)]
-    (log/info component "started"))
-  (.addShutdownHook (Runtime/getRuntime) (Thread. stop-app)))
-
 ; TODO - scraper needs to be put into a defstate so we re-scrape when reloading state.
 (defn -main [& args]
-  (start-app args)
+  ; Init Application
+  (start-app)
+  (.addShutdownHook (Runtime/getRuntime)
+                    (Thread. stop-app))
   (let [seconds 1000
         minutes (* seconds 60)
         interval (* 15 minutes)
         pool (at-at/mk-pool)]
-    (at-at/every interval #(db/update-stats (scrape-sootoday)) pool)))
+    (at-at/every interval #(update-posts-and-comments (scrape-sootoday)) pool)))

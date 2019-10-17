@@ -1,6 +1,8 @@
 (ns salttoday.components.comment
   (:require [cuerdas.core :as string]
-            [komponentit.clipboard :as clipboard]))
+            [komponentit.clipboard :as clipboard]
+            [accountant.core :as accountant]
+            [salttoday.views.common :refer [get-comments update-query-params-with-state]]))
 
 (def blue "#0072bc")
 (def red "#ed1c24")
@@ -36,7 +38,7 @@
                       (second))]
       (set! (.-innerHTML tooltip) text))))
 
-(defn comment-component [comment lorem]
+(defn comment-component [comment state]
   (let [id (:comment-id comment)
         upvotes (:upvotes comment)
         downvotes (:downvotes comment)
@@ -76,8 +78,9 @@
         [:span.fa-stack.fa-1x.counter-icon
          [:i.fas.fa-thumbs-up.fa-stack-2x]
          [:i.fas.fa-stack-1x.vote-counter-text (str upvotes " ")]]]
+
        ; Comment text
-       [:span.comment-text (if lorem
+       [:span.comment-text (if (:lorem @state)
                              (str "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
                                   "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.")
                              (:text comment))]
@@ -90,7 +93,10 @@
      [:div.row
       ; Empty Offset
       [:div.column.comment-author {:style {:flex 70}}
-       [:a.author-link {:href "/#/user"} "- "
+       [:a.author-link {:on-click (fn [] (do
+                                           (swap! state assoc :user (:user comment) :days "0")
+                                           (update-query-params-with-state state :comments :users)
+                                           (get-comments state)))} "- "
         (:user comment)]]
       (if (:comment/deleted comment) [:div.column.deleted "DELETED"])
       ; Empty Offset

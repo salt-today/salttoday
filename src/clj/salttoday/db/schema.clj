@@ -1,0 +1,56 @@
+(ns salttoday.db.schema)
+
+(defonce schema
+  ; Users
+  [{:db/ident              :user/name
+    :db/valueType          :db.type/string
+    :db/cardinality        :db.cardinality/one
+    :db.install/_attribute :db.part/db}
+   {:db/ident              :user/upvotes
+    :db/valueType          :db.type/long
+    :db/cardinality        :db.cardinality/one
+    :db.install/_attribute :db.part/db}
+   {:db/ident              :user/downvotes
+    :db/valueType          :db.type/long
+    :db/cardinality        :db.cardinality/one
+    :db.install/_attribute :db.part/db}
+
+   ; Comments
+   {:db/ident              :comment/text
+    :db/valueType          :db.type/string
+    :db/cardinality        :db.cardinality/one
+    :db.install/_attribute :db.part/db}
+   {:db/ident              :comment/time
+    :db/valueType          :db.type/string
+    :db/cardinality        :db.cardinality/one
+    :db.install/_attribute :db.part/db}
+   {:db/ident              :comment/upvotes
+    :db/valueType          :db.type/long
+    :db/cardinality        :db.cardinality/one
+    :db.install/_attribute :db.part/db}
+   {:db/ident              :comment/downvotes
+    :db/valueType          :db.type/long
+    :db/cardinality        :db.cardinality/one
+    :db.install/_attribute :db.part/db}
+   {:db/ident              :comment/user
+    :db/valueType          :db.type/ref
+    :db/cardinality        :db.cardinality/one
+    :db.install/_attribute :db.part/db}
+   {:db/ident              :comment/deleted
+    :db/valueType          :db.type/boolean
+    :db/cardinality        :db.cardinality/one
+    :db.install/_attribute :db.part/db}
+
+   ; Post aka Articles
+   {:db/ident              :post/url
+    :db/valueType          :db.type/string
+    :db/cardinality        :db.cardinality/one
+    :db.install/_attribute :db.part/db}
+   {:db/ident              :post/title
+    :db/valueType          :db.type/string
+    :db/cardinality        :db.cardinality/one
+    :db.install/_attribute :db.part/db}
+   {:db/ident              :post/comment
+    :db/valueType          :db.type/ref
+    :db/cardinality        :db.cardinality/many
+    :db.install/_attribute :db.part/db}])

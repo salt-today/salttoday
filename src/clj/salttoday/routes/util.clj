@@ -1,7 +1,7 @@
 (ns salttoday.routes.util
   (:require [clojure.string :refer [blank?]]))
 
-; TODO - return nil and move to a common namespace
+; TODO - return nil
 (defn string->number
   "Converts a string to a number, if nil or not a number, returns 0."
   [str]
@@ -18,3 +18,8 @@
     false
     (let [b (read-string str)]
       (if (boolean? b) b false))))
+
+(defn blank-str->nil
+  "If a string is blank, returns nil, otherwise returns the string"
+  [str]
+  (if (not (blank? str)) str))

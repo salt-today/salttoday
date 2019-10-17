@@ -318,6 +318,19 @@ span.nav-link.active {
   font-size: 2em;
 }
 
+.user-name-row > a {
+    color: white;
+}
+
+.user-name-row > span > a {
+    color: white;
+}
+
+.user-name-row > span > a:hover {
+    color: white;
+    text-decoration: underline;
+}
+
 .user-stats-row {
   justify-content: center;
 }
@@ -370,13 +383,16 @@ span.nav-link.active {
 
 .sort-dropdown {
   width: 150px;
+  font-size: 1em;
+  color: #1b1b1b;
 }
 
-.sort-dropdown select {
-  font-family: BebasNeue;
-  font-size: 1em;
-  background-color: #1d1d1d;
-  color: white;
+.sort-dropdown__indicator-separator {
+    display: none;
+}
+
+.sort-dropdown__input{
+    font-size: 1em;
 }
 
 .footer-pile {
