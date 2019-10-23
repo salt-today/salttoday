@@ -44,7 +44,6 @@
         [:div.about-text "It happens. Bear with me, theres a few kinks that need to be worked out yet."]))
 
 (defn about-page []
-  (js/console.log "whatup")
   (let [state (r/atom {})]
     (get-users state)
     (fn []

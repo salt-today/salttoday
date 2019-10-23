@@ -164,7 +164,9 @@
          comments (apply (partial d/q (:query query-map)) (:args query-map))
          formatted-comments (db-comments->frontend-comments comments)
          sorted-comments (sort-by-specified sort-type formatted-comments)]
-     (paginate-results offset num sorted-comments)))
+     ; TODO would be better to have like next/rel/prev links like a true REST api
+     {:comments (paginate-results offset num sorted-comments)
+      :total-comments (count comments)}))
   ([offset num sort-type days-ago search-text name id deleted]
    (get-comments (d/db conn) offset num sort-type days-ago search-text name id deleted))
   ; TODO - get rid of the usage in statistics.clj

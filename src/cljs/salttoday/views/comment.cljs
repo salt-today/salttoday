@@ -4,7 +4,7 @@
             [clojure.core.async :as a]
             [reagent.core :as r]
             [salttoday.components.comment :refer [comment-component]]
-            [salttoday.views.common :refer [content get-comments get-selected-value jumbotron make-content make-navbar
+            [salttoday.views.common :refer [content get-selected-value jumbotron make-content make-navbar
                                             make-right-offset update-query-params-with-state]]))
 
 (defn get-comment [state]
@@ -13,7 +13,7 @@
                      :with-credentials? false
                      :headers {}}
             {:keys [status headers body error] :as resp} (a/<! (http/get "/api/v1/comments" options))]
-        (swap! state assoc :comments body))))
+        (swap! state assoc :comments (:comments body)))))
 
 (defn component-content [state]
   (list [:div.column.justify-center.comments-wrapper

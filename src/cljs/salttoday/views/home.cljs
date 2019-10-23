@@ -6,13 +6,12 @@
             [reagent.core :as r]
             [salttoday.components.comment :refer [comment-component]]
             [salttoday.components.pagination :refer [pagination-component]]
-            [salttoday.views.comment :refer [get-comments]]
             [salttoday.views.common :refer [content create-select-options days-dropdown get-comments get-selected-value jumbotron make-content make-navbar
                                             make-right-offset select sort-dropdown update-query-params-with-state]]))
 
 ; Get all of the users - this is needed for the users dropdown
 (defn get-users [state]
-  (go (let [options {:query-params {:amount    99999}
+  (go (let [options {:query-params {:amount 99999}
                      :with-credentials? false
                      :headers {}}
             {:keys [status headers body error] :as resp} (a/<! (http/get "/api/v1/users" options))]
@@ -67,18 +66,23 @@
                                           (filter-by-user user state)
                                           (update-query-params-with-state state :comments :users)))}]]]
 
-  ;  (list [:div.column.justify-center.comments-wrapper
-  ;         (for [comment (:comments @state)]
-  ;           (comment-component comment state))])
-   
-   (pagination-component 2 20 5 state)))
+   (list [:div.column.justify-center.comments-wrapper
+          (for [comment (:comments @state)]
+            (comment-component comment state))])
+
+   (let [num-comments (:total-comments @state)
+         page-size (dec (:amount @state))
+         page-buffer 5
+         current-page (Math/ceil (/ (:offset @state) page-size))]
+     (pagination-component state current-page num-comments page-size page-buffer))))
 
 ; Helpful Docs - https://purelyfunctional.tv/guide/reagent/#form-2
 (defn home-page [query-params]
   (let [state (r/atom {:comments []
+                       :total-comments 0
                        :lorem (= (:lorem query-params) "true")
                        :offset (or (:offset query-params) 0)
-                       :amount (or (:amount query-params) 50)
+                       :amount (or (:amount query-params) 20)
                        :sort-type (or (:sort-type query-params) "score")
                        :days (or (:days query-params) 1)
                        :id nil
