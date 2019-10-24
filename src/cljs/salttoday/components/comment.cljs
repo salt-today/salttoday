@@ -56,6 +56,28 @@
      [:div.article-title
       [:a.article-link {:href (:url comment) :target "_blank"}
        (:title comment)]
+      [:a.facebook-share-button {:on-click (fn [e]
+                                             (clipboard/copy-text (str (.-origin (.-location js/window))
+                                                                       "/comment?id=" id))
+                                             (let [tooltip (-> e
+                                                               .-currentTarget
+                                                               .-childNodes
+                                                               (second))]
+                                               (set! (.-innerHTML tooltip) "Shared")))}
+       [:img.facebook-icon {:src "/img/icons/Facebook-Icon.png"}]
+       [:span.tooltip "Share"]]
+
+      [:a.twitter-share-button {:on-click (fn [e]
+                                            (clipboard/copy-text (str (.-origin (.-location js/window))
+                                                                      "/comment?id=" id))
+                                            (let [tooltip (-> e
+                                                              .-currentTarget
+                                                              .-childNodes
+                                                              (second))]
+                                              (set! (.-innerHTML tooltip) "Tweeted")))}
+       [:img.twitter-icon {:src "/img/icons/Twitter-Icon.png"}]
+       [:span.tooltip "Tweet"]]
+
       ; TODO - change this to just copy the link to the clipboard eventually
       ; could be used elsewhere, develop it generically.
       [:a.comment-link {:on-mouse-over (create-tooltip "Copy Link")

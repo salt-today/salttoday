@@ -245,6 +245,30 @@ span.nav-link.active {
   font-size: 0.5em;
 }
 
+.facebook-share-button {
+  text-decoration: none;
+  color: white;
+  margin-left: 0.5em;
+  font-size: 0.85em;
+  cursor: pointer;
+}
+
+.facebook-icon {
+  width: 20px;
+}
+
+.twitter-share-button {
+   text-decoration: none;
+   color: white;
+   margin-left: 0.5em;
+   font-size: 0.85em;
+   cursor: pointer;
+ }
+
+.twitter-icon {
+  width: 20px;
+}
+
 .comment-link {
   text-decoration: none;
   color: white;
@@ -422,5 +446,13 @@ span.nav-link.active {
 
 /* Show the tooltip text when you mouse over the tooltip container */
 .comment-link:hover .tooltip {
+  visibility: visible;
+}
+
+.facebook-share-button:hover .tooltip {
+  visibility: visible;
+}
+
+.twitter-share-button:hover .tooltip {
   visibility: visible;
 }
