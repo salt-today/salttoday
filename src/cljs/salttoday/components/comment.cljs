@@ -26,6 +26,7 @@
     gray
     red))
 
+; I forget why I did this, theres a reason
 (extend-type js/NodeList
   ISeqable
   (-seq [array] (array-seq array 0)))

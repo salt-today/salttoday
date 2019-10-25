@@ -111,6 +111,10 @@
                         (filter-by-sort selected state action)
                         (update-query-params-with-state state :comments :users))}])
 
+; Stateful modifications in a common namespace can be tricky
+; State is defined at the component level and could not adhere to the assumptions here in the util func
+; For now it's ok but we should not pass in the state and instead just return the value that is set
+; in the component
 (defn get-comments [state]
   (go (let [options {:query-params {:offset    (:offset @state)
                                     :amount    (:amount @state)
@@ -122,4 +126,5 @@
                      :with-credentials? false
                      :headers {}}
             {:keys [status headers body error] :as resp} (a/<! (http/get "/api/v1/comments" options))]
-        (swap! state assoc :comments body))))
+        (swap! state assoc :comments (:comments body))
+        (swap! state assoc :total-comments (:total-comments body)))))

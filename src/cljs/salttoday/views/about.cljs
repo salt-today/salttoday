@@ -46,7 +46,6 @@
         [:div.about-text "It's far from perfect, " [:a.about-link {:href "https://github.com/salt-today/salttoday/issues" :target "_blank"} [:u "click here"]] " to let me know about it. Maybe even contribute?"]))
 
 (defn about-page []
-  (js/console.log "whatup")
   (let [state (r/atom {})]
     (get-users state)
     (fn []

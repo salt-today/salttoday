@@ -56,7 +56,6 @@
 (defn hook-browser-navigation! []
   (accountant/configure-navigation!
    {:nav-handler   (fn [path]
-                     (js/console.log path)
                      (secretary/dispatch! path))
     :path-exists?  (fn [path]
                      (secretary/locate-route path))
