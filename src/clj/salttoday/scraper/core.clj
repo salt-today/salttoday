@@ -79,7 +79,7 @@
 (defn ^:private get-username
   "Gets the username given the html of a comment."
   [comment-html]
-  (-> (html/select comment-html [:a.comment-un])
+  (-> (html/select comment-html [:.comment-un])
       get-content-helper))
 
 (defn ^:private tag-type->encoding [tag-type content]
