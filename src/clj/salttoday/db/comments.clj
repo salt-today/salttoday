@@ -174,3 +174,17 @@
   ; TODO - get rid of the usage in statistics.clj
   ([db]
    (get-comments db 0 1 nil -1 nil nil nil false)))
+
+(def memoized-get-comments
+  (let [seconds 1000
+        minutes (* seconds 60)
+        interval (* 15 minutes)]
+    (clojure.core.memoize/ttl get-comments :ttl/threshold interval)))
+
+(defn refresh-memoization []
+  (log/info "Refreshing comments cache")
+  (memoized-get-comments 0 20 :score 1 nil nil 0 false)
+  (memoized-get-comments 0 20 :score 7 nil nil 0 false)
+  (memoized-get-comments 0 20 :score 30 nil nil 0 false)
+  (memoized-get-comments 0 20 :score 365 nil nil 0 false)
+  (memoized-get-comments 0 20 :score 0 nil nil 0 false))

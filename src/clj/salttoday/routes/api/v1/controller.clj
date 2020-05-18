@@ -1,5 +1,5 @@
 (ns salttoday.routes.api.v1.controller
-  (:require [salttoday.db.comments :refer [get-comments]]
+  (:require [salttoday.db.comments :refer [memoized-get-comments]]
             [salttoday.db.users :refer [get-users]]
             [salttoday.routes.util :as routing-util]
             [ring.util.response :as response]
@@ -20,7 +20,7 @@
         id-num (routing-util/string->number id)
         deleted-bool (routing-util/string->bool deleted)
         user-str (routing-util/blank-str->nil user)   ; convert to nil if string is blank
-        results (get-comments offset-num amount-num (keyword sort-type) days-num search-text user-str id-num deleted-bool)]
+        results (memoized-get-comments offset-num amount-num (keyword sort-type) days-num search-text user-str id-num deleted-bool)]
     (-> (http-response/ok results)
         (response/header "Content-Type"
                          "application/json"))))

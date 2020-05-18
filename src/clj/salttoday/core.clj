@@ -56,4 +56,5 @@
         minutes (* seconds 60)
         interval (* 15 minutes)
         pool (at-at/mk-pool)]
-    (at-at/every interval #(update-posts-and-comments (scrape-sootoday)) pool)))
+    (at-at/every interval #(update-posts-and-comments (scrape-sootoday)) pool)
+    (at-at/every interval #(salttoday.db.comments/refresh-memoization) pool)))
