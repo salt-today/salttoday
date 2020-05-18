@@ -32,6 +32,7 @@
                  [metosin/muuntaja "0.5.0"]
                  [metosin/ring-http-response "0.9.1"]
                  [mount "0.1.16"]
+                 [org.clojure/core.memoize "1.0.236"]
                  [org.clojure/tools.cli "0.4.2"]
                  [org.clojure/tools.logging "0.5.0-alpha.1"]
                  [overtone/at-at "1.2.0"]

@@ -1,5 +1,6 @@
 (ns salttoday.core
   (:require [salttoday.routes.handler :as handler]
+            [salttoday.db.comments :refer [refresh-memoization]]
             [salttoday.db.posts :refer [update-posts-and-comments]]
             [salttoday.scraper.core :refer [scrape-sootoday]]
             [overtone.at-at :as at-at]
@@ -56,4 +57,5 @@
         minutes (* seconds 60)
         interval (* 15 minutes)
         pool (at-at/mk-pool)]
-    (at-at/every interval #(update-posts-and-comments (scrape-sootoday)) pool)))
+    (at-at/every interval #(update-posts-and-comments (scrape-sootoday)) pool)
+    (at-at/every interval #(refresh-memoization) pool)))
