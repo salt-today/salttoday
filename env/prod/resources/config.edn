@@ -1,5 +1,5 @@
 {:dev false
  :enable-ssl true
  :port nil
- :ssl-port 443
+ :ssl-port 8443
  :database-url "datomic:free://localhost:4334/salttoday"}
