@@ -1,5 +1,7 @@
 # Salttoday
 
+This repo has been archived in favour of [saltoday2](https://github.com/salt-today/salttoday2)
+
 ## About
 
 [Currently lives here](http://www.salttoday.ca)
